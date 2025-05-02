@@ -105,7 +105,7 @@ export default function SupplierUsersPage() {
                         client,
                         email: data.email,
                         createdAt: new Date().toLocaleDateString(),
-                        supplier: user.supplier,
+                        supplier: user?.supplier,
                         fullName: data.name,
                     }
                     const res = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/suppliers/clients`, {
@@ -161,7 +161,7 @@ export default function SupplierUsersPage() {
     async function fetchUsers() {
         try {
             setLoading(true);
-            const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/users/by-supplier/${user?.supplier.id}`);
+            const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/users/by-supplier/${user?.supplier?.id}`);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -393,11 +393,11 @@ export default function SupplierUsersPage() {
                                         <TableCell>{user.email}</TableCell>
                                         <TableCell>
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        user.role.name === 'SUPER_ADMIN'
+                        user?.role.name === 'SUPER_ADMIN'
                             ? 'bg-purple-100 text-purple-800'
                             : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {rolePipe(user.role.name)}
+                      {rolePipe(user?.role.name)}
                     </span>
                                         </TableCell>
                                         <TableCell>

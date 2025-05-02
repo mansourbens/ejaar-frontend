@@ -6,7 +6,7 @@ import {User} from "@/app/users/page";
 
 
 type AuthContextType = {
-  user: User;
+  user: User | null;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -26,7 +26,7 @@ export function useAuth() {
 const publicRoutes = ['/', '/signin', '/signup', '/set-password', '/contact'];
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User|null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();

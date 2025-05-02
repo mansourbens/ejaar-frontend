@@ -54,7 +54,7 @@ export interface User {
         id?: number;
         name: UserRole;
     };
-    supplier: Supplier;
+    supplier?: Supplier;
     createdAt: string;
     lastConnectionAt?: Date;
     client?: Client;
@@ -386,11 +386,11 @@ export default function UsersPage() {
                                         <TableCell>{user.supplier ? user.supplier.raisonSociale : '—'}</TableCell>
                                         <TableCell>
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        user.role.name === 'SUPER_ADMIN'
+                        user?.role.name === 'SUPER_ADMIN'
                             ? 'bg-purple-100 text-purple-800'
                             : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {rolePipe(user.role.name)}
+                      {rolePipe(user?.role.name)}
                     </span>
                                         </TableCell>
                                         <TableCell>

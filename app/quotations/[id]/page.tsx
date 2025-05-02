@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {  Quotation } from '@/lib/mock-data';
-import { generateQuotationPDF } from '@/lib/pdf-generator';
+
 
 export default function QuotationDetailsPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -32,24 +32,12 @@ export default function QuotationDetailsPage({ params }: { params: { id: string 
   useEffect(() => {
     // In a real app, this would be fetched from an API
 
-    if (found) {
-      setQuotation(found);
-    } else {
-      toast({
-        title: "Quotation not found",
-        description: "The requested quotation could not be found.",
-        variant: "destructive",
-      });
-      router.push('/quotations');
-    }
     
     setLoading(false);
   }, [params.id, router, toast]);
   
   const handleDownloadPDF = () => {
-    if (!quotation) return;
-    const pdfDoc = generateQuotationPDF(quotation);
-    pdfDoc.save();
+
   };
   
   const handleUploadDocument = () => {
