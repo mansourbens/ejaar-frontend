@@ -20,12 +20,18 @@ export default function Dashboard() {
     pendingQuotations: 0,
     approvedQuotations: 0,
   });
+  enum QuotationStatusEnum {
+    GENERE= 'Généré',
+    VALIDE_CLIENT = 'Validé client',
+    VERIFICATION = 'En cours de vérification',
+    VALIDE = 'Validé'
+  }
   const getQuotations = async() => {
     const response =  await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations`);
     const quotations =  await response.json() as Quotation[];
     const total = quotations.length;
-    const pending = quotations.filter(quote => quote.status === 'waiting').length;
-    const approved = quotations.filter(quote => quote.status === 'approved').length;
+    const pending = quotations.filter(quote => quote.status === QuotationStatusEnum.GENERE).length;
+    const approved = quotations.filter(quote => quote.status === QuotationStatusEnum.VALIDE_CLIENT).length;
     setQuotations(quotations);
     setStats({
       totalQuotations: total,
@@ -205,9 +211,9 @@ export default function Dashboard() {
                   >
                     <div className="flex items-center space-x-4">
                       <div className={`p-2 rounded-full ${
-                          quotation.status === 'waiting'
+                          quotation.status === QuotationStatusEnum.GENERE
                               ? 'bg-yellow-100 text-yellow-600'
-                              : quotation.status === 'approved'
+                              : quotation.status ===  QuotationStatusEnum.VALIDE
                                   ? 'bg-green-100 text-green-600'
                                   : 'bg-blue-100 text-blue-600'
                       }`}>

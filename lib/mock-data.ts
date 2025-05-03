@@ -8,6 +8,12 @@ export interface Device {
 export interface Client {
   raisonSociale: string;
 }
+enum QuotationStatusEnum {
+  GENERE= 'Généré',
+  VALIDE_CLIENT = 'Validé client',
+  VERIFICATION = 'En cours de vérification',
+  VALIDE = 'Validé'
+}
 export interface Quotation {
   id: string;
   userId: string;
@@ -18,7 +24,7 @@ export interface Quotation {
   amount: number;
   supplier: Supplier;
   client: Client;
-  status: 'waiting' | 'approved' | 'rejected' | 'completed';
+  status: QuotationStatusEnum
   createdAt: string;
   documents: {
     id: string;

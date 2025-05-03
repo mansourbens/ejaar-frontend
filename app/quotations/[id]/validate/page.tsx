@@ -22,17 +22,11 @@ import {Quotation} from "@/lib/mock-data";
 import {fetchWithToken} from "@/lib/utils";
 import MainLayout from "@/components/layouts/main-layout";
 
-interface FileWithProgress extends File {
-    preview?: string;
-    progress?: number;
-    error?: string;
-    uploaded?: boolean;
-}
 
 export default function ValidateQuotationPage({ params }: { params: { id: string } }) {
     const router = useRouter();
     const { toast } = useToast();
-    const [files, setFiles] = useState<FileWithProgress[]>([]);
+    const [files, setFiles] = useState<any[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const [quotation, setQuotation] = useState<Quotation | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -46,6 +40,13 @@ export default function ValidateQuotationPage({ params }: { params: { id: string
             }))
         ]);
     }, []);
+    interface FileWithProgress extends File {
+        preview?: string;
+        progress?: number;
+        error?: string;
+        uploaded?: boolean;
+    }
+
     useEffect(() => {
         const fetchQuotation = async () => {
             try {
