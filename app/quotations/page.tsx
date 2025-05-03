@@ -16,12 +16,7 @@ import {useAuth} from "@/components/auth/auth-provider";
 import {useToast} from "@/hooks/use-toast";
 import {useRouter} from "next/navigation";
 
-export enum QuotationStatusEnum {
-    GENERE= 'Généré',
-    VALIDE_CLIENT = 'Validé client',
-    VERIFICATION = 'En cours de vérification',
-    VALIDE = 'Validé'
-}
+
 export default function QuotationsPage() {
     const {user} = useAuth();
     const [quotations, setQuotations] = useState<Quotation[]>([]);
@@ -31,7 +26,12 @@ export default function QuotationsPage() {
     const [isLoading, setIsLoading] = useState(false);
     const {toast} = useToast();
     const router = useRouter();
-
+    enum QuotationStatusEnum {
+        GENERE= 'Généré',
+        VALIDE_CLIENT = 'Validé client',
+        VERIFICATION = 'En cours de vérification',
+        VALIDE = 'Validé'
+    }
     const handleValidate = async (quotationId: number) => {
         // Show confirmation dialog
         const isConfirmed = window.confirm('Êtes-vous sûr de vouloir valider ce devis ?');
