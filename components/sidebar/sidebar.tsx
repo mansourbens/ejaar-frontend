@@ -55,15 +55,16 @@ export default function Sidebar({closeMobileMenu}: { closeMobileMenu?: () => voi
                     <SidebarLink href="/quotations" icon={FileText} active={pathname.startsWith('/quotations')}>
                         Devis
                     </SidebarLink>
-                    {user?.role.name === UserRole.SUPER_ADMIN ? (
+                    {user?.role.name === UserRole.SUPER_ADMIN && (
                         <SidebarLink href="/users" icon={UsersIcon} active={pathname.startsWith('/users')}>
                             Utilisateurs
-                        </SidebarLink>) :
-                        (<SidebarLink href="/supplier-users" icon={UsersIcon}
+                        </SidebarLink>)}
+                    {user?.role.name === UserRole.SUPPLIER_SUPER_ADMIN &&
+                    (<SidebarLink href="/supplier-users" icon={UsersIcon}
                      active={pathname.startsWith('/supplier-users')}>
                     Utilisateurs
                 </SidebarLink>
-                ) }
+                    )}
             </div>
 
             <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">

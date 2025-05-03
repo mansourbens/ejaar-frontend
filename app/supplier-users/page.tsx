@@ -1,7 +1,7 @@
 "use client";
 
 import {useEffect, useState} from 'react';
-import {Plus, Search, Trash2, UserPlus, Users as UsersIcon} from 'lucide-react';
+import {Plus, Search, UserPlus, Users as UsersIcon} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {
@@ -281,7 +281,7 @@ export default function SupplierUsersPage() {
                                                     name="raisonSociale"
                                                     render={({field}) => (
                                                         <FormItem>
-                                                            <FormLabel>SIREN</FormLabel>
+                                                            <FormLabel>Raison sociale</FormLabel>
                                                             <FormControl>
                                                                 <Input placeholder="Entrer la raison sociale" {...field} />
                                                             </FormControl>
@@ -393,11 +393,11 @@ export default function SupplierUsersPage() {
                                         <TableCell>{user.email}</TableCell>
                                         <TableCell>
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        user?.role.name === 'SUPER_ADMIN'
+                        user?.role?.name === 'SUPER_ADMIN'
                             ? 'bg-purple-100 text-purple-800'
                             : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {rolePipe(user?.role.name)}
+                      {rolePipe(user?.role?.name ?? UserRole.CLIENT)}
                     </span>
                                         </TableCell>
                                         <TableCell>

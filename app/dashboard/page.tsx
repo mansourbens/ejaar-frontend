@@ -214,7 +214,7 @@ export default function Dashboard() {
                         <Clock className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="font-medium">{quotation.hardwareType}</p>
+                        <p className="font-medium">{quotation.duration} mois</p>
                         <p className="text-sm text-muted-foreground">
                           {new Date(quotation.createdAt).toLocaleDateString('fr-FR')}
                         </p>
@@ -222,7 +222,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex items-center space-x-4">
                       <div>
-                        <p className="font-medium text-right">{quotation.price.toLocaleString('fr-FR'
+                        <p className="font-medium text-right">{quotation.amount?.toLocaleString('fr-FR'
                         )} DH</p>
                         <p className="text-sm text-muted-foreground capitalize">
                           {quotation.status}

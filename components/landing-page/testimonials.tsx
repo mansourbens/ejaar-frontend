@@ -31,10 +31,10 @@ const Testimonials = () => {
             <div className="container mx-auto px-4">
                 <div className="text-center max-w-3xl mx-auto mb-16">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                        What Our <span className="gradient-text">Clients</span> Say
+                        Ce que disent nos <span className="gradient-text">clients</span>
                     </h2>
                     <p className="text-lg text-gray-700">
-                        Discover how EJAAR's hardware leasing solutions have transformed businesses across industries.
+                        Découvrez comment les solutions de location de matériel d'EJAAR ont transformé des entreprises dans divers secteurs.
                     </p>
                 </div>
 

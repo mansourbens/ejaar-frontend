@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {  Quotation } from '@/lib/mock-data';
+import MainLayout from "@/components/layouts/main-layout";
 
 
 export default function QuotationDetailsPage({ params }: { params: { id: string } }) {
@@ -92,7 +93,9 @@ export default function QuotationDetailsPage({ params }: { params: { id: string 
   
   if (!quotation) {
     return (
-      <div className="flex flex-col items-center justify-center h-full space-y-4">
+        <MainLayout>
+
+        <div className="flex flex-col items-center justify-center h-full space-y-4">
         <p className="text-lg text-muted-foreground">Quotation not found</p>
         <Link href="/quotations">
           <Button variant="outline">
@@ -100,14 +103,16 @@ export default function QuotationDetailsPage({ params }: { params: { id: string 
           </Button>
         </Link>
       </div>
+        </MainLayout>
     );
   }
   
   const returnValue = quotation.price * (quotation.returnRate / 100);
-  const monthlyPayment = quotation.totalAmount / parseInt(quotation.duration);
+  const monthlyPayment = quotation.amount / parseInt(quotation.duration);
   
   return (
-    <div className="space-y-6">
+      <MainLayout>
+      <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
@@ -231,7 +236,7 @@ export default function QuotationDetailsPage({ params }: { params: { id: string 
                         </div>
                         <div className="p-4 bg-primary/10 dark:bg-primary/20 rounded-md">
                           <div className="text-sm font-medium">Total Lease Amount</div>
-                          <div className="text-lg font-bold">${quotation.totalAmount.toFixed(2)}</div>
+                          <div className="text-lg font-bold">${quotation.amount.toFixed(2)}</div>
                         </div>
                       </div>
                     </div>
@@ -487,5 +492,6 @@ export default function QuotationDetailsPage({ params }: { params: { id: string 
         </Card>
       </div>
     </div>
+      </MainLayout>
   );
 }

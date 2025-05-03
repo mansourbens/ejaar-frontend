@@ -1,38 +1,74 @@
 "use client";
 
-import {useState, useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import Link from 'next/link';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from '@/components/ui/select';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table';
 import {Badge} from '@/components/ui/badge';
-import {Plus, Search, Filter, FileDown} from 'lucide-react';
+import {FileDown, Plus, Search} from 'lucide-react';
 import {Quotation} from '@/lib/mock-data';
 import MainLayout from "@/components/layouts/main-layout";
 import {fetchWithToken, UserRole} from "@/lib/utils";
 import {useAuth} from "@/components/auth/auth-provider";
+import {useToast} from "@/hooks/use-toast";
+import {useRouter} from "next/navigation";
 
+export enum QuotationStatusEnum {
+    GENERE= 'Généré',
+    VALIDE_CLIENT = 'Validé client',
+    VERIFICATION = 'En cours de vérification',
+    VALIDE = 'Validé'
+}
 export default function QuotationsPage() {
     const {user} = useAuth();
     const [quotations, setQuotations] = useState<Quotation[]>([]);
     const [filteredQuotations, setFilteredQuotations] = useState<Quotation[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [isLoading, setIsLoading] = useState(false);
+    const {toast} = useToast();
+    const router = useRouter();
+
+    const handleValidate = async (quotationId: number) => {
+        // Show confirmation dialog
+        const isConfirmed = window.confirm('Êtes-vous sûr de vouloir valider ce devis ?');
+
+        if (!isConfirmed) return;
+
+        setIsLoading(true);
+        try {
+            const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations/${quotationId}/validate`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to validate quotation');
+            }
+
+            toast({
+                title: 'Succes',
+                description: "Devis validé avec succès.",
+                variant: 'success',
+            });
+            router.push(`/quotations/${quotationId}/validate`)
+            // Optionally refresh data or update state
+        } catch (error) {
+            toast({
+                title: 'Erreur',
+                description: "Erreur lors de la validation du devis. Veuillez réessayer.",
+                variant: 'destructive',
+            });
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const getQuotations = async() => {
         const response =  await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations`);
@@ -62,8 +98,24 @@ export default function QuotationsPage() {
         setFilteredQuotations(filtered);
     }, [searchTerm, statusFilter, quotations]);
 
-    const handleDownloadPDF = (quotation: Quotation) => {
-
+    const handleDownloadPDF = async(quotationId: number) => {
+            try {
+                const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations/${quotationId}/download`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `devis-${quotationId}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                } else {
+                    console.error('Failed to download quotation');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
     };
 
     const getStatusBadgeColor = (status: string) => {
@@ -136,10 +188,13 @@ export default function QuotationsPage() {
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Date</TableHead>
-                                        <TableHead>Fournisseur</TableHead>
+                                        {user?.role.name != UserRole.CLIENT && (
+                                            <>
+                                            <TableHead>Fournisseur</TableHead>
                                         <TableHead>Client</TableHead>
+                                            </>)
+                                        }
                                         <TableHead className="hidden md:table-cell">Durée</TableHead>
-                                        <TableHead className="text-right">Mensualité</TableHead>
                                         <TableHead className="text-right">Montant</TableHead>
                                         <TableHead>Statut</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
@@ -158,13 +213,17 @@ export default function QuotationsPage() {
                                                 <TableCell className="font-medium">
                                                     {new Date(quotation.createdAt).toLocaleDateString('fr-FR')}
                                                 </TableCell>
-                                                <TableCell>{quotation.supplier.raisonSociale}</TableCell>
-                                                <TableCell>{quotation.client.raisonSociale}</TableCell>
+                                                {user?.role.name != UserRole.CLIENT && (
+                                                    <>
+                                                <TableCell>{quotation.supplier?.raisonSociale}</TableCell>
+                                                <TableCell>{quotation.client?.raisonSociale}</TableCell>
+                                                </>
+                                                    )}
                                                 <TableCell className="hidden md:table-cell">
                                                     {quotation.duration} mois
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    {quotation.totalAmount.toLocaleString('fr-FR', {
+                                                    {quotation.amount?.toLocaleString('fr-FR', {
                                                         minimumFractionDigits: 2,
                                                         maximumFractionDigits: 2
                                                     })} DH
@@ -180,14 +239,27 @@ export default function QuotationsPage() {
                                                         <Button
                                                             variant="outline"
                                                             size="icon"
-                                                            onClick={() => handleDownloadPDF(quotation)}
+                                                            onClick={() => handleDownloadPDF(+quotation.id)}
                                                             title="Download PDF"
                                                         >
                                                             <FileDown className="h-4 w-4"/>
                                                         </Button>
-                                                        <Link href={`/quotations/${quotation.id}`}>
-                                                            <Button className="bg-ejaar-800 hover:bg-ejaar-600" size="sm">Visualiser</Button>
-                                                        </Link>
+                                                        {
+                                                            (quotation.status === QuotationStatusEnum.GENERE &&
+                                                                user?.role.name === UserRole.CLIENT)
+                                                        &&
+                                                            <Button onClick={() => handleValidate(+quotation.id)}
+                                                                className="bg-ejaar-800 hover:bg-ejaar-600" size="sm">Valider
+                                                            </Button>
+                                                        }
+                                                        {
+                                                            (quotation.status === QuotationStatusEnum.VALIDE_CLIENT &&
+                                                                user?.role.name === UserRole.CLIENT)
+                                                        &&
+                                                            <Button onClick={() => router.push(`/quotations/${quotation.id}/validate`)}
+                                                                className="bg-ejaar-800 hover:bg-ejaar-600" size="sm">Documents
+                                                            </Button>
+                                                        }
                                                     </div>
                                                 </TableCell>
                                             </TableRow>

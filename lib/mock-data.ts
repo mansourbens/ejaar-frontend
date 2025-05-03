@@ -15,7 +15,7 @@ export interface Quotation {
   price: number;
   duration: string;
   returnRate: number;
-  totalAmount: number;
+  amount: number;
   supplier: Supplier;
   client: Client;
   status: 'waiting' | 'approved' | 'rejected' | 'completed';

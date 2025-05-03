@@ -30,6 +30,7 @@ import {useToast} from '@/hooks/use-toast';
 import {hardwareTypes, durationOptions, calculateTotalAmount} from '@/lib/mock-data';
 import {v4 as uuidv4} from 'uuid';
 import MainLayout from "@/components/layouts/main-layout";
+import {useAuth} from "@/components/auth/auth-provider";
 
 const deviceSchema = z.object({
     type: z.string({
@@ -38,7 +39,7 @@ const deviceSchema = z.object({
     unitCost: z.coerce.number({
         required_error: "Veuillez entrer un coût unitaire",
         invalid_type_error: "Le coût unitaire doit être un nombre",
-    }).min(1, {message: "Le coût unitaire doit être d'au moins 1 DH"}),
+    }).min(1, {message: "Le coût unitaire doit être d'au moins 1 MAD"}),
     units: z.coerce.number({
         required_error: "Veuillez entrer le nombre d'unités",
         invalid_type_error: "Le nombre d'unités doit être un nombre",
@@ -54,6 +55,7 @@ const formSchema = z.object({
 
 
 export default function NewQuotationPage() {
+    const {user} = useAuth();
     const router = useRouter();
     const {toast} = useToast();
     const [isCalculating, setIsCalculating] = useState(false);
@@ -128,12 +130,30 @@ export default function NewQuotationPage() {
             alert(error.message);
         }
     };
+    interface QuotationCreationDTO {
+        devices: {
+            type: string;
+            unitCost: number;
+            units: number;
+        }[];
+
+        duration: number;
+
+        clientId: number;
+
+        supplierId: number;
+    }
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
+
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations/generate`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
+                    body: JSON.stringify({
+                        ...data,
+                        clientId: user?.id,
+                        supplierId: user?.supplier?.id
+                    }),
                 });
 
                 if (response.ok) {
@@ -146,6 +166,7 @@ export default function NewQuotationPage() {
                         title: "Devis créé",
                         description: "Votre devis a été créé avec succès et est en attente de validation.",
                     });
+                    router.push('/quotations')
                 } else {
                     toast({
                         title: "Erreur",
@@ -162,7 +183,7 @@ export default function NewQuotationPage() {
             <div className="space-y-4">
                 <div className="flex items-end space-x-4"> {/* Added items-baseline */}
                     <div>
-                        <h1 className="text-2xl md:text-xl font-bold tracking-tight bg-ejaar-800 hover:bg-ejaar-600">Nouveau devis</h1>
+                        <h1 className="text-2xl md:text-xl font-bold tracking-tight">Nouveau devis</h1>
                         <p className="md:text-sm text-muted-foreground">
                             Remplissez le formulaire ci-dessous pour demander un devis de location de matériel.
                         </p>
@@ -226,7 +247,7 @@ export default function NewQuotationPage() {
                                                                 <FormLabel>Prix unitaire (HT)</FormLabel>
                                                                 <FormControl>
                                                                     <div className="relative">
-                                                                        <span className="absolute right-3 top-2.5 text-gray-500">DH</span>
+                                                                        <span className="absolute right-3 top-2.5 text-gray-500">MAD</span>
                                                                         <Input
                                                                             type="number"
                                                                             placeholder="0,00"
@@ -277,7 +298,6 @@ export default function NewQuotationPage() {
                                         <Button
                                             type="button"
                                             variant="outline"
-                                            className="text-white bg-[#266CA9] hover:bg-[#266CA9DD] hover:text-white"
                                             onClick={() => append({type: '', unitCost: 0, units: 1})}
                                         >
                                             <Plus className=" mr-2 h-4 w-4"/> Ajouter un appareil
@@ -312,7 +332,7 @@ export default function NewQuotationPage() {
                                         )}
                                     />
 
-                                    <Button type="submit" className="w-full">
+                                    <Button type="submit" className="w-full bg-[#266CA9] hover:bg-[#266CA9DD] hover:text-white">
                                         Demander un devis
                                     </Button>
                                 </form>
@@ -350,7 +370,7 @@ export default function NewQuotationPage() {
                                             <div className="col-span-2 p-3 bg-secondary rounded-md">
                                                 <div className="text-sm text-muted-foreground">Sous-total</div>
                                                 <div className="font-medium">
-                                                    {((device.unitCost || 0) * (device.units || 0)).toFixed(2)} DH
+                                                    {((device.unitCost || 0) * (device.units || 0)).toFixed(2)} MAD
                                                 </div>
                                             </div>
                                         </div>
@@ -372,7 +392,7 @@ export default function NewQuotationPage() {
                                         <div className="p-4 bg-primary/10 dark:bg-primary/20 rounded-md">
                                             <div className="text-sm font-medium">Montant total</div>
                                             <div className="text-lg font-bold">
-                                                ${totalAmount.toFixed(2)}
+                                                {totalAmount.toFixed(2)} MAD
                                             </div>
                                         </div>
                                     </div>
