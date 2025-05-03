@@ -101,8 +101,8 @@ export default function UsersPage() {
     });
 
     const filteredUsers = users.filter(user =>
-        user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+        user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -404,7 +404,7 @@ export default function UsersPage() {
                                                 '—'
                                             )}                                        </TableCell>
                                         <TableCell>
-                                            {new Date(user.createdAt).toLocaleDateString('fr-FR')}
+                                            {new Date(user.createdAt)?.toLocaleDateString('fr-FR')}
                                         </TableCell>
 
                                         <TableCell className="text-right">
