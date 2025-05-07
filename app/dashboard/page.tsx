@@ -10,7 +10,7 @@ import {Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis,
 import {useAuth} from '@/components/auth/auth-provider';
 import MainLayout from "@/components/layouts/main-layout";
 import {fetchWithToken, UserRole} from "@/lib/utils";
-import {Quotation} from "@/lib/mock-data";
+import {Quotation, QuotationStatusEnum} from "@/lib/mock-data";
 import Loader from "@/components/ui/loader";
 
 export default function Dashboard() {
@@ -21,12 +21,6 @@ export default function Dashboard() {
     pendingQuotations: 0,
     approvedQuotations: 0,
   });
-  enum QuotationStatusEnum {
-    GENERE= 'Généré',
-    VALIDE_CLIENT = 'Validé client',
-    VERIFICATION = 'En cours de vérification',
-    VALIDE = 'Validé'
-  }
   const getQuotations = async() => {
     let url;
     if (user?.role.name === UserRole.CLIENT) {

@@ -18,7 +18,7 @@ import {
     Plus,
     Search
 } from 'lucide-react';
-import {Quotation} from '@/lib/mock-data';
+import {Quotation, QuotationStatusEnum} from '@/lib/mock-data';
 import MainLayout from "@/components/layouts/main-layout";
 import {fetchWithToken, UserRole} from "@/lib/utils";
 import {useAuth} from "@/components/auth/auth-provider";
@@ -45,14 +45,6 @@ export default function QuotationsPage() {
     const {toast} = useToast();
     const router = useRouter();
     const pathname = usePathname();
-
-    enum QuotationStatusEnum {
-        GENERE = 'Généré',
-        REJECTED = 'Refusé',
-        VALIDE_CLIENT = 'Validé client',
-        VERIFICATION = 'En cours de vérification',
-        VALIDE = 'Validé'
-    }
 
     const handleRejection = async () => {
         const quotationId = activeQuote?.id;

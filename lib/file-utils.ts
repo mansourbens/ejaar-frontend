@@ -35,9 +35,7 @@ export const uploadFile = async (
 };
 
 // Format file size to a human-readable format
-export const formatFileSize = (bytes: number, uploadedFile: UploadFile): string => {
-    console.log(uploadedFile);
-    console.log(bytes, 'bytes')
+export const formatFileSize = (bytes: number): string => {
     if (typeof bytes !== 'number' || isNaN(bytes) || bytes < 0) {
         return 'Unknown size';
     }

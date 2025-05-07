@@ -52,9 +52,12 @@ export default function Sidebar({closeMobileMenu}: { closeMobileMenu?: () => voi
                     <SidebarLink href="/dashboard" icon={BarChart} active={pathname === '/dashboard'}>
                         Dashboard
                     </SidebarLink>
-                    <SidebarLink href="/verification" icon={CheckCircle2Icon} active={pathname.startsWith('/verification')}>
-                        Verification
-                    </SidebarLink>
+                    {(user?.role.name === UserRole.SUPER_ADMIN ||
+                        user?.role.name === UserRole.BANK) && (
+
+                        <SidebarLink href="/verification" icon={CheckCircle2Icon} active={pathname.startsWith('/verification')}>
+                        Vérification
+                    </SidebarLink>)}
                     <SidebarLink href="/quotations" icon={FileText} active={pathname.startsWith('/quotations')}>
                         Devis
                     </SidebarLink>

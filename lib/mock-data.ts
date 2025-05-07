@@ -10,12 +10,13 @@ export interface Client {
   raisonSociale: string;
   fullName: string;
 }
-enum QuotationStatusEnum {
+export enum QuotationStatusEnum {
   GENERE= 'Généré',
   VALIDE_CLIENT = 'Validé client',
   VERIFICATION = 'En cours de vérification',
   SENT_TO_BANK = 'Envoyé à la banque',
-  VALIDE = 'Validé'
+  VALIDE = 'Validé',
+  REJECTED = 'Refusé'
 }
 export interface Quotation {
   id: string;

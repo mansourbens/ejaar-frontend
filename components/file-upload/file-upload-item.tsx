@@ -78,15 +78,6 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
             await fetchWithTokenWithoutContentType(`${process.env.NEXT_PUBLIC_API_URL}/api/upload`, {
                 method: 'POST',
                 body: formData,
-                onUploadProgress: (progressEvent) => {
-                    const progress = Math.round(
-                        (progressEvent.loaded * 100) / (progressEvent.total || 1)
-                    );
-                    onFileUpload(id, {
-                        ...newFile,
-                        progress
-                    });
-                },
             });
 
             onFileUpload(id, {
@@ -218,9 +209,7 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
                                     </p>
                                     <p className="text-xs text-gray-500">
                                         {formatFileSize(
-                                            'size' in uploadedFile.file
-                                                ? uploadedFile.file.size
-                                                : uploadedFile.file.size, uploadedFile
+                                             uploadedFile.file.size
                                         )}
                                     </p>
                                 </div>
