@@ -73,14 +73,6 @@ const formSchema = z.object({
         .regex(/^\d{9}$/, {message: "Le numéro doit contenir exactement 9 chiffres"})
         .optional(),
     adresse: z.string().optional(),
-}).refine((data) => {
-    if (data.userType === "FOURNISSEUR") {
-        return data.siren && data.telephone && data.adresse;
-    }
-    return true;
-}, {
-    message: "SIREN, Téléphone et Adresse sont requis pour un Fournisseur",
-    path: ["siren"],
 });
 
 export default function UsersPage() {
@@ -147,8 +139,45 @@ export default function UsersPage() {
                     variant: 'destructive',
                 });
             }
-        }
+        } else {
+            try {
+                const createUserDTO: { fullName: string, email: string } = {
+                    email: data.email,
+                    fullName: data.name
+                };
+                const res = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/users/bank`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(createUserDTO),
+                });
+                const result = await res.json();
 
+                if (!res.ok) {
+                    // Handle errors returned from backend
+                    console.error('Error:', result.message || 'Something went wrong');
+                    toast({
+                        title: 'Erreur',
+                        description: "Erreur lors de la création de l'utilisateur. Veuillez réessayer.",
+                        variant: 'destructive',
+                    });
+                } else {
+                    toast({
+                        title: 'Succès',
+                        description: "L'utilisateur a été créé avec succès.",
+                    });
+                    setIsDialogOpen(false);
+                    form.reset();
+                }
+
+
+            } catch (error) {
+                toast({
+                    title: 'Erreur',
+                    description: "Erreur lors de la création de l'utilisateur. Veuillez réessayer.",
+                    variant: 'destructive',
+                });
+            }
+        }
     };
 
     const handleDeleteUser = (userId: string) => {
@@ -263,67 +292,6 @@ export default function UsersPage() {
                                                 </FormItem>
                                             )}
                                         />
-                                        {form.watch("userType") === "FOURNISSEUR" && (
-                                            <>
-                                                {/* SIREN */}
-                                                <FormField
-                                                    control={form.control}
-                                                    name="siren"
-                                                    render={({field}) => (
-                                                        <FormItem>
-                                                            <FormLabel>SIREN</FormLabel>
-                                                            <FormControl>
-                                                                <Input placeholder="Entrer le SIREN" {...field} />
-                                                            </FormControl>
-                                                            <FormMessage/>
-                                                        </FormItem>
-                                                    )}
-                                                />
-
-                                                {/* Telephone with +212 prefix */}
-                                                <FormField
-                                                    control={form.control}
-                                                    name="telephone"
-                                                    render={({field}) => (
-                                                        <FormItem>
-                                                            <FormLabel>Téléphone</FormLabel>
-                                                            <FormControl>
-                                                                <div className="flex items-center space-x-2">
-                                                                    <span className="text-gray-600">+212</span>
-                                                                    <Input
-                                                                        placeholder="6 12 34 56 78"
-                                                                        {...field}
-                                                                        onChange={(e) => {
-                                                                            // Allow only numbers
-                                                                            const onlyNums = e.target.value.replace(/\D/g, "");
-                                                                            field.onChange(onlyNums);
-                                                                        }}
-                                                                        maxLength={9}
-                                                                    />
-                                                                </div>
-                                                            </FormControl>
-                                                            <FormMessage/>
-                                                        </FormItem>
-                                                    )}
-                                                />
-
-                                                {/* Adresse Textarea */}
-                                                <FormField
-                                                    control={form.control}
-                                                    name="adresse"
-                                                    render={({field}) => (
-                                                        <FormItem>
-                                                            <FormLabel>Adresse</FormLabel>
-                                                            <FormControl>
-                                                                <Textarea
-                                                                    placeholder="Entrer l'adresse complète" {...field} />
-                                                            </FormControl>
-                                                            <FormMessage/>
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                            </>
-                                        )}
                                     </div>
                                     {/* Submit Button */}
                                     <DialogFooter>

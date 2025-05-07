@@ -1,7 +1,3 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { HardDrive, ChevronRight, Server, Clock, PieChart, Shield } from 'lucide-react';
-import Image from "next/image";
 import React from "react";
 import LandingPage from "@/components/landing-page/landing-page";
 import Features from "@/components/landing-page/features";

@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import {Supplier} from "@/app/supplier-users/page";
+import {ServerFile} from "@/types/file-upload";
 export interface Device {
   type: string;
   unitCost: number;
@@ -7,17 +8,20 @@ export interface Device {
 }
 export interface Client {
   raisonSociale: string;
+  fullName: string;
 }
 enum QuotationStatusEnum {
   GENERE= 'Généré',
   VALIDE_CLIENT = 'Validé client',
   VERIFICATION = 'En cours de vérification',
+  SENT_TO_BANK = 'Envoyé à la banque',
   VALIDE = 'Validé'
 }
 export interface Quotation {
   id: string;
   userId: string;
-  hardwareType: string;
+  devices: string;
+  number: string;
   price: number;
   duration: string;
   returnRate: number;
@@ -26,12 +30,7 @@ export interface Quotation {
   client: Client;
   status: QuotationStatusEnum
   createdAt: string;
-  documents: {
-    id: string;
-    name: string;
-    url: string;
-    uploadedAt: string;
-  }[];
+  documents: ServerFile[];
 }
 
 // Hardware type options
@@ -47,12 +46,8 @@ export const hardwareTypes = [
   'Autre'
 ];
 export const durationOptions = [
-  { value: '6', label: '6 mois' },
-  { value: '12', label: '12 mois' },
   { value: '24', label: '24 mois' },
   { value: '36', label: '36 mois' },
-  { value: '48', label: '48 mois' },
-  { value: '60', label: '60 mois' }
 ];
 
 // Return rate options (percentage of original value)

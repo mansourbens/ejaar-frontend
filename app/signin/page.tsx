@@ -70,10 +70,10 @@ export default function SignIn() {
         <p className="mt-2 text-center text-sm text-gray-600">
           Ou{' '}
           <Link
-            href="/contact"
+            href="/signup"
             className="font-medium text-blue-600 hover:text-blue-500"
           >
-            contactez-nous pour en créer un
+            créer un compte rapidement
           </Link>
         </p>
       </div>

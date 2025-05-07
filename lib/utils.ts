@@ -21,6 +21,21 @@ export async function fetchWithToken(url: string, options: RequestInit = {}) {
 
   return response;
 }
+export async function fetchWithTokenWithoutContentType(url: string, options: RequestInit = {}) {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('ejaar_token') : null;
+
+  const headers = {
+    ...options.headers,
+    Authorization: token ? `Bearer ${token}` : '',
+  };
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
+
+  return response;
+}
  export function rolePipe(role: UserRole) {
   switch(role) {
     case UserRole.SUPER_ADMIN :
@@ -40,7 +55,8 @@ export enum UserRole {
   SUPER_ADMIN = 'SUPER_ADMIN',
   SUPPLIER_SUPER_ADMIN = 'SUPPLIER_SUPER_ADMIN',
   SUPPLIER_ADMIN = 'SUPPLIER_ADMIN',
-  CLIENT = 'CLIENT'
+  CLIENT = 'CLIENT',
+  BANK= 'BANK'
 }
 // utils/date-utils.ts
 

@@ -8,7 +8,7 @@ import {User} from "@/app/users/page";
 type AuthContextType = {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (fullName: string, email: string, password: string, userType: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
 };
@@ -41,6 +41,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       if (!res.ok) throw new Error('Failed to fetch user');
       console.log(res);
       const data = await res.json();
+      console.log(data);
       setUser(data.user);
     } catch (err) {
       console.error('Error fetching user:', err);
@@ -93,13 +94,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
   };
 
-  const signup = async (name: string, email: string, password: string) => {
+  const signup = async (fullName: string, email: string, password: string, userType: string) => {
     try {
       setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ fullName, email, password, userType }),
       });
 
       if (!res.ok) throw new Error('Signup failed');

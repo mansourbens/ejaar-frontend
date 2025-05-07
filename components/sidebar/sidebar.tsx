@@ -7,7 +7,7 @@ import {
     BarChart,
     Settings,
     LogOut,
-    UsersIcon,
+    UsersIcon, FoldersIcon, CheckCircle2Icon,
 } from 'lucide-react';
 import Image from 'next/image';
 import {useAuth} from '@/components/auth/auth-provider';
@@ -52,8 +52,14 @@ export default function Sidebar({closeMobileMenu}: { closeMobileMenu?: () => voi
                     <SidebarLink href="/dashboard" icon={BarChart} active={pathname === '/dashboard'}>
                         Dashboard
                     </SidebarLink>
+                    <SidebarLink href="/verification" icon={CheckCircle2Icon} active={pathname.startsWith('/verification')}>
+                        Verification
+                    </SidebarLink>
                     <SidebarLink href="/quotations" icon={FileText} active={pathname.startsWith('/quotations')}>
                         Devis
+                    </SidebarLink>
+                    <SidebarLink href="/folders" icon={FoldersIcon} active={pathname.startsWith('/folders')}>
+                        Dossiers
                     </SidebarLink>
                     {user?.role.name === UserRole.SUPER_ADMIN && (
                         <SidebarLink href="/users" icon={UsersIcon} active={pathname.startsWith('/users')}>

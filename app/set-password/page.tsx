@@ -47,7 +47,7 @@ export default function SetPasswordPage() {
             setSuccess(true);
 
             setTimeout(() => {
-                router.push('/auth/login');
+                router.push('/signin');
             }, 2000);
         } catch (err: any) {
             setError(err.message);

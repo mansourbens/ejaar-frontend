@@ -1,10 +1,17 @@
-
-import React from 'react';
+"use client"
+import React, {useState} from 'react';
 import { Button } from '@/components/ui/button';
 import { Computer, Server, ArrowRight } from 'lucide-react';
 import Link from "next/link";
+import RentCalculator from "@/components/landing-page/rent-calculator";
 
 const LandingPage = () => {
+    const [isFlipped, setIsFlipped] = useState(false);
+
+    const handleFlip = () => {
+        setIsFlipped(!isFlipped);
+    };
+
     return (
         <section className="relative pt-32 pb-20 overflow-hidden">
             {/* Background Elements */}
@@ -34,55 +41,68 @@ const LandingPage = () => {
                                 </Button>
                             </Link>
 
-                            <Button className="ejaar-btn ejaar-btn-outline text-base" variant="outline">
-                                Réserver une démo
+                            <Button className="ejaar-btn ejaar-btn-outline text-base"
+                                    onClick={handleFlip}
+                                    variant="outline">
+                                Simuler une location
                             </Button>
                         </div>
                     </div>
 
-                    <div className="relative">
-                        <div className="relative rounded-2xl bg-gradient-to-r from-ejaar-100 to-ejaar-200 p-1 shadow-xl">
-                            <div className="absolute inset-0 bg-white/40 rounded-2xl backdrop-blur-sm"></div>
-                            <div className="relative rounded-xl bg-white/70 backdrop-blur-sm p-8 shadow-inner">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <HeroCard
-                                        icon={<Computer className="text-ejaar-700" />}
-                                        title="Workstations"
-                                        description="Workstations haute performance pour des applications exigeantes."
-                                        isAnimated={true}
-                                    />
-                                    <HeroCard
-                                        icon={<Server className="text-ejaar-700" />}
-                                        title="Serveurs"
-                                        description="Serveurs de niveau entreprise avec configurations flexibles."
-                                        isAnimated={true}
-                                        delay="200ms"
-                                    />
-                                    <HeroCard
-                                        icon={
-                                            <svg className="text-ejaar-700 w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M20 4V16H4V4H20ZM20 2H4C2.9 2 2 2.9 2 4V16C2 17.1 2.9 18 4 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="currentColor" />
-                                                <path d="M20 20H4V22H20V20Z" fill="currentColor" />
-                                                <path d="M12 6.75C11.31 6.75 10.75 7.31 10.75 8C10.75 8.69 11.31 9.25 12 9.25C12.69 9.25 13.25 8.69 13.25 8C13.25 7.31 12.69 6.75 12 6.75Z" fill="currentColor" />
-                                            </svg>
-                                        }
-                                        title="Équipements réseau"
-                                        description="Routeurs, switches et points d'accès pour une connectivité fiable."
-                                        isAnimated={true}
-                                        delay="300ms"
-                                    />
-                                    <HeroCard
-                                        icon={
-                                            <svg className="text-ejaar-700 w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M18 2H6C4.89 2 4 2.9 4 4V20C4 21.1 4.89 22 6 22H18C19.1 22 20 21.1 20 20V4C20 2.9 19.1 2 18 2ZM18 20H6V4H18V20Z" fill="currentColor" />
-                                                <path d="M12 18C12.55 18 13 17.55 13 17C13 16.45 12.55 16 12 16C11.45 16 11 16.45 11 17C11 17.55 11.45 18 12 18Z" fill="currentColor" />
-                                            </svg>
-                                        }
-                                        title="Appareils mobiles"
-                                        description="Smartphones et tablettes pour une équipe mobile."
-                                        isAnimated={true}
-                                        delay="400ms"
-                                    />
+                    <div className="relative perspective mb-auto min-h-[500px]">
+                        <div className={`relative w-full flip-card ${isFlipped ? 'flipped' : ''}`}>
+                            {/* Front side - Hardware cards */}
+                            <div className="flip-card-front rounded-2xl  p-1 shadow-xl">
+                                <div className="absolute inset-0 bg-white/40 rounded-2xl backdrop-blur-sm"></div>
+                                <div className="relative rounded-xl bg-white/70 backdrop-blur-sm p-8 shadow-inner">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <HeroCard
+                                            icon={<Computer className="text-ejaar-700" />}
+                                            title="Workstations"
+                                            description="Stations de travail haute performance pour des applications exigeantes."
+                                            isAnimated={true}
+                                        />
+                                        <HeroCard
+                                            icon={<Server className="text-ejaar-700" />}
+                                            title="Serveurs"
+                                            description="Serveurs de niveau entreprise avec des configurations flexibles."
+                                            isAnimated={true}
+                                            delay="200ms"
+                                        />
+                                        <HeroCard
+                                            icon={
+                                                <svg className="text-ejaar-700 w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M20 4V16H4V4H20ZM20 2H4C2.9 2 2 2.9 2 4V16C2 17.1 2.9 18 4 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="currentColor" />
+                                                    <path d="M20 20H4V22H20V20Z" fill="currentColor" />
+                                                    <path d="M12 6.75C11.31 6.75 10.75 7.31 10.75 8C10.75 8.69 11.31 9.25 12 9.25C12.69 9.25 13.25 8.69 13.25 8C13.25 7.31 12.69 6.75 12 6.75Z" fill="currentColor" />
+                                                </svg>
+                                            }
+                                            title="Équipements réseau"
+                                            description="Routeurs, commutateurs et points d’accès pour une connectivité fiable."
+                                            isAnimated={true}
+                                            delay="300ms"
+                                        />
+                                        <HeroCard
+                                            icon={
+                                                <svg className="text-ejaar-700 w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M18 2H6C4.89 2 4 2.9 4 4V20C4 21.1 4.89 22 6 22H18C19.1 22 20 21.1 20 20V4C20 2.9 19.1 2 18 2ZM18 20H6V4H18V20Z" fill="currentColor" />
+                                                    <path d="M12 18C12.55 18 13 17.55 13 17C13 16.45 12.55 16 12 16C11.45 16 11 16.45 11 17C11 17.55 11.45 18 12 18Z" fill="currentColor" />
+                                                </svg>
+                                            }
+                                            title="Appareils mobiles"
+                                            description="Smartphones et tablettes pour une main-d’œuvre mobile."
+                                            isAnimated={true}
+                                            delay="400ms"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Back side - Calculator form */}
+                            <div className="flip-card-back rounded-2xl p-1 shadow-xl">
+                                <div className="absolute inset-0 bg-white/40 rounded-2xl backdrop-blur-sm"></div>
+                                <div className="relative h-full rounded-xl bg-white/70 backdrop-blur-sm p-8 shadow-inner">
+                                    <RentCalculator onBack={handleFlip} />
                                 </div>
                             </div>
                         </div>

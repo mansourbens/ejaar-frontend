@@ -3,34 +3,20 @@ import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import {useRef, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {useForm, useFieldArray} from 'react-hook-form';
+import {useFieldArray, useForm} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {ImportIcon, Loader2, Plus, Trash2, UploadIcon} from 'lucide-react';
+import {DownloadIcon, Loader2, Plus, Trash2, UploadIcon} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from '@/components/ui/form';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from '@/components/ui/select';
 import {useToast} from '@/hooks/use-toast';
-import {hardwareTypes, durationOptions, calculateTotalAmount} from '@/lib/mock-data';
-import {v4 as uuidv4} from 'uuid';
+import {calculateTotalAmount, durationOptions, hardwareTypes} from '@/lib/mock-data';
 import MainLayout from "@/components/layouts/main-layout";
 import {useAuth} from "@/components/auth/auth-provider";
+import {fetchWithToken} from "@/lib/utils";
 
 const deviceSchema = z.object({
     type: z.string({
@@ -53,7 +39,6 @@ const formSchema = z.object({
     }),
 });
 
-
 export default function NewQuotationPage() {
     const {user} = useAuth();
     const router = useRouter();
@@ -68,9 +53,7 @@ export default function NewQuotationPage() {
         },
     });
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-
 
     const {fields, append, remove} = useFieldArray({
         control: form.control,
@@ -79,6 +62,7 @@ export default function NewQuotationPage() {
 
     const devices = form.watch('devices');
     const totalAmount = calculateTotalAmount(devices);
+
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -93,13 +77,17 @@ export default function NewQuotationPage() {
                 },
                 error: (error) => {
                     console.error('CSV Parsing Error:', error);
-                    alert('Erreur lors de la lecture du fichier CSV.');
+                    toast({
+                        title: "Erreur",
+                        description: "Erreur lors de la lecture du fichier CSV.",
+                        variant: "destructive",
+                    });
                 },
             });
         } else if (file.name.endsWith('.xlsx')) {
             reader.onload = (evt) => {
                 const data = new Uint8Array(evt.target?.result as ArrayBuffer);
-                const workbook = XLSX.read(data, { type: 'array' });
+                const workbook = XLSX.read(data, {type: 'array'});
                 const sheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[sheetName];
                 const jsonData = XLSX.utils.sheet_to_json(worksheet);
@@ -107,200 +95,292 @@ export default function NewQuotationPage() {
             };
             reader.readAsArrayBuffer(file);
         } else {
-            alert('Format de fichier non supporté. Veuillez utiliser un CSV ou un Excel.');
+            toast({
+                title: "Format non supporté",
+                description: "Veuillez utiliser un fichier CSV ou Excel.",
+                variant: "destructive",
+            });
         }
     };
 
     const validateAndSetData = (data: any[]) => {
+        console.log(data);
         try {
             const mappedDevices = data.map((row, index) => {
-                if (!row.type || isNaN(Number(row.unitCost)) || isNaN(Number(row.units))) {
+                if (!row['Type de matériel'] || isNaN(Number(row['Prix unitaire'])) || isNaN(Number(row['Unité']))) {
                     throw new Error(`Erreur de format à la ligne ${index + 1}.`);
                 }
                 return {
-                    type: String(row.type),
-                    unitCost: Number(row.unitCost),
-                    units: Number(row.units),
+                    type: String(row['Type de matériel']),
+                    unitCost: Number(row['Prix unitaire']),
+                    units: Number(row['Unité']),
                 };
             });
-
+            console.log(mappedDevices);
             form.setValue('devices', mappedDevices);
+            toast({
+                title: "Import réussi",
+                description: `${mappedDevices.length} appareils ont été importés.`,
+            });
         } catch (error: any) {
             console.error('Validation Error:', error);
-            alert(error.message);
+            toast({
+                title: "Erreur d'import",
+                description: error.message,
+                variant: "destructive",
+            });
         }
     };
-    interface QuotationCreationDTO {
-        devices: {
-            type: string;
-            unitCost: number;
-            units: number;
-        }[];
 
-        duration: number;
-
-        clientId: number;
-
-        supplierId: number;
-    }
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        setIsCalculating(true);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations/generate`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    ...data,
+                    clientId: user?.id,
+                    supplierId: user?.supplier?.id
+                }),
+            });
 
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations/generate`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        ...data,
-                        clientId: user?.id,
-                        supplierId: user?.supplier?.id
-                    }),
+            if (response.ok) {
+                const blob = await response.blob();
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'devis.pdf';
+                link.click();
+                toast({
+                    title: "Devis créé",
+                    description: "Votre devis a été créé avec succès et est en attente de validation.",
                 });
-
+                router.push('/quotations')
+            } else {
+                toast({
+                    title: "Erreur",
+                    description: "Une erreur est survenue lors de la création du devis. Veuillez réessayer.",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            console.error('Error generating quotation:', error);
+            toast({
+                title: "Erreur",
+                description: "Une erreur inattendue est survenue.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsCalculating(false);
+        }
+    };
+    const downloadTemplate = async() => {
+            try {
+                const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations/template`);
                 if (response.ok) {
                     const blob = await response.blob();
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = 'devis.pdf';
-                    link.click();
-                    toast({
-                        title: "Devis créé",
-                        description: "Votre devis a été créé avec succès et est en attente de validation.",
-                    });
-                    router.push('/quotations')
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `template-devis.xlsx`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
                 } else {
-                    toast({
-                        title: "Erreur",
-                        description: "Une erreur est survenue lors de la création du devis. Veuillez réessayer.",
-                        variant: "destructive",
-                    });                }
+                    console.error('Failed to download quotation');
+                }
             } catch (error) {
-                console.error('Error generating quotation:', error);
+                console.error('Error:', error);
             }
-    };
-
+    }
     return (
         <MainLayout>
-            <div className="space-y-4">
-                <div className="flex items-end space-x-4"> {/* Added items-baseline */}
+            <div className="space-y-6">
+                <div className="flex justify-between items-center">
                     <div>
-                        <h1 className="text-2xl md:text-xl font-bold tracking-tight">Nouveau devis</h1>
-                        <p className="md:text-sm text-muted-foreground">
-                            Remplissez le formulaire ci-dessous pour demander un devis de location de matériel.
+                        <h1 className="text-2xl font-bold tracking-tight">Nouveau devis</h1>
+                        <p className="text-sm text-muted-foreground">
+                            Remplissez le formulaire pour demander un devis de location de matériel
                         </p>
                     </div>
-                    <input type="file" accept=".csv, .xlsx" onChange={handleFileUpload} className="hidden" ref={fileInputRef} />
+                    <div className="flex gap-4">
                     <Button
-                        size="sm"
-                        className="bg-green-600 hover:bg-green-500 text-white h-8 px-3 text-xs"
-                        onClick={() => fileInputRef.current?.click()}
+                        variant="outline"
+                        onClick={downloadTemplate}
+                        className="gap-2 bg-white hover:bg-ejaar-100 text-gray-800"
                     >
-                        <UploadIcon className="w-4 h-4 mr-2" />
+                        <DownloadIcon className="w-4 h-4"/>
+                        Télécharger le template
+                    </Button>
+                    <input type="file" accept=".csv, .xlsx" onChange={handleFileUpload} className="hidden"
+                           ref={fileInputRef}/>
+                    <Button
+                        variant="outline"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="gap-2 bg-ejaar-900 hover:bg-ejaar-800 text-gray-100 hover:text-gray-100"
+                    >
+                        <UploadIcon className="w-4 h-4"/>
                         Importer Excel/CSV
                     </Button>
+                    </div>
                 </div>
 
-                <div className="grid gap-6 md:grid-cols-2">
-                    <Card className="md:col-span-1">
+                <div className="grid gap-6 lg:grid-cols-3">
+                    {/* Summary Card - Moved to top and simplified */}
+                    <Card className="lg:col-span-1 order-1 lg:order-2">
                         <CardHeader>
-                            <CardTitle className="md:text-xl">Détails du devis</CardTitle>
-                            <CardDescription  className="md:text-sm">
-                                Entrez les détails du matériel et vos préférences de location.
+                            <CardTitle>Résumé</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-muted-foreground">Durée</span>
+                                    <span className="font-medium">
+                                        {durationOptions.find(option => option.value === form.watch('duration'))?.label || 'Non sélectionné'}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-between items-center pt-2 border-t">
+                                    <span className="text-sm font-medium text-muted-foreground">Montant total</span>
+                                    <span className="text-lg font-bold text-primary">
+                                        {totalAmount.toFixed(2)} MAD
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="rounded-lg bg-blue-50 dark:bg-blue-900/30 p-4">
+                                <h3 className="text-sm font-medium mb-2">Note</h3>
+                                <p className="text-sm text-muted-foreground">
+                                    Vérifiez bien les informations avant de soumettre votre demande.
+                                    Le devis sera envoyé pour validation.
+                                </p>
+                            </div>
+
+                            <Button
+                                onClick={form.handleSubmit(onSubmit)}
+                                className="w-full bg-blue-600 hover:bg-blue-700"
+                                disabled={isCalculating}
+                            >
+                                {isCalculating ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                        Génération...
+                                    </>
+                                ) : (
+                                    "Générer le devis"
+                                )}
+                            </Button>
+                        </CardContent>
+                    </Card>
+
+                    {/* Form Card - Takes more space */}
+                    <Card className="lg:col-span-2 order-2 lg:order-1">
+                        <CardHeader>
+                            <CardTitle>Détails du matériel</CardTitle>
+                            <CardDescription>
+                                Ajoutez les appareils à inclure dans votre devis
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                                    <div className="space-y-4 max-h-[45vh] sm:max-h-[20vh] md:max-h-[30vh] lg:max-h-[35vh] overflow-y-auto">
-                                        {fields.map((field, index) => (
-                                            <div key={field.id} className="space-y-4 p-4 border rounded-lg relative">
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`devices.${index}.type`}
-                                                    render={({field}) => (
-                                                        <FormItem>
-                                                            <FormLabel>Type de matériel</FormLabel>
-                                                            <Select onValueChange={field.onChange} value={field.value}>
-                                                                <FormControl>
-                                                                    <SelectTrigger>
-                                                                        <SelectValue placeholder="Sélectionner un type de matériel"/>
-                                                                    </SelectTrigger>
-                                                                </FormControl>
-                                                                <SelectContent >
-                                                                    {hardwareTypes.map((type) => (
-                                                                        <SelectItem key={type} value={type}>
-                                                                            {type}
-                                                                        </SelectItem>
-                                                                    ))}
-                                                                </SelectContent>
-                                                            </Select>
-                                                            <FormMessage/>
-                                                        </FormItem>
-                                                    )}
-                                                />
+                                <form className="space-y-6">
+                                    <div className="space-y-4">
+                                        <div className="max-h-[300px] space-y-4 overflow-auto">
+                                            {fields.map((field, index) => (
+                                                <div key={field.id} className="p-4 border rounded-lg relative group">
+                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                        <FormField
+                                                            control={form.control}
+                                                            name={`devices.${index}.type`}
+                                                            render={({field}) => (
+                                                                <FormItem>
+                                                                    <FormLabel>Type de matériel</FormLabel>
+                                                                    <Select onValueChange={field.onChange}
+                                                                            value={field.value}>
+                                                                        <FormControl>
+                                                                            <SelectTrigger className="bg-white">
+                                                                                <SelectValue placeholder="Sélectionner"/>
+                                                                            </SelectTrigger>
+                                                                        </FormControl>
+                                                                        <SelectContent>
+                                                                            {hardwareTypes.map((type) => (
+                                                                                <SelectItem key={type} value={type}>
+                                                                                    {type}
+                                                                                </SelectItem>
+                                                                            ))}
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                    <FormMessage/>
+                                                                </FormItem>
+                                                            )}
+                                                        />
 
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <FormField
-                                                        control={form.control}
-                                                        name={`devices.${index}.unitCost`}
-                                                        render={({field}) => (
-                                                            <FormItem>
-                                                                <FormLabel>Prix unitaire (HT)</FormLabel>
-                                                                <FormControl>
-                                                                    <div className="relative">
-                                                                        <span className="absolute right-3 top-2.5 text-gray-500">MAD</span>
+                                                        <FormField
+                                                            control={form.control}
+                                                            name={`devices.${index}.unitCost`}
+                                                            render={({field}) => (
+                                                                <FormItem>
+                                                                    <FormLabel>Prix unitaire (HT)</FormLabel>
+                                                                    <FormControl>
+                                                                        <div className="relative">
+                                                                            <Input
+                                                                                type="number"
+                                                                                placeholder="0,00"
+                                                                                className="pr-10"
+                                                                                {...field}
+                                                                            />
+                                                                            <span
+                                                                                className="absolute right-3 top-2.5 text-gray-500 text-sm">MAD</span>
+                                                                        </div>
+                                                                    </FormControl>
+                                                                    <FormMessage/>
+                                                                </FormItem>
+                                                            )}
+                                                        />
+
+                                                        <FormField
+                                                            control={form.control}
+                                                            name={`devices.${index}.units`}
+                                                            render={({field}) => (
+                                                                <FormItem>
+                                                                    <FormLabel>Quantité</FormLabel>
+                                                                    <FormControl>
                                                                         <Input
                                                                             type="number"
-                                                                            placeholder="0,00"
-                                                                            className="pl-7"
+                                                                            min="1"
+                                                                            placeholder="1"
                                                                             {...field}
                                                                         />
-                                                                    </div>
-                                                                </FormControl>
-                                                                <FormMessage/>
-                                                            </FormItem>
-                                                        )}
-                                                    />
+                                                                    </FormControl>
+                                                                    <FormMessage/>
+                                                                </FormItem>
+                                                            )}
+                                                        />
+                                                    </div>
 
-                                                    <FormField
-                                                        control={form.control}
-                                                        name={`devices.${index}.units`}
-                                                        render={({field}) => (
-                                                            <FormItem>
-                                                                <FormLabel>Nombre d'unités</FormLabel>
-                                                                <FormControl>
-                                                                    <Input
-                                                                        type="number"
-                                                                        min="1"
-                                                                        placeholder="1"
-                                                                        {...field}
-                                                                    />
-                                                                </FormControl>
-                                                                <FormMessage/>
-                                                            </FormItem>
-                                                        )}
-                                                    />
+                                                    {fields.length > 1 && (
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                            onClick={() => remove(index)}
+                                                        >
+                                                            <Trash2 className="h-4 w-4 text-red-500"/>
+                                                        </Button>
+                                                    )}
                                                 </div>
-
-                                                {fields.length > 1 && (
-                                                    <Button
-                                                        type="button"
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="absolute !mt-0 top-2  right-2"
-                                                        onClick={() => remove(index)}
-                                                    >
-                                                        <Trash2 className="h-4 w-4 text-red-500"/>
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
 
                                         <Button
                                             type="button"
                                             variant="outline"
+                                            className="w-full border-blue-300 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                                             onClick={() => append({type: '', unitCost: 0, units: 1})}
                                         >
-                                            <Plus className=" mr-2 h-4 w-4"/> Ajouter un appareil
+                                            <Plus className="mr-2 h-4 w-4"/>
+                                            Ajouter un appareil
                                         </Button>
                                     </div>
 
@@ -312,7 +392,7 @@ export default function NewQuotationPage() {
                                                 <FormLabel>Durée de location</FormLabel>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                     <FormControl>
-                                                        <SelectTrigger>
+                                                        <SelectTrigger className="bg-white">
                                                             <SelectValue placeholder="Sélectionner une durée"/>
                                                         </SelectTrigger>
                                                     </FormControl>
@@ -324,87 +404,12 @@ export default function NewQuotationPage() {
                                                         ))}
                                                     </SelectContent>
                                                 </Select>
-                                                <FormDescription>
-                                                    Choisissez la durée de location souhaitée.
-                                                </FormDescription>
                                                 <FormMessage/>
                                             </FormItem>
                                         )}
                                     />
-
-                                    <Button type="submit" className="w-full bg-[#266CA9] hover:bg-[#266CA9DD] hover:text-white">
-                                        Demander un devis
-                                    </Button>
                                 </form>
                             </Form>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="md:col-span-1">
-                        <CardHeader>
-                            <CardTitle className="md:text-xl">Résumé du devis</CardTitle>
-                            <CardDescription className="md:text-sm">
-                                Vérifiez votre sélection de matériel et le coût total.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-6">
-                                <div className="space-y-4 max-h-[45vh] sm:max-h-[20vh] md:max-h-[30vh] lg:max-h-[35vh] overflow-y-auto">
-
-                                {devices.map((device, index) => (
-                                    <div key={index} className="space-y-2">
-                                        <h3 className="text-sm font-medium text-muted-foreground">
-                                            Appareil {index + 1}
-                                        </h3>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="p-3 bg-secondary rounded-md">
-                                                <div className="text-sm text-muted-foreground">Type</div>
-                                                <div className="font-medium">
-                                                    {device.type || 'Non sélectionné'}
-                                                </div>
-                                            </div>
-                                            <div className="p-3 bg-secondary rounded-md">
-                                                <div className="text-sm text-muted-foreground">Unités</div>
-                                                <div className="font-medium">{device.units || 0}</div>
-                                            </div>
-                                            <div className="col-span-2 p-3 bg-secondary rounded-md">
-                                                <div className="text-sm text-muted-foreground">Sous-total</div>
-                                                <div className="font-medium">
-                                                    {((device.unitCost || 0) * (device.units || 0)).toFixed(2)} MAD
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <h3 className="text-sm font-medium text-muted-foreground">
-                                        Conditions de location
-                                    </h3>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="p-3 bg-secondary rounded-md">
-                                            <div className="text-sm text-muted-foreground">Durée</div>
-                                            <div className="font-medium">
-                                                {durationOptions.find(option => option.value === form.watch('duration'))?.label || 'Non sélectionné'}
-                                            </div>
-                                        </div>
-                                        <div className="p-4 bg-primary/10 dark:bg-primary/20 rounded-md">
-                                            <div className="text-sm font-medium">Montant total</div>
-                                            <div className="text-lg font-bold">
-                                                {totalAmount.toFixed(2)} MAD
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="rounded-md bg-gray-50 dark:bg-gray-800 p-4">
-                                    <h3 className="text-sm font-medium mb-2">Note</h3>
-                                    <p className="text-sm text-muted-foreground">
-                                        Vérifiez bien les informations avant de soumettre votre demande.
-                                    </p>
-                                </div>
-                            </div>
                         </CardContent>
                     </Card>
                 </div>
