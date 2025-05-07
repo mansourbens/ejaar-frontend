@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const CTA = () => {
     return (
-        <section className="py-20 overflow-hidden">
+        <section className="bg-ejaar-50 py-20 overflow-hidden">
             <div className="container mx-auto px-4 relative">
                 <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-ejaar-800 to-ejaar-900 z-10">
                     {/* Éléments décoratifs */}
@@ -18,16 +18,12 @@ const CTA = () => {
                     <div className="relative z-10 p-8 md:p-12 lg:p-16">
                         <div className="max-w-4xl mx-auto text-center">
                             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-                                Prêt à moderniser votre infrastructure IT ?
+                                Prêt à moderniser votre infrastructure ou augmentez vos ventes ?
                             </h2>
-                            <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-                                Rejoignez des centaines d'entreprises qui font confiance à EJAAR pour leurs besoins en location de matériel. Notre équipe vous aidera à trouver la solution idéale pour vos exigences spécifiques.
-                            </p>
-
-                            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10">
+                            <div className="flex flex-col sm:flex-row justify-center mt-12 gap-4 mb-10">
                                 <Link href="/signin">
-                                <Button size="lg" className="bg-white text-ejaar-800 hover:bg-gray-100 text-lg px-8">
-                                    Commencer
+                                <Button size="lg" className="bg-white text-ejaar-800 hover:bg-ejaar-50 text-2xl px-8 w-[300px] h-[60px]">
+                                    Découvrir
                                 </Button>
                                 </Link>
                             </div>

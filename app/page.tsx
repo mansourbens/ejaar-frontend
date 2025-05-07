@@ -1,11 +1,11 @@
 import React from "react";
 import LandingPage from "@/components/landing-page/landing-page";
 import Features from "@/components/landing-page/features";
-import Solutions from "@/components/landing-page/solutions";
-import Testimonials from "@/components/landing-page/testimonials";
 import CTA from "@/components/landing-page/CTA";
 import LandingNavbar from "@/components/landing-page/landing-navbar";
 import LandingFooter from "@/components/landing-page/landing-footer";
+import RentEstimation from "@/components/landing-page/rent-estimation";
+import {Solutions} from "@/components/landing-page/solutions";
 
 export default function Home() {
   return (
@@ -14,8 +14,8 @@ export default function Home() {
         <main>
           <LandingPage />
           <Features />
-          <Solutions />
-          <Testimonials />
+            <Solutions></Solutions>
+          <RentEstimation />
           <CTA />
         </main>
         <LandingFooter />

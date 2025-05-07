@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Image from "next/image";
 import Link from "next/link";
+import {LanguageSwitcher} from "@/components/language-switcher/language-switcher";
 
 const LandingNavbar = () => {
     const [scrolled, setScrolled] = useState(false);
@@ -32,28 +33,31 @@ const LandingNavbar = () => {
                     : 'bg-transparent py-4'
             )}
         >
-            <div className="container mx-auto px-4 flex items-center justify-between">
-                <div className="flex items-center">
-                    <div className="text-2xl font-bold text-ejaar-800">
-                        <Image alt='logo' src='/assets/logos/ejaar_logo_v2.png' width={150} height={40}/>
-                    </div>
+            <div className="container mx-auto px-4 flex items-center">
+                <div className="flex items-center flex-1">
+                        <img alt='logo' src='/assets/logos/ejaar_logo_v2.svg' width={220} height={60}/>
                 </div>
 
+
                 {/* Desktop Navigation */}
-                <nav className="hidden md:flex items-center space-x-8">
+                <nav className="hidden md:flex items-center space-x-8 flex-1">
                     <Link href="/signin">
                     <Button
                         variant="outline"
-                        className="border-ejaar-700 text-ejaar-800 hover:bg-ejaar-50"
+                        className="border-none text-ejaar-800 hover:bg-ejaar-50 hover:text-ejaar-700"
                     >
-                        Se connecter
+                        Espace Client
                     </Button>
                     </Link>
                     <Link href="/contact">
-                    <Button className="bg-ejaar-800 text-white hover:bg-ejaar-700">
-                        Contactez nous
+                    <Button
+                        variant="outline"
+                        className="border-none text-ejaar-800 hover:bg-ejaar-50 hover:text-ejaar-700"
+                    >
+                        Parler à un expert
                     </Button>
                     </Link>
+                    <LanguageSwitcher />
 
                 </nav>
 

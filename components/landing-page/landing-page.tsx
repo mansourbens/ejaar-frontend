@@ -28,10 +28,10 @@ const LandingPage = () => {
                     <div className="flex flex-col space-y-8 animate-fade-in">
 
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight lg:leading-tight lato-bold">
-                            Boostez votre entreprise avec des solutions matérielles <span className="gradient-text">modernes</span>                        </h1>
+                            Libérez votre trésorerie,  <span className="gradient-text">accélérez</span>   vos projets IT                       </h1>
 
                         <p className="text-lg text-gray-700 max-w-xl lato-regular">
-                            EJAAR propose des solutions de location de matériel flexibles et économiques, adaptées aux besoins de votre entreprise, avec un déploiement sans accroc et un accompagnement continu.
+                            Ejaar transforme vos achats d’équipements en loyers prévisibles. Obtenez un financement en moins de 48 h, sans immobiliser de cash ni complexité administrative.
                         </p>
 
                         <div className="flex flex-wrap gap-4">

@@ -1,36 +1,47 @@
 
 import React from 'react';
 import { Clock, Shield, ArrowRight, CreditCard } from 'lucide-react';
+import Process from "@/components/landing-page/process";
 
 const Features = () => {
     return (
         <section id="features" className="py-20 bg-gradient-to-b from-white to-ejaar-50">
             <div className="container mx-auto px-4">
+                <Process></Process>
                 <div className="text-center max-w-3xl mx-auto mb-16">
-                    <h2 className="text-3xl md:text-4xl mb-4 lato-bold">
-                        Pourquoi choisir <span className="gradient-text">EJAAR</span> pour la location de matériel ?
-                    </h2>
+                    <div className="flex flex-wrap md:flex-nowrap justify-center items-center text-3xl md:text-4xl mb-4 lato-bold gap-2">
+                        <h2 className="whitespace-nowrap">Pourquoi choisir</h2>
+                        <img
+                            alt="logo"
+                            src="/assets/logos/ejaar_logo_v2.svg"
+                            width={180}
+                            height={20}
+                            className="inline-block mx-2"
+                        />
+                        <h2 className="whitespace-nowrap">pour la location de matériel ?</h2>
+                    </div>
                     <p className="text-lg text-gray-700">
                         Nous combinons du matériel de pointe avec des options de location flexibles pour faire avancer votre entreprise.
                     </p>
                 </div>
 
+
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <FeatureCard
                         icon={<Clock />}
-                        title="Traitement rapide des dossiers"
-                        description="Optimisez le traitement de vos dossiers grâce à notre processus efficace, facilitant la liaison entre fournisseurs, clients finaux et banques, tout en assurant un processus de leasing fluide."
+                        title="Validation en moins de 48 h"
+                        description="Notre workflow digital, orchestrant fournisseurs et partenaires bancaires, valide vos financements sous 48h, assurant un parcours de leasing fluide et sécurisé."
                     />
                     <FeatureCard
                         icon={<CreditCard />}
                         title="Financement flexible"
-                        description="Transformez des investissements initiaux importants en dépenses opérationnelles maîtrisées grâce à des plans de paiement personnalisés adaptés à votre budget."
+                        description="Transformez vos investissements IT en charges opérationnelles prévisibles grâce à des plans de loyers sur‑mesure parfaitement calibrés à votre capacité budgétaire."
                         highlighted={true}
                     />
                     <FeatureCard
                         icon={<Shield />}
                         title="Support complet"
-                        description="Profitez d’une tranquillité d’esprit grâce à notre assistance 24/7, nos services de maintenance et nos garanties."
+                        description="Appuyez‑vous sur un support 24/7, une maintenance proactive, des garanties étendues et une assurance tous risques intégrée."
                     />
                 </div>
 
@@ -64,8 +75,8 @@ const Features = () => {
                                     ))}
                                 </ul>
                                 <div className="mt-8">
-                                    <a href="#learn-more" className="inline-flex items-center text-ejaar-800 font-medium hover:text-ejaar-600 transition-colors">
-                                        Découvrez plus sur notre plateforme de gestion
+                                    <a href="/signin" className="inline-flex items-center text-ejaar-800 font-medium hover:text-ejaar-600 transition-colors">
+                                        Découvrez plus sur notre plateforme
                                         <ArrowRight className="ml-2 w-4 h-4" />
                                     </a>
                                 </div>

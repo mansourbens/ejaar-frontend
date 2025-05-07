@@ -7,9 +7,10 @@ import Link from "next/link"; // Make sure you have this component
 
 interface RentCalculatorProps {
     onBack: () => void;
+    hideHeader?: boolean;
 }
 
-const RentCalculator = ({ onBack }: RentCalculatorProps) => {
+const RentCalculator = ({ onBack, hideHeader }: RentCalculatorProps) => {
     const [price, setPrice] = useState<number[]>([10000]);
     const [duration, setDuration] = useState<number[]>([24]);
     const [inputPrice, setInputPrice] = useState<string>('10000');
@@ -47,16 +48,18 @@ const RentCalculator = ({ onBack }: RentCalculatorProps) => {
 
     return (
         <div className="h-full flex flex-col">
-            <div className="flex items-center mb-6">
-                <Button
-                    variant="ghost"
-                    onClick={onBack}
-                    className="p-2 mr-2 hover:bg-ejaar-50"
-                >
-                    <ArrowLeft className="h-5 w-5" />
-                </Button>
-                <h3 className="text-xl font-bold text-ejaar-800">Estimez votre location</h3>
-            </div>
+            {!hideHeader &&
+                <div className="flex items-center mb-6">
+                    <Button
+                        variant="ghost"
+                        onClick={onBack}
+                        className="p-2 mr-2 hover:bg-ejaar-50"
+                    >
+                        <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                    <h3 className="text-xl font-bold text-ejaar-800">Estimez votre location</h3>
+                </div>
+            }
 
             <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
                 <div className="space-y-8 flex-1">
