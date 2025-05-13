@@ -16,7 +16,7 @@ import {
     Info,
     MoreVertical,
     Plus,
-    Search
+    Search, Settings2
 } from 'lucide-react';
 import {Quotation, QuotationStatusEnum} from '@/lib/mock-data';
 import MainLayout from "@/components/layouts/main-layout";
@@ -201,6 +201,13 @@ export default function QuotationsPage() {
                             </Button>
                         </Link>
                     }
+                    {user?.role.name !== UserRole.CLIENT &&
+                        <Link href="/quotations/new">
+                            <Button className="bg-ejaar-800 hover:bg-ejaar-600">
+                                <Settings2 className="mr-2 h-4 w-4"/> Simuler un devis
+                            </Button>
+                        </Link>
+                    }
                 </div>
 
                 <Card>
@@ -232,7 +239,6 @@ export default function QuotationsPage() {
                                         </>
                                     )}
                                     <TableHead className="text-right text-blue-800">Montant</TableHead>
-                                    <TableHead className="hidden md:table-cell text-blue-800">Durée</TableHead>
                                     <TableHead className="text-right text-blue-800">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -275,10 +281,6 @@ export default function QuotationsPage() {
                                                     maximumFractionDigits: 2
                                                 })} DH
                                             </TableCell>
-                                            <TableCell className="hidden md:table-cell">
-                                                {quotation.duration} mois
-                                            </TableCell>
-
                                             {/*
                                             <TableCell>
                                                 <div

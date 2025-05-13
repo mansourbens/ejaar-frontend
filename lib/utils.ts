@@ -105,3 +105,10 @@ export const formatRelativeTime = (date: Date | null | undefined): {
 
   return { relativeTime, fullDate };
 };
+export const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'MAD',
+    maximumFractionDigits: 0
+  }).format(value);
+};

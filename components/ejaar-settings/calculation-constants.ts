@@ -19,14 +19,6 @@ export const LEASER_RATE_OPTIONS = [
 
 export const CONFIG_CONSTANTS = [
     {
-        id: 'residualValuePercentage',
-        name: 'Valeur résiduelle %',
-        description: 'Pourcentage de la valeur résiduelle considérée par Ejaar',
-        type: 'percentage',
-        min: 0,
-        max: 100,
-    },
-    {
         id: 'financingSpreadAnnual',
         name: 'Spread financement (Annuel)',
         description: 'Spread de financement annuel appliqué',
@@ -41,13 +33,5 @@ export const CONFIG_CONSTANTS = [
         type: 'percentage',
         min: 6,
         max: 9,
-    },
-    {
-        id: 'fileFeesPercentage',
-        name: 'Frais de dossier Ejaar',
-        description: 'Pourcentage des frais de dossier appliqués',
-        type: 'percentage',
-        min: 0,
-        max: 10,
-    },
+    }
 ];

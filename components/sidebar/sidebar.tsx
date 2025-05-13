@@ -7,7 +7,7 @@ import {
     BarChart,
     Settings,
     LogOut,
-    UsersIcon, FoldersIcon, CheckCircle2Icon, Settings2Icon,
+    UsersIcon, FoldersIcon, CheckCircle2Icon, Settings2Icon, CogIcon,
 } from 'lucide-react';
 import Image from 'next/image';
 import {useAuth} from '@/components/auth/auth-provider';
@@ -64,13 +64,16 @@ export default function Sidebar({closeMobileMenu}: { closeMobileMenu?: () => voi
                     <SidebarLink href="/folders" icon={FoldersIcon} active={pathname.startsWith('/folders')}>
                         Dossiers
                     </SidebarLink>
+                    <SidebarLink href="/simulation" icon={Settings2Icon} active={pathname.startsWith('/simulation')}>
+                        Simulation
+                    </SidebarLink>
                     {user?.role.name === UserRole.SUPER_ADMIN && (
                         <SidebarLink href="/users" icon={UsersIcon} active={pathname.startsWith('/users')}>
                             Utilisateurs
                         </SidebarLink>)}
                     {user?.role.name === UserRole.SUPER_ADMIN && (
-                        <SidebarLink href="/settings" icon={Settings2Icon} active={pathname.startsWith('/settings')}>
-                            Configuration
+                        <SidebarLink href="/settings" icon={CogIcon} active={pathname.startsWith('/settings')}>
+                            Paramètrage
                         </SidebarLink>)}
                     {user?.role.name === UserRole.SUPPLIER_SUPER_ADMIN &&
                     (<SidebarLink href="/supplier-users" icon={UsersIcon}
