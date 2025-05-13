@@ -85,14 +85,21 @@ export const RateConfig = () => {
         loadTauxLoyer();
     }, []);
 
-    const handleChange = (categorie: CategorieCA, field: 'tauxBanque' | 'spread', value: string) => {
-        setTauxLoyer(prev => ({
-            ...prev,
-            [categorie]: {
-                ...prev?.[categorie],
-                [field]: parseFloat(value) || 0
-            }
-        }));
+    const handleChange = (
+        categorie: CategorieCA,
+        field: 'tauxBanque' | 'spread',
+        value: string
+    ) => {
+        setTauxLoyer((prev = {}) => {
+            const previousEntry = prev[categorie] || { tauxBanque: 0, spread: 0 };
+            return {
+                ...prev,
+                [categorie]: {
+                    ...previousEntry,
+                    [field]: parseFloat(value) || 0,
+                },
+            };
+        });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {

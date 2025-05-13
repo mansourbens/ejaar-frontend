@@ -91,7 +91,13 @@ const EjaarSimulator = () => {
         };
         loadConfigs();
     }, []);
+    type DurationKey = 'months24' | 'months36';
 
+    function toDurationKey(months: number): DurationKey {
+        if (months === 24) return 'months24';
+        if (months === 36) return 'months36';
+        throw new Error(`Unsupported duration: ${months}`);
+    }
     useEffect(() => {
         if (deviceEntries.length && tauxLoyerConfig.length && residualConfig.length) {
             const tauxMap = buildTauxLoyerMap(tauxLoyerConfig);
@@ -103,7 +109,8 @@ const EjaarSimulator = () => {
             for (const entry of deviceEntries) {
                 if (entry.unitCount > 0 && entry.unitPrice > 0) {
                     const amount = entry.unitCount * entry.unitPrice;
-                    const residualValuePercentage = residualMap[entry.deviceType]['months'+entry.durationMonths];
+                    const durationKey = toDurationKey(entry.durationMonths); // type-safe conversion
+                    const residualValuePercentage = residualMap[entry.deviceType][durationKey];
                     const spread = tauxMap[clientCA].spread;
                     const leasingRate = tauxMap[clientCA].tauxBanque;
 

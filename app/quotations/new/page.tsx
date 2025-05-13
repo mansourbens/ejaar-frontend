@@ -128,7 +128,6 @@ export default function NewQuotationPage() {
                     unitCost: Number(row['Prix Unitaire HT']),
                     units: Number(row['Quantité']),
                     duration: String(row['Durée Location (mois)']) || '24',
-                    duration: String(row['Durée Location (mois)']) || '24',
                 };
             });
             form.setValue('devices', mappedDevices);
@@ -283,7 +282,7 @@ export default function NewQuotationPage() {
                                 </div>}
                             </div>
 
-                            {user?.role === UserRole.CLIENT &&
+                            {user?.role.name === UserRole.CLIENT &&
                                 <div className="rounded-lg bg-blue-50 dark:bg-blue-900/30 p-4">
                                 <h3 className="text-sm font-medium mb-2">Note</h3>
                                 <p className="text-sm text-muted-foreground">
