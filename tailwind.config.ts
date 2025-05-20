@@ -39,6 +39,9 @@ const config: Config = {
                     purple: '#8B5CF6',
                     light: '#F8FAFC',
                     dark: '#0F172A',
+                    beige: '#fcf5eb',
+                    red: '#9d4833',
+                    redHover: '#b65e47',
                     'purple-light': '#C4B5FD'
                 },
                 card: {

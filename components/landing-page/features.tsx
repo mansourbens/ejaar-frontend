@@ -194,7 +194,7 @@ export const FeatureCard = ({
                      }: {
     icon: React.ReactNode;
     title: string;
-    type: string;
+    type?: string;
     description: string;
     highlighted?: boolean;
 }) => {

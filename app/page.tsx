@@ -9,7 +9,7 @@ import {Solutions} from "@/components/landing-page/solutions";
 
 export default function Home() {
   return (
-      <div className="min-h-screen lato-regular bg-[##fcf5eb]">
+      <div className="min-h-screen lato-regular bg-[#fcf5eb]">
         <LandingNavbar />
         <main>
           <LandingPage />

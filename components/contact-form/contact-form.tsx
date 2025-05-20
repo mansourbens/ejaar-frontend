@@ -137,7 +137,7 @@ const ContactForm = () => {
     return (
         <div className="glass-card w-full max-w-3xl mx-auto p-8 overflow-hidden">
             <h2 className="text-3xl font-bold text-center mb-2 text-ejaar-blue">
-                Contactez EJAAR
+                Contactez Ejaar
             </h2>
             <p className="text-center text-gray-600 mb-6">
                 Solutions de location de matériel informatique adaptées à votre entreprise
