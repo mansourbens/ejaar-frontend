@@ -1,4 +1,3 @@
-// src/components/TauxLoyerConfig.tsx
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import {fetchWithToken} from "@/lib/utils";
 import {useToast} from "@/hooks/use-toast";
+
 export enum CategorieCA {
     MOINS_DE_5M = 'Moins de 5 000 000 dhs',
     ENTRE_5M_ET_10M = 'Entre 5 000 000 dhs et 10 000 000 dhs',
@@ -22,6 +22,7 @@ export interface TauxLoyer {
 export interface TauxLoyerMapping {
     [categorieCA: string]: TauxLoyer;
 }
+
 export const CATEGORIES_ORDER = [
     CategorieCA.MOINS_DE_5M,
     CategorieCA.ENTRE_5M_ET_10M,
@@ -46,6 +47,22 @@ const updateTauxLoyer = async (data: TauxLoyerMapping): Promise<void> => {
     });
 };
 
+const getCommercialRate = async (): Promise<number> => {
+    const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/commercial-margin/1`);
+    const data = await response.json();
+    return data.rate;
+};
+
+const updateCommercialRate = async (rate: number): Promise<void> => {
+    await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/commercial-margin/1`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ rate }),
+    });
+};
+
 function backendToFrontendMapping(backendData: Array<{
     categorieCA: string;
     tauxBanque: number;
@@ -62,19 +79,25 @@ function backendToFrontendMapping(backendData: Array<{
 
 export const RateConfig = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const [isCommercialRateLoading, setIsCommercialRateLoading] = useState(false);
     const [tauxLoyer, setTauxLoyer] = useState<TauxLoyerMapping>();
+    const [commercialRate, setCommercialRate] = useState<number>(0);
     const { toast } = useToast();
 
     useEffect(() => {
-        const loadTauxLoyer = async () => {
+        const loadData = async () => {
             try {
                 setIsLoading(true);
-                const data = await getTauxLoyer();
-                setTauxLoyer(data);
+                const [tauxLoyerData, commercialRateData] = await Promise.all([
+                    getTauxLoyer(),
+                    getCommercialRate()
+                ]);
+                setTauxLoyer(tauxLoyerData);
+                setCommercialRate(commercialRateData);
             } catch (error) {
                 toast({
                     title: "Erreur",
-                    description: "Erreur lors du chargement des taux de loyer",
+                    description: "Erreur lors du chargement des données",
                     variant: "destructive",
                 });
             } finally {
@@ -82,7 +105,7 @@ export const RateConfig = () => {
             }
         };
 
-        loadTauxLoyer();
+        loadData();
     }, []);
 
     const handleChange = (
@@ -123,10 +146,30 @@ export const RateConfig = () => {
         }
     };
 
+    const handleCommercialRateSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            setIsCommercialRateLoading(true);
+            await updateCommercialRate(commercialRate);
+            toast({
+                title: "Succès",
+                description: "Taux de marge commerciale enregistré avec succès",
+            });
+        } catch (error) {
+            toast({
+                title: "Erreur",
+                description: "Erreur lors de l'enregistrement du taux",
+                variant: "destructive",
+            });
+        } finally {
+            setIsCommercialRateLoading(false);
+        }
+    };
+
     if (!tauxLoyer) return <div>Chargement...</div>;
 
     return (
-        <div className="w-full max-w-4xl mx-auto h-full">
+        <div className="w-full max-w-4xl mx-auto h-full space-y-6">
             <Card>
                 <CardHeader className="bg-ejaar-800 text-white">
                     <CardTitle>Configuration des taux de loyer</CardTitle>
@@ -154,10 +197,10 @@ export const RateConfig = () => {
                                 <tbody className="bg-white divide-y divide-gray-200">
                                 {CATEGORIES_ORDER.map(categorie => (
                                     <tr key={categorie}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        <td className="px-6 py-2 whitespace-nowrap text-sm font-medium text-blue-900 lato-bold">
                                             {categorie}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-6 py-2 whitespace-nowrap">
                                             <Input
                                                 type="number"
                                                 step="0.1"
@@ -168,7 +211,7 @@ export const RateConfig = () => {
                                                 className="w-24 border-ejaar-300 focus:border-ejaar-500 focus:ring-ejaar-500"
                                             />
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-6 py-2 whitespace-nowrap">
                                             <Input
                                                 type="number"
                                                 step="0.1"
@@ -192,6 +235,43 @@ export const RateConfig = () => {
                                 disabled={isLoading}
                             >
                                 {isLoading ? "Enregistrement..." : "Enregistrer les modifications"}
+                            </Button>
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader className="bg-ejaar-800 text-white">
+                    <CardTitle>Configuration du taux de marge commerciale</CardTitle>
+                    <CardDescription className="text-ejaar-100">
+                        Définissez le taux de marge commerciale global
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6">
+                    <form onSubmit={handleCommercialRateSubmit} className="space-y-4">
+                        <div className="flex items-center gap-4">
+                            <Label htmlFor="commercialRate" className="flex-shrink-0">
+                                Taux de marge commerciale (%)
+                            </Label>
+                            <Input
+                                id="commercialRate"
+                                type="number"
+                                step="0.1"
+                                min="0"
+                                max="100"
+                                value={commercialRate}
+                                onChange={(e) => setCommercialRate(parseFloat(e.target.value) || 0)}
+                                className="w-24 border-ejaar-300 focus:border-ejaar-500 focus:ring-ejaar-500"
+                            />
+                        </div>
+                        <div className="flex justify-end">
+                            <Button
+                                type="submit"
+                                className="bg-ejaar-800 hover:bg-ejaar-900 text-white"
+                                disabled={isCommercialRateLoading}
+                            >
+                                {isCommercialRateLoading ? "Enregistrement..." : "Enregistrer le taux"}
                             </Button>
                         </div>
                     </form>

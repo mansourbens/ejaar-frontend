@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="5.5735545mm"
+   height="4.8425517mm"
+   viewBox="0 0 5.5735545 4.8425517"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   sodipodi:docname="ejaar_logo_v3.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="22.627417"
+     inkscape:cx="1.5909903"
+     inkscape:cy="5.5463688"
+     inkscape:window-width="1920"
+     inkscape:window-height="1084"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-66.510474,-67.564633)">
+    <path
+       id="rect846"
+       style="fill:none;stroke:#2869b8;stroke-width:0.188976;stroke-opacity:1"
+       d="m 269.21289,260.26172 v -2.03906 l -10.11435,-1.56788 -7.62588,-1.18212 v 18.08203 l 17.74023,-2.75 v -1.39258 -0.36133"
+       transform="scale(0.26458333)"
+       sodipodi:nodetypes="cccccccc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.92434px;font-family:NATS;-inkscape-font-specification:'NATS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0.0612116px;fill:#2869b8;fill-opacity:1;stroke:none;stroke-width:0.0366224;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       x="67.627975"
+       y="69.613159"
+       id="text6256"
+       transform="scale(0.98585141,1.0143516)"><tspan
+         sodipodi:role="line"
+         id="tspan6254"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.92434px;font-family:NATS;-inkscape-font-specification:'NATS, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#2869b8;fill-opacity:1;stroke-width:0.0366225"
+         x="67.627975"
+         y="69.613159">Ejaar</tspan></text>
+  </g>
+</svg>

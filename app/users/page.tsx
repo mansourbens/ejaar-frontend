@@ -1,7 +1,16 @@
 "use client";
 
 import {useEffect, useState} from 'react';
-import {Plus, Search, Trash2, UserPlus, Users as UsersIcon} from 'lucide-react';
+import {
+    CircleXIcon,
+    FileDown,
+    MoreVertical,
+    Plus,
+    Search,
+    TextSearch,
+    UserPlus,
+    Users as UsersIcon
+} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {
@@ -13,38 +22,18 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table';
 import {useToast} from '@/hooks/use-toast';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from '@/components/ui/form';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from '@/components/ui/select';
 import MainLayout from "@/components/layouts/main-layout";
-import {Textarea} from "@/components/ui/textarea";
-import {Quotation} from "@/lib/mock-data";
 import {fetchWithToken, formatRelativeTime, rolePipe, UserRole} from "@/lib/utils";
 import {Client, Supplier} from "@/app/supplier-users/page";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import {useAuth} from "@/components/auth/auth-provider";
 
 export interface User {
     id?: string;
@@ -81,7 +70,10 @@ export default function UsersPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [activeUser, setActiveUser] = useState<User |  null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         mode: 'onBlur',
@@ -91,7 +83,7 @@ export default function UsersPage() {
             userType: 'FOURNISSEUR',
         },
     });
-
+    const {user} = useAuth();
     const filteredUsers = users.filter(user =>
         user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -101,7 +93,7 @@ export default function UsersPage() {
         if (data.userType === 'FOURNISSEUR') {
             const newSupplier: Supplier = {
                 raisonSociale: data.name,
-                siren: data.siren!,
+                ICE: data.siren!,
                 address: data.adresse!,
                 email: data.email,
                 telephone: data.telephone
@@ -180,12 +172,35 @@ export default function UsersPage() {
         }
     };
 
-    const handleDeleteUser = (userId: string) => {
-        setUsers(users.filter(user => user.id !== userId));
-        toast({
-            title: 'Succès',
-            description: 'Utilisateur supprimé avec succès',
-        });
+    const handleDeleteUser = async()  => {
+        const activeUserId = activeUser?.id;
+        setActiveUser(null);
+
+        try {
+            const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${activeUserId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete user');
+            }
+
+            toast({
+                title: 'Succès',
+                description: "Utilisateur supprimé avec succès.",
+                variant: 'success',
+            });
+            setIsDeleteDialogOpen(false);
+            fetchUsers();
+        } catch (error) {
+            toast({
+                title: 'Erreur',
+                description: "Erreur lors de la suppression de l'uilisateur. Veuillez réessayer.",
+                variant: 'destructive',
+            });
+            console.error(error);
+        } finally {
+        }
     };
 
     async function fetchUsers() {
@@ -243,7 +258,7 @@ export default function UsersPage() {
                                             name="name"
                                             render={({field}) => (
                                                 <FormItem>
-                                                    <FormLabel>Nom</FormLabel>
+                                                    <FormLabel>Nom ou Raison Sociale</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             placeholder="Entrer le nom de l'utilisateur" {...field} />
@@ -337,9 +352,8 @@ export default function UsersPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Nom</TableHead>
+                                    <TableHead>Nom ou Raison Sociale</TableHead>
                                     <TableHead>Email</TableHead>
-                                    <TableHead>Fournisseur</TableHead>
                                     <TableHead>Rôle</TableHead>
                                     <TableHead>Dernière connexion</TableHead>
                                     <TableHead>Date de création</TableHead>
@@ -347,42 +361,64 @@ export default function UsersPage() {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredUsers.map((user) => (
-                                    <TableRow key={user.id}>
-                                        <TableCell className="font-medium">{user.fullName}</TableCell>
-                                        <TableCell>{user.email}</TableCell>
-                                        <TableCell>{user.supplier ? user.supplier.raisonSociale : '—'}</TableCell>
+                                {filteredUsers.map((rowUser) => (
+                                    <TableRow key={rowUser.id}>
+                                        <TableCell className="font-medium">{rowUser.fullName ?? (rowUser.client?.raisonSociale ?? rowUser.supplier?.raisonSociale)}</TableCell>
+                                        <TableCell>{rowUser.email}</TableCell>
                                         <TableCell>
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        user?.role.name === 'SUPER_ADMIN'
+                        rowUser?.role.name === 'SUPER_ADMIN'
                             ? 'bg-purple-100 text-purple-800'
                             : 'bg-blue-100 text-blue-800'
                     }`}>
-                      {rolePipe(user?.role.name)}
+                      {rolePipe(rowUser?.role.name)}
                     </span>
                                         </TableCell>
                                         <TableCell>
-                                            {user.lastConnectionAt ? (
+                                            {rowUser.lastConnectionAt ? (
                                                 <span
-                                                    title={formatRelativeTime(user.lastConnectionAt).fullDate}
+                                                    title={formatRelativeTime(rowUser.lastConnectionAt).fullDate}
                                                     className="cursor-help"
-                                                >{formatRelativeTime(user.lastConnectionAt).relativeTime}
+                                                >{formatRelativeTime(rowUser.lastConnectionAt).relativeTime}
                                               </span>
                                             ) : (
                                                 '—'
                                             )}                                        </TableCell>
                                         <TableCell>
-                                            {new Date(user.createdAt)?.toLocaleDateString('fr-FR')}
+                                            {new Date(rowUser.createdAt)?.toLocaleDateString('fr-FR')}
                                         </TableCell>
 
                                         <TableCell className="text-right">
-                                            {/*                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={() => handleDeleteUser(user.id)}
-                                            >
-                                                <Trash2 className="h-4 w-4 text-red-500"/>
-                                            </Button>*/}
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="outline" size="icon" title="Actions">
+                                                        <MoreVertical className="h-4 w-4"/>
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    {user?.role.name === UserRole.SUPER_ADMIN && <DropdownMenuItem
+                                                        onClick={() => {
+                                                            setActiveUser(rowUser);
+                                                            setIsDeleteDialogOpen(true);
+                                                        }}
+                                                        className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                                                    >
+                                                        <CircleXIcon className="w-4 h-4 mr-2"/>
+                                                        Supprimer
+                                                    </DropdownMenuItem>}
+                                                    {user?.role.name === UserRole.SUPER_ADMIN  && (
+                                                        <DropdownMenuItem
+                                                            onClick={() => {
+                                                                setActiveUser(rowUser);
+                                                                setIsDetailsDialogOpen(true);
+                                                            }}
+                                                        >
+                                                            <TextSearch className="w-4 h-4 mr-2"/>
+                                                            Voir les détails
+                                                        </DropdownMenuItem>
+                                                    )}
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -391,6 +427,91 @@ export default function UsersPage() {
                     </div>
                 )}
             </div>
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogContent className="sm:max-w-[425px] bg-white rounded-lg border border-red-100 shadow-xl">
+                    <DialogHeader className="space-y-4">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-full bg-red-50">
+                                <CircleXIcon className="h-5 w-5 text-red-600"/>
+                            </div>
+                            <DialogTitle className="text-red-900 text-lg font-semibold">
+                                Suppression de l'utilisateur {activeUser?.email}
+                            </DialogTitle>
+                        </div>
+                    </DialogHeader>
+
+                    <div className="py-4 px-2">
+                        <p className="text-sm text-gray-700">
+                            Êtes-vous sûr de vouloir supprimer définitivement cet utilisateur? Cette action est irréversible.
+                        </p>
+                    </div>
+
+                    <DialogFooter className="sm:justify-between">
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setActiveUser(null); setIsDeleteDialogOpen(false)}}
+                            className="border-gray-700 text-gray-700 hover:bg-gray-50"
+                        >
+                            Non
+                        </Button>
+                        <Button
+                            onClick={handleDeleteUser}
+                            className="bg-red-900 hover:bg-red-800 text-white shadow-sm"
+                        >
+                            Oui
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
+                <DialogContent className="sm:max-w-[500px] bg-white rounded-lg border shadow-xl">
+                    <DialogHeader>
+                        <DialogTitle>Détails de l'utilisateur</DialogTitle>
+                        <DialogDescription>
+                            Informations complètes de l'utilisateur sélectionné.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-2 py-2">
+                        <p><strong>Raison sociale:</strong> {activeUser?.client?.raisonSociale}</p>
+                        <p><strong>Email :</strong> {activeUser?.email}</p>
+                        <p><strong>Rôle :</strong> {rolePipe(activeUser?.role.name ?? UserRole.CLIENT)}</p>
+                        {activeUser?.createdAt && (
+                            <p><strong>Créé le :</strong> {new Date(activeUser.createdAt).toLocaleString('fr-FR')}</p>
+                        )}
+                        {activeUser?.lastConnectionAt && (
+                            <p><strong>Dernière connexion :</strong> {new Date(activeUser.lastConnectionAt).toLocaleString('fr-FR')}</p>
+                        )}
+                        {activeUser?.supplier && (
+                            <>
+                                <p><strong>Type :</strong> Fournisseur</p>
+                                <p><strong>ICE :</strong> {activeUser.supplier.ICE}</p>
+                                <p><strong>Téléphone :</strong> {activeUser.supplier.telephone}</p>
+                                <p><strong>Adresse :</strong> {activeUser.supplier.address}</p>
+                            </>
+                        )}
+                        {activeUser?.client && (
+                            <>
+                                <p><strong>Type :</strong> Client</p>
+                                <p><strong>ICE :</strong> {activeUser.client.ICE}</p>
+                                <p><strong>Téléphone :</strong> {activeUser.client.telephone}</p>
+                                <p><strong>Adresse :</strong> {activeUser.client.address}</p>
+                            </>
+                        )}
+                    </div>
+
+                    <DialogFooter>
+                        <Button
+                            className="bg-ejaar-800 hover:bg-ejaar-700"
+                            onClick={() => {
+                            setActiveUser(null);
+                            setIsDetailsDialogOpen(false);
+                        }}>Fermer</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
         </MainLayout>
     );
 }

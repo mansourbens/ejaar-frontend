@@ -10,10 +10,10 @@ export function ClientTypes() {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="mt-16 text-center"
         >
-            <h3 className="text-xl font-medium text-white lato-bold">
+            <h3 className="text-xl font-medium text-blue-900 lato-bold">
                 Pour tous type d&apos;acteur
             </h3>
-            <p className="mt-2 text-lg text-blue-50 lato-regular">
+            <p className="mt-2 text-lg text-blue-800 lato-regular">
                 TPE/PME/ ETI professions libérales / Auto entrepreneurs
             </p>
         </motion.div>

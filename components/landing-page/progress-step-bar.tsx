@@ -70,21 +70,13 @@ const ProgressStepBar: React.FC<ProgressStepBarProps> = ({
                                 <div
                                     className={cn(
                                         "flex items-center justify-center",
-                                        "w-20 h-20 rounded-full shadow-lg",
-                                        "transition-all duration-300 transform",
-                                        isActive
-                                            ? "bg-gradient-to-r from-ejaar-800 to-ejaar-700 text-white"
-                                            : "bg-white text-gray-400 border border-gray-200",
-                                        isActive && "scale-110",
+                                        "w-24 h-24 rounded-full shadow-lg",
+                                        "transition-all duration-300 transform", "bg-white text-gray-400 border border-gray-200",
                                         index === 1  && "m-auto",
                                         index === 2 && "ml-auto"
                                     )}
                                 >
-                                    {isComplete ? (
-                                        <Check className="w-10 h-10" />
-                                    ) : (
-                                        <StepIcon className="w-10 h-10" />
-                                    )}
+                                    <div className="text-4xl text-[#182e43]">{index + 1}</div>
                                 </div>
 
                                 {/* Step text content */}
@@ -94,7 +86,7 @@ const ProgressStepBar: React.FC<ProgressStepBarProps> = ({
                                             "font-semibold text-lg md:text-xl",
                                             isActive ? "text-ejaar-800" : "text-gray-500",
                                             index === 1 && "ml-12",
-                                            index === 2 && "ml-20"
+                                            index === 2 && "ml-28"
 
                                         )}
                                     >
@@ -104,7 +96,7 @@ const ProgressStepBar: React.FC<ProgressStepBarProps> = ({
                                         "text-sm md:text-base mt-1",
                                         isActive ? "text-gray-700" : "text-gray-400",
                                         index === 1 && "ml-12",
-                                        index === 2 && "ml-20"
+                                        index === 2 && "ml-28"
                                     )}>
                                         {step.description}
                                     </p>

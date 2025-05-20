@@ -30,7 +30,7 @@ import {User} from "@/app/users/page";
 
 export interface Supplier {
     id?: number;
-    siren: string;
+    ICE: string;
     email: string;
     raisonSociale?: string;
     telephone?: string;
@@ -42,7 +42,7 @@ export interface Supplier {
 }
 export interface Client {
     id?: number;
-    siren?: string;
+    ICE?: string;
     raisonSociale?: string;
     telephone?: string;
     address?: string;
@@ -96,7 +96,7 @@ export default function SupplierUsersPage() {
                         createdAt: new Date(),
                         raisonSociale: data.raisonSociale,
                         telephone: data.telephone,
-                        siren: data.siren
+                        ICE: data.siren
                     }
                     const newUser: User = {
                         role: {
@@ -143,7 +143,7 @@ export default function SupplierUsersPage() {
             }
             const newSupplier : Supplier = {
                 raisonSociale: data.name,
-                siren: data.siren!,
+                ICE: data.siren!,
                 address: data.adresse!,
                 email: data.email
             }

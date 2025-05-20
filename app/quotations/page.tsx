@@ -16,7 +16,8 @@ import {
     Info,
     MoreVertical,
     Plus,
-    Search, Settings2
+    Search,
+    Settings2
 } from 'lucide-react';
 import {Quotation, QuotationStatusEnum} from '@/lib/mock-data';
 import MainLayout from "@/components/layouts/main-layout";
@@ -34,6 +35,7 @@ export default function QuotationsPage() {
     const {user} = useAuth();
     const [isValidateDialogOpen, setIsValidateDialogOpen] = useState(false);
     const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [rejectionReason, setRejectionReason] = useState('');
     const [activeQuote, setActiveQuote] = useState<Quotation | null>(null);
     const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
@@ -45,7 +47,38 @@ export default function QuotationsPage() {
     const {toast} = useToast();
     const router = useRouter();
     const pathname = usePathname();
+    const handleDelete = async () => {
+        const quotationId = activeQuote?.id;
+        setActiveQuote(null);
 
+        setIsLoading(true);
+        try {
+            const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations/${quotationId}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete quotation');
+            }
+
+            toast({
+                title: 'Succès',
+                description: "Devis annulé avec succès.",
+                variant: 'success',
+            });
+            setIsDeleteDialogOpen(false);
+            getQuotations();
+        } catch (error) {
+            toast({
+                title: 'Erreur',
+                description: "Erreur lors de l'annulation du devis. Veuillez réessayer.",
+                variant: 'destructive',
+            });
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
     const handleRejection = async () => {
         const quotationId = activeQuote?.id;
         setActiveQuote(null);
@@ -238,7 +271,13 @@ export default function QuotationsPage() {
                                             )}
                                         </>
                                     )}
-                                    <TableHead className="text-right text-blue-800">Montant</TableHead>
+                                    <TableHead className="text-right text-blue-800">{user?.role.name === UserRole.SUPER_ADMIN ?
+                                        `Montant financé` : `Montant`}</TableHead>
+                                    {user?.role.name === UserRole.SUPER_ADMIN &&
+                                        <TableHead className="text-right text-blue-800">
+                                            Mensualité
+                                        </TableHead>
+                                    }
                                     <TableHead className="text-right text-blue-800">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -271,8 +310,8 @@ export default function QuotationsPage() {
                                             </TableCell>
                                             {user?.role.name != UserRole.CLIENT && (
                                                 <>
-                                                    <TableCell>{quotation.supplier?.raisonSociale}</TableCell>
-                                                    <TableCell>{quotation.client?.raisonSociale}</TableCell>
+                                                    <TableCell>{quotation.supplier?.raisonSociale ?? '—'}</TableCell>
+                                                    <TableCell>{quotation.client?.raisonSociale ?? '—'}</TableCell>
                                                 </>
                                             )}
                                             <TableCell className="text-right">
@@ -280,6 +319,12 @@ export default function QuotationsPage() {
                                                     minimumFractionDigits: 2,
                                                     maximumFractionDigits: 2
                                                 })} DH
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                {quotation.totalMonthlyPayments?.toLocaleString('fr-FR', {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2
+                                                }) ?? 0} DH
                                             </TableCell>
                                             {/*
                                             <TableCell>
@@ -397,7 +442,18 @@ export default function QuotationsPage() {
                                                             <FileDown className="w-4 h-4 mr-2"/>
                                                             Télécharger
                                                         </DropdownMenuItem>
-
+                                                        {user?.role.name === UserRole.SUPER_ADMIN && (
+                                                            <DropdownMenuItem
+                                                                onClick={() => {
+                                                                    setActiveQuote(quotation);
+                                                                    setIsDeleteDialogOpen(true);
+                                                                }}
+                                                                className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                                                            >
+                                                                <CircleXIcon className="w-4 h-4 mr-2"/>
+                                                                Annuler
+                                                            </DropdownMenuItem>
+                                                        )}
                                                         {
                                                             user?.role.name === UserRole.CLIENT && quotation.status === QuotationStatusEnum.GENERE && (
                                                                 <>
@@ -515,7 +571,43 @@ export default function QuotationsPage() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogContent className="sm:max-w-[425px] bg-white rounded-lg border border-red-100 shadow-xl">
+                    <DialogHeader className="space-y-4">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-full bg-red-50">
+                                <CircleXIcon className="h-5 w-5 text-red-600"/>
+                            </div>
+                            <DialogTitle className="text-red-900 text-lg font-semibold">
+                                Annulation du devis N°{activeQuote?.number}
+                            </DialogTitle>
+                        </div>
+                    </DialogHeader>
 
+                    <div className="py-4 px-2">
+                        <p className="text-sm text-gray-700">
+                            Êtes-vous sûr de vouloir annuler définitivement ce devis? Cette action est irréversible.
+                        </p>
+                    </div>
+
+                    <DialogFooter className="sm:justify-between">
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setActiveQuote(null); setIsDeleteDialogOpen(false)}}
+                            className="border-gray-700 text-gray-700 hover:bg-gray-50"
+                            >
+                            Non
+                        </Button>
+                        <Button
+                            onClick={handleDelete}
+                            className="bg-red-900 hover:bg-red-800 text-white shadow-sm"
+                        >
+                            Oui
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </MainLayout>
     );
 }

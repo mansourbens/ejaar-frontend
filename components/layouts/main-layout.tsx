@@ -39,7 +39,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                             <div className="flex items-center">
                                 Bienvenue
                                 <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {user?.fullName || 'User'}
+                  {user?.fullName ?? ( user?.client?.raisonSociale ?? ( user?.supplier?.raisonSociale ??  user?.email))}
                 </span>
                             </div>
                             <div className="flex ml-auto">

@@ -3,12 +3,14 @@ import React, { useState, useEffect } from "react";
 import ProgressStepBar from "./progress-step-bar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import {cn} from "@/lib/utils";
 
 interface ProgressStepBarDemoProps {
     initialStep?: number;
 }
 
-const Process: React.FC<ProgressStepBarDemoProps> = ({ initialStep = 1 }) => {
+const Process: React.FC<ProgressStepBarDemoProps> = ({ initialStep = 3 }) => {
     const [currentStep, setCurrentStep] = useState(initialStep);
     const totalSteps = 3;
 
@@ -25,24 +27,134 @@ const Process: React.FC<ProgressStepBarDemoProps> = ({ initialStep = 1 }) => {
     };
 
     // Auto-advance every 2 seconds instead of 3 for faster animation
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setCurrentStep(prevStep => {
-                if (prevStep >= totalSteps) return 1;
-                return prevStep + 1;
-            });
-        }, 2000);
 
-        return () => clearTimeout(timer);
-    }, [currentStep]);
 
     return (
-        <div className="bg-gradient-to-b from-gray-50 to-ejaar-50 rounded-xl shadow-md p-6 md:p-8 mb-24">
-            <h2 className="text-2xl md:text-3xl lato-bold text-center text-gray-900 mb-8">
-                Notre processus simplifié
-            </h2>
+        <div className="p-6 md:p-8 mb-24">
+            <div className="container mx-auto px-2 relative z-10">
+                <div className="grid lg:grid-cols-2 items-center">
+                    <div className="flex flex-col space-y-8 animate-fade-in">
 
-            <ProgressStepBar currentStep={currentStep} />
+                        <h1 className="text-4xl text-[#182e43] md:text-5xl lg:text-6xl font-bold leading-tight lg:leading-tight lato-bold">
+                            Un processus   <span className="text-[#256aa3]">simplifié</span>  tout au long
+                        </h1>
+                        <p className="text-2xl text-justify text-[#344e69] max-w-xl lat-bold">
+                            Du devis à la mise en service, tout s’enchaîne : un clic, un accord éclair, votre parc IT opérationnel. EJAAR transforme le leasing en simple levier de croissance.                        </p>
+
+                    </div>
+                    <div className="flex flex-col gap-8">
+
+
+                        <div className="relative perspective mb-auto min-h-[500px]">
+                        <div className="flex flex-col gap-12">
+                            <div className="flex gap-4">
+                                <div className="ml-4 md:ml-0 md:mt-4 flex-1 flex gap-4">
+                                    <div
+                                        className={cn(
+                                            "flex items-center justify-center",
+                                            "w-10 h-10 rounded-full shadow-lg my-auto",
+                                            "transition-all duration-300 transform", "bg-ejaar-700 text-gray-50 border border-gray-200",
+                                        )}
+                                    >
+                                        <div className="text-xl">1</div>
+                                    </div>
+                                    <div className="my-auto">
+                                    <h3
+                                        className={cn(
+                                            "font-semibold text-2xl text-ejaar-800",
+
+                                        )}
+                                    >
+                                        Choisissez vos équipements et la durée
+                                    </h3>
+                                    <p className={cn(
+                                        "text-lg mt-1",
+                                    )}>
+                                        Sélectionnez les équipements dont vous avez besoin
+                                    </p>
+                                    </div>
+                                    <img src='/assets/images/step_1.png' width={150} />
+                                </div>
+
+                            </div>
+                            <img src='/assets/images/arrow_right.png'
+                                 className="absolute top-[120px] right-[-12px]"
+                                 width={50} />
+                            <div className="flex gap-4">
+                                <div className="ml-4 md:ml-0 md:mt-4 flex-1 flex gap-4">
+                                    <img src='/assets/images/step_2.png' width={150} />
+                                    <div
+                                        className={cn(
+                                            "flex items-center justify-center",
+                                            "w-10 h-10 rounded-full shadow-lg my-auto",
+                                            "transition-all duration-300 transform", "bg-ejaar-700 text-gray-50 border border-gray-200",
+                                        )}
+                                    >
+                                        <div className="text-xl">2</div>
+                                    </div>
+
+                                    <div className="my-auto">
+                                        <h3
+                                            className={cn(
+                                                "font-semibold text-2xl text-ejaar-800",
+
+                                            )}
+                                        >
+                                            Obtenez votre devis et déposez votre dossier
+                                        </h3>
+                                        <p className={cn(
+                                            "text-lg mt-1",
+                                        )}>
+                                            Recevez une proposition adaptée à vos besoins
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <img src='/assets/images/arrow_left.png'
+                                 className="absolute top-[360px] left-[-50px]"
+                                 width={50} />
+                            <div className="flex gap-4">
+                                <div className="ml-4 md:ml-0 md:mt-4 flex-1 flex gap-4">
+                                    <div
+                                        className={cn(
+                                            "flex items-center justify-center",
+                                            "w-10 h-10 rounded-full shadow-lg my-auto",
+                                            "transition-all duration-300 transform", "bg-ejaar-700 text-gray-50 border border-gray-200",
+                                        )}
+                                    >
+                                        <div className="text-xl">3</div>
+                                    </div>
+                                    <div className="my-auto">
+                                        <h3
+                                            className={cn(
+                                                "font-semibold text-2xl text-ejaar-800",
+
+                                            )}
+                                        >
+                                            Profitez & Renouvelez
+                                        </h3>
+                                        <p className={cn(
+                                            "text-lg mt-1",
+                                        )}>
+                                            Assistance 24/7, reprise ou upgrade en fin de contrat
+                                        </p>
+                                    </div>
+                                    <img src='/assets/images/step_3.png' width={160} />
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                                {/*<ProgressStepBar currentStep={currentStep} />*/}
+
+                    </div>
+                    </div>
+                </div>
+            </div>
+
 
         </div>
     );

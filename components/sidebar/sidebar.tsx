@@ -11,7 +11,10 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import {useAuth} from '@/components/auth/auth-provider';
-import {UserRole} from "@/lib/utils";
+import {fetchWithToken, UserRole} from "@/lib/utils";
+import {Badge} from "@/components/ui/badge";
+import {QuotationStatusEnum} from "@/lib/mock-data";
+import {useEffect, useState} from "react";
 
 interface SidebarLinkProps {
     href: string;
@@ -35,15 +38,23 @@ function SidebarLink({href, icon: Icon, children, active}: SidebarLinkProps) {
 
 export default function Sidebar({closeMobileMenu}: { closeMobileMenu?: () => void }) {
     const {user, logout, loading} = useAuth();
+    const [verificationCount, setVerificationCount] = useState(0);
     const pathname = usePathname();
-
+    useEffect(() => {
+        const loadData = async() => {
+            const res =  await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations/count/to-verify-ejaar`);
+            const toVerification = await res.json();
+            setVerificationCount(toVerification);
+        }
+        loadData();
+    }, []);
     return (
         <aside
             className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-30"
         >
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-                <Link href="/" className="flex items-center">
-                    <Image alt='logo' src='/assets/logos/ejaar_logo_v2.png' width={150} height={40}/>
+            <div className="flex items-center justify-between p-4">
+                <Link href="/" className="inline-flex items-center w-full">
+                    <img alt='logo' src='/assets/logos/ejaar_logo_v3.svg' className="mx-auto" width={100}/>
                 </Link>
             </div>
 
@@ -57,6 +68,9 @@ export default function Sidebar({closeMobileMenu}: { closeMobileMenu?: () => voi
 
                         <SidebarLink href="/verification" icon={CheckCircle2Icon} active={pathname.startsWith('/verification')}>
                         Vérification
+                            <Badge className="ml-2 bg-amber-500">
+                                {verificationCount}
+                            </Badge>
                     </SidebarLink>)}
                     <SidebarLink href="/quotations" icon={FileText} active={pathname.startsWith('/quotations')}>
                         Devis

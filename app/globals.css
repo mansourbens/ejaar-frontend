@@ -93,7 +93,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #266CA9;
+  background-color: #9d4833;
   border-radius: 10px;
   border: 2px solid #f1f1f1;
   transition: all 0.2s ease; /* Smooth transition for thumb */
@@ -106,13 +106,13 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #1a4d7a; /* Optional: slightly darker shade on thumb hover */
+  background-color: #9d4833; /* Optional: slightly darker shade on thumb hover */
 }
 
 /* Firefox support */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #266CA9 #f1f1f1;
+  scrollbar-color: #9d4833 #f1f1f1;
 }
 @layer components {
   .glass-card {
@@ -305,4 +305,39 @@
 .dialog-overlay {
   background-color: rgba(241, 245, 249, 0.85) !important;
   backdrop-filter: blur(4px);
+}
+.landing-section-1 {
+  background-image: url(/assets/backgrounds/waves_2.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top;
+}
+@font-face {
+  font-family: bahnschrift;
+  font-weight: 600;
+  src: url('/assets/fonts/bahnschrift/BAHNSCHRIFT.woff');
+}
+* {
+  font-family: bahnschrift;
+  font-weight: 600;
+}
+.cta-container {
+  background-image: url(/assets/backgrounds/cta_background.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.types-actors {
+  background-image: url(/assets/images/img_6.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+@keyframes pulseFade {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.pulse-arrow {
+  animation: pulseFade 3s ease-in-out infinite;
 }

@@ -6,19 +6,16 @@ import {Card} from "@/components/ui/card";
 
 const RentEstimation = () => {
     return (
-        <section id="solutions" className="py-20 bg-white relative overflow-hidden">
-            <div className="absolute inset-0 z-0">
-                <div className="blue-blur-circle w-96 h-96 left-[-10%] top-[-10%]"></div>
-                <div className="blue-blur-circle w-80 h-80 right-[-5%] bottom-[-5%]"></div>
-            </div>
+        <section id="solutions" className=" relative bg-[#fcf5eb]  overflow-hidden">
+            <div id="simuler"  className="divider-ejaar h-1 w-[300px] mx-auto bg-[#4a7971] my-8"></div>
             <div className="container mx-auto px-4">
-                <div className="text-center max-w-3xl mx-auto mb-16">
-                    <h2 className="text-3xl md:text-4xl lato-bold mb-4">
-                        Calculez votre loyer en <span className="gradient-text">30 secondes</span> et découvrez nos solutions de financement
+                <div className="text-center  mx-auto mb-16">
+                    <h2 className="text-3xl text-[#182e43] md:text-5xl lg:text-6            xl font-bold leading-tight lg:leading-tight lato-bold">
+                        Calculez votre loyer en <span className="text-[#9d4833]">30 secondes</span> et découvrez nos solutions de financement
                     </h2>
                 </div>
-                <Card className="w-2/4 m-auto">
-                    <div className=" h-full rounded-xl bg-white/70 backdrop-blur-sm p-8 shadow-inner">
+                <Card className="w-2/4 m-auto bg-white/50 rounded-3xl hover:shadow-xl mb-16">
+                    <div className=" h-full rounded-3xl p-8">
                         <RentCalculator onBack={() => {}} hideHeader={true} />
                     </div>
                 </Card>

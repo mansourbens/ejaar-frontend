@@ -60,7 +60,7 @@ export default function SetPasswordPage() {
         <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
             <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md flex flex-col">
                 <div className="flex m-auto items-center mb-6">
-                    <img alt='logo' src='/assets/logos/ejaar_logo_v2.svg' width={164} height={40}  />
+                    <img alt='logo' src='/assets/logos/ejaar_logo_v3.svg' width={164} height={40}  />
                 </div>
                 <h1 className="mb-6 text-2xl font-bold text-center">Créer votre mot de passe</h1>
 

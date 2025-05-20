@@ -85,6 +85,7 @@ const EjaarConfig = () => {
 
     return (
         <div className="w-full max-w-4xl mx-auto">
+            <h1 className="text-2xl font-bold text-blue-900">Paramètrage du module de calcul</h1>
             <Card>
                 <CardHeader className="bg-ejaar-800 text-white">
                     <CardTitle>Configuration des constantes</CardTitle>

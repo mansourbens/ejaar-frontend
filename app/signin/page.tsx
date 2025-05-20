@@ -61,7 +61,7 @@ export default function SignIn() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <Link href="/" className="flex items-center">
-            <img alt='logo' src='/assets/logos/ejaar_logo_v2.svg' width={328} height={80}  />
+            <img alt='logo' src='/assets/logos/ejaar_logo_v3.svg' width={200} />
           </Link>
         </div>
         <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-900">

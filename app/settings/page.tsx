@@ -12,7 +12,8 @@ const EjaarSettings = () => {
     return (
         <MainLayout>
             <div className="container px-4">
-                <div className="flex flex-col md:flex-row gap-4">
+                <h1 className="text-2xl font-bold text-blue-900">Paramètrage du module de calcul</h1>
+                <div className="flex flex-col md:flex-row gap-8 px-12 py-4">
                     {/* Each card will take full width on mobile, half on desktop */}
                     <div className="flex-1 min-w-0">
                         <ResidualConfig/>

@@ -13,6 +13,7 @@ import { fetchWithToken, formatCurrency } from "@/lib/utils";
 import { CategorieCA } from "@/components/ejaar-settings/rate-config";
 import {Trash2Icon} from "lucide-react";
 import {Button} from "@/components/ui/button";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 
 interface SimulationResults {
     residualValue: number;
@@ -22,6 +23,30 @@ interface SimulationResults {
     ejaarFinancingRateMonthly: number;
     monthlyPayment: number;
     totalPayment: number;
+    financialTable : {
+    months24: {
+        achatMateriel: number;
+            reventeContrat: number;
+            margeUpfront: number;
+            margeCommerciale: number;
+            margeFinanciere: number;
+            upFrontPercent: number;
+            paiementUpfrontVR: number;
+            totalUpfront: number;
+            totalUpfrontPercent: number;
+    },
+    months36: {
+        achatMateriel: number;
+            reventeContrat: number;
+            margeUpfront: number;
+            margeCommerciale: number;
+            margeFinanciere: number;
+            upFrontPercent: number;
+            paiementUpfrontVR: number;
+            totalUpfront: number;
+            totalUpfrontPercent: number;
+    }
+};
 }
 
 interface DeviceEntry {
@@ -73,7 +98,25 @@ const EjaarSimulator = () => {
             return acc;
         }, {} as Record<string, { tauxBanque: number; spread: number }>);
     }
+    function calculatePV(rate: number, periods: number, payment: number, futureValue: number) {
+        const pvOfPayments = payment / rate * (1 - Math.pow(1 + rate, -periods));
+        const pvOfFutureValue = futureValue * Math.pow(1 + rate, -periods);
+        return pvOfPayments + pvOfFutureValue;
+    }
+    function pv(rate:number, nper:number, pmt:number, fv = 0, type = 0) {
+        if (rate === 0) return -((pmt * nper) + fv);
+        if (type !== 0 && type !== 1) return null;
 
+        // Calculate the present value of the annuity (payments).
+        const pvAnnuity = pmt * (1 + rate * type) * (1 - Math.pow(1 + rate, -nper)) / rate;
+
+        // Calculate the present value of the future value.
+        const pvFV = fv * Math.pow(1 + rate, -nper);
+
+        // The total present value is the sum of the PV of the annuity and the PV of the future value.
+        // The result is negated to indicate cash outflow.
+        return -(pvAnnuity + pvFV);
+    }
     // Load config
     useEffect(() => {
         const loadConfigs = async () => {
@@ -105,6 +148,30 @@ const EjaarSimulator = () => {
 
             let totalMonthly = 0;
             let totalOverall = 0;
+            let financialTable = {
+                months24: {
+                    achatMateriel: 0,
+                    reventeContrat: 0,
+                    margeUpfront: 0,
+                    margeCommerciale: 0,
+                    margeFinanciere: 0,
+                    upFrontPercent: 0,
+                    paiementUpfrontVR: 0,
+                    totalUpfront: 0,
+                    totalUpfrontPercent: 0,
+                },
+                months36: {
+                    achatMateriel: 0,
+                    reventeContrat: 0,
+                    margeUpfront: 0,
+                    margeCommerciale: 0,
+                    margeFinanciere: 0,
+                    upFrontPercent: 0,
+                    paiementUpfrontVR: 0,
+                    totalUpfront: 0,
+                    totalUpfrontPercent: 0,
+                }
+            };
 
             for (const entry of deviceEntries) {
                 if (entry.unitCount > 0 && entry.unitPrice > 0) {
@@ -124,6 +191,27 @@ const EjaarSimulator = () => {
 
                     totalMonthly += res.monthlyPayment;
                     totalOverall += res.totalPayment;
+                    if (durationKey === 'months24') {
+                        financialTable.months24.achatMateriel += amount-amount*4/100;
+                        financialTable.months24.reventeContrat += calculatePV(res.leaserFinancingRateMonthly/100, 24, res.monthlyPayment, res.residualValue);
+                        financialTable.months24.margeUpfront +=  financialTable.months24.reventeContrat - financialTable.months24.achatMateriel;
+                        financialTable.months24.margeCommerciale += amount*4/100;
+                        financialTable.months24.margeFinanciere += financialTable.months24.margeUpfront - financialTable.months24.margeCommerciale;
+                        financialTable.months24.upFrontPercent += financialTable.months24.margeUpfront*100/res.totalPayment
+                        financialTable.months24.paiementUpfrontVR += -res.residualValue*Math.pow(1+res.leaserFinancingRateMonthly/100,-24);
+                        financialTable.months24.totalUpfront += financialTable.months24.margeUpfront + financialTable.months24.paiementUpfrontVR;
+                        financialTable.months24.totalUpfrontPercent += financialTable.months24.totalUpfront*100/res.totalPayment;
+                    } else {
+                        financialTable.months36.achatMateriel += amount-amount*4/100;
+                        financialTable.months36.reventeContrat += calculatePV(res.leaserFinancingRateMonthly/100, 36, res.monthlyPayment, res.residualValue);
+                        financialTable.months36.margeUpfront +=  financialTable.months36.reventeContrat - financialTable.months36.achatMateriel;
+                        financialTable.months36.margeCommerciale += amount*4/100;
+                        financialTable.months36.margeFinanciere += financialTable.months36.margeUpfront - financialTable.months36.margeCommerciale;
+                        financialTable.months36.upFrontPercent += financialTable.months36.margeUpfront*100/res.totalPayment
+                        financialTable.months36.paiementUpfrontVR += -res.residualValue*Math.pow(1+res.leaserFinancingRateMonthly/100,-36);
+                        financialTable.months36.totalUpfront += financialTable.months36.margeUpfront + financialTable.months36.paiementUpfrontVR;
+                        financialTable.months36.totalUpfrontPercent += financialTable.months36.totalUpfront*100/res.totalPayment;
+                    }
                 }
             }
 
@@ -135,6 +223,7 @@ const EjaarSimulator = () => {
                 ejaarFinancingRateMonthly: 0,
                 monthlyPayment: totalMonthly,
                 totalPayment: totalOverall,
+                financialTable
             });
         }
     }, [deviceEntries, clientCA, tauxLoyerConfig, residualConfig]);
@@ -171,7 +260,7 @@ const EjaarSimulator = () => {
 
     return (
         <div className="w-full mx-auto">
-            <div className="grid grid-cols-[3fr_1fr] gap-6 px-28">
+            <div className="grid grid-cols-[4fr_1fr] gap-6 px-28">
                 {/* Input Form */}
                 <Card>
                     <CardHeader className="bg-ejaar-800 text-white">
@@ -297,6 +386,89 @@ const EjaarSimulator = () => {
                     </Card>
                 </div>
             </div>
+            {/* Financial Table */}
+            {results?.financialTable && (
+                <Card className="w-full max-w-5xl ml-28 mt-4">
+                    <CardHeader className="bg-[#075985] text-white">
+                        <CardTitle className="text-xl">Flux Ejaar</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="p-8">
+
+                            <div className="mx-auto px-4 sm:px-6 lg:px-8">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full border-collapse shadow-sm">
+                                        <thead>
+                                        <tr>
+                                            <th className="bg-amber-100 text-amber-800 font-semibold px-6 py-3 text-left w-[50%] border border-amber-200"></th>
+                                            <th className="bg-amber-100 text-amber-800 font-semibold px-6 py-3 text-right border border-amber-200">24 mois</th>
+                                            <th className="bg-amber-100 text-amber-800 font-semibold px-6 py-3 text-right border border-amber-200">36 mois</th>
+                                            <th className="bg-amber-100 text-amber-800 font-semibold px-6 py-3 text-right border border-amber-200">Total</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr className="hover:bg-amber-50">
+                                            <td className="px-6 py-3 font-medium border">Achat de matériel</td>
+                                            <td className="px-6 py-3 text-right border">{formatCurrency(results.financialTable.months24.achatMateriel)}</td>
+                                            <td className="px-6 py-3 text-right border">{formatCurrency(results.financialTable.months36.achatMateriel)}</td>
+                                            <td className="px-6 py-3 text-right border">{formatCurrency(results.financialTable.months24.achatMateriel + results.financialTable.months36.achatMateriel)}</td>
+                                        </tr>
+                                        <tr className="hover:bg-amber-50">
+                                            <td className="px-6 py-3 font-medium border">Revente du contrat</td>
+                                            <td className="px-6 py-3 text-right border">{formatCurrency(results.financialTable.months24.reventeContrat)}</td>
+                                            <td className="px-6 py-3 text-right border">{formatCurrency(results.financialTable.months36.reventeContrat)}</td>
+                                            <td className="px-6 py-3 text-right border">{formatCurrency(results.financialTable.months24.reventeContrat + results.financialTable.months36.reventeContrat)}</td>
+                                        </tr>
+                                        <tr className="bg-gray-50 hover:bg-amber-50">
+                                            <td className="px-6 py-3 font-medium border border-l-4 border-l-amber-400">Marge Upfront</td>
+                                            <td className="px-6 py-3 text-right border font-medium">{formatCurrency(results.financialTable.months24.margeUpfront)}</td>
+                                            <td className="px-6 py-3 text-right border font-medium">{formatCurrency(results.financialTable.months36.margeUpfront)}</td>
+                                            <td className="px-6 py-3 text-right border font-medium">{formatCurrency(results.financialTable.months24.margeUpfront + results.financialTable.months36.margeUpfront)}</td>
+                                        </tr>
+                                        <tr className="hover:bg-amber-50">
+                                            <td className="pl-12 pr-6 py-2 text-gray-700 border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200 italic">Dont marge commerciale</td>
+                                            <td className="px-6 py-2 text-right border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200">{formatCurrency(results.financialTable.months24.margeCommerciale)}</td>
+                                            <td className="px-6 py-2 text-right border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200">{formatCurrency(results.financialTable.months36.margeCommerciale)}</td>
+                                            <td className="px-6 py-2 text-right border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200">{formatCurrency(results.financialTable.months24.margeCommerciale + results.financialTable.months36.margeCommerciale)}</td>
+                                        </tr>
+                                        <tr className="hover:bg-amber-50">
+                                            <td className="pl-12 pr-6 py-2 text-gray-700 border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200 italic">Dont marge financière</td>
+                                            <td className="px-6 py-2 text-right border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200">{formatCurrency(results.financialTable.months24.margeFinanciere)}</td>
+                                            <td className="px-6 py-2 text-right border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200">{formatCurrency(results.financialTable.months36.margeFinanciere)}</td>
+                                            <td className="px-6 py-2 text-right border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200">{formatCurrency(results.financialTable.months24.margeFinanciere + results.financialTable.months36.margeFinanciere)}</td>
+                                        </tr>
+                                        <tr className="hover:bg-amber-50">
+                                            <td className="pl-12 pr-6 py-2 text-gray-700 border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200 italic">Soit un upfront en %</td>
+                                            <td className="px-6 py-2 text-right border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200">{formatPercentage(results.financialTable.months24.upFrontPercent)}</td>
+                                            <td className="px-6 py-2 text-right border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200">{formatCurrency(results.financialTable.months36.upFrontPercent)}</td>
+                                            <td className="px-6 py-2 text-right border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200">{formatCurrency(results.financialTable.months24.upFrontPercent + results.financialTable.months36.upFrontPercent)}</td>
+                                        </tr>
+                                        <tr className="hover:bg-amber-50">
+                                            <td className="px-6 py-3 font-medium border">Paiemment upfront de la VR</td>
+                                            <td className="px-6 py-3 text-right border">{formatCurrency(results.financialTable.months24.paiementUpfrontVR)}</td>
+                                            <td className="px-6 py-3 text-right border">{formatCurrency(results.financialTable.months36.paiementUpfrontVR)}</td>
+                                            <td className="px-6 py-3 text-right border">{formatCurrency(results.financialTable.months24.paiementUpfrontVR + results.financialTable.months36.paiementUpfrontVR)}</td>
+                                        </tr>
+                                        <tr className="bg-gray-50 hover:bg-amber-50">
+                                            <td className="px-6 py-3 font-semibold border border-l-4 border-l-amber-400">Total upfront</td>
+                                            <td className="px-6 py-3 text-right border font-medium">{formatCurrency(results.financialTable.months24.totalUpfront)}</td>
+                                            <td className="px-6 py-3 text-right border font-medium">{formatCurrency(results.financialTable.months36.totalUpfront)}</td>
+                                            <td className="px-6 py-3 text-right border font-medium">{formatCurrency(results.financialTable.months24.totalUpfront + results.financialTable.months36.totalUpfront)}</td>
+                                        </tr>
+                                        <tr className="hover:bg-amber-50">
+                                            <td className="pl-12 pr-6 py-2 text-gray-700 border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200 italic">Soit un upfront en %</td>
+                                            <td className="px-6 py-2 text-right border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200">{formatPercentage(results.financialTable.months24.totalUpfrontPercent)}</td>
+                                            <td className="px-6 py-2 text-right border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200">{formatPercentage(results.financialTable.months36.totalUpfrontPercent)}</td>
+                                            <td className="px-6 py-2 text-right border border-dashed border-l-0 border-r-0 border-b-0 border-t-gray-200">{formatPercentage(results.financialTable.months24.totalUpfrontPercent + results.financialTable.months36.totalUpfrontPercent)}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+                        )}
         </div>
     );
 };

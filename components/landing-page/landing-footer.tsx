@@ -7,29 +7,29 @@ const LandingFooter = () => {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="bg-gray-50 pt-16 pb-8">
+        <footer className="bg-[#182e43] pt-16 pb-8">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
                     {/* Company Info */}
                     <div>
                         <div className="flex items-center mb-6">
-                            <Image alt='logo' src='/assets/logos/ejaar_logo_v2.png' width={150} height={40}/>
+                            <Image alt='logo' src='/assets/logos/ejaar_logo_v5.svg' width={150} height={40}/>
 
                         </div>
-                        <p className="text-gray-600 mb-6">
+                        <p className="text-white mb-6 ">
                             Fournisseur leader de solutions de leasing de matériel informatique, permettant aux entreprises de bénéficier d'options technologiques flexibles.                        </p>
                         <div className="space-y-3">
                             <div className="flex items-center">
-                                <MapPin className="w-5 h-5 text-ejaar-600 mr-3" />
-                                <span className="text-gray-600">123 Business Avenue, Casablanca, Maroc</span>
+                                <MapPin className="w-8 h-8 text-[#fcf5eb] mr-3" />
+                                <span className="text-white">47, RUE AIT   OURIR, RESID. NASSIM JASSIM, APPT. N° 36 – CASABLANCA</span>
                             </div>
                             <div className="flex items-center">
-                                <Phone className="w-5 h-5 text-ejaar-600 mr-3" />
-                                <span className="text-gray-600">+212 5 55 55 55 55</span>
+                                <Phone className="w-5 h-5 text-[#fcf5eb] mr-3" />
+                                <span className="text-white">+212 5 55 55 55 55</span>
                             </div>
                             <div className="flex items-center">
-                                <Mail className="w-5 h-5 text-ejaar-600 mr-3" />
-                                <a href="mailto:info@ejaar.com" className="text-gray-600 hover:text-ejaar-800">info@ejaar.com</a>
+                                <Mail className="w-5 h-5 text-white mr-3" />
+                                <a href="mailto:info@ejaar.com" className="text-white hover:text-blue-400">info@ejaar.com</a>
                             </div>
                         </div>
                     </div>
@@ -38,7 +38,7 @@ const LandingFooter = () => {
                     {/* Newsletter */}
                     <div className="ml-auto">
                         <div className="mt-6">
-                            <h4 className="text-sm font-semibold uppercase text-gray-500 mb-3">Suivez nous</h4>
+                            <h4 className="text-sm font-semibold uppercase text-white mb-3">Suivez nous</h4>
                             <div className="flex space-x-4">
                                 {['facebook', 'twitter', 'linkedin', 'instagram'].map((social) => (
                                     <a
@@ -58,7 +58,7 @@ const LandingFooter = () => {
                 </div>
 
                 <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center">
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-white text-sm">
                         © {currentYear} EJAAR. All rights reserved.
                     </p>
                 </div>

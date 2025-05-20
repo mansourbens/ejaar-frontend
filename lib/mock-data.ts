@@ -32,6 +32,7 @@ export interface Quotation {
   status: QuotationStatusEnum
   createdAt: string;
   documents: ServerFile[];
+  totalMonthlyPayments: number;
 }
 
 // Hardware type options
