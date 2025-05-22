@@ -9,15 +9,17 @@ const LandingFooter = () => {
     return (
         <footer className="bg-[#182e43] pt-16 pb-8">
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+                <div className="flex gap-8 mb-16">
                     {/* Company Info */}
-                    <div>
+                    <div className="w-2/5">
                         <div className="flex items-center mb-6">
                             <Image alt='logo' src='/assets/logos/ejaar_logo_v5.svg' width={150} height={40}/>
 
                         </div>
-                        <p className="text-white mb-6 ">
-                            Fournisseur leader de solutions de leasing de matériel informatique, permettant aux entreprises de bénéficier d'options technologiques flexibles.                        </p>
+                        <p className="text-white mb-6 text-justify">
+                            Platforme de solution de leasing pour matériel informatique, permettant aux entreprises
+                            d'avoir les meilleurs offres de <span className="italic">Device-As-A-Service</span>
+                        </p>
                         <div className="space-y-3">
                             <div className="flex items-center">
                                 <MapPin className="w-8 h-8 text-[#fcf5eb] mr-3" />
@@ -25,7 +27,7 @@ const LandingFooter = () => {
                             </div>
                             <div className="flex items-center">
                                 <Phone className="w-5 h-5 text-[#fcf5eb] mr-3" />
-                                <span className="text-white">+212 5 55 55 55 55</span>
+                                <span className="text-white">+212 6 00 95 39 37</span>
                             </div>
                             <div className="flex items-center">
                                 <Mail className="w-5 h-5 text-white mr-3" />
@@ -36,11 +38,24 @@ const LandingFooter = () => {
 
 
                     {/* Newsletter */}
-                    <div className="ml-auto">
+                    <div className="ml-auto ml-[272px]">
                         <div className="mt-6">
+                            <div className="grid grid-cols-3 text-white min-w-3xl gap-y-[20px] gap-x-[260px] my-8 grid-rows-4">
+                                <div className="min-w-[220px] hover:text-ejaar-blueHover cursor-pointer">À propos</div>
+                                <div className="min-w-[220px] hover:text-ejaar-blueHover cursor-pointer">Centre d'aide</div>
+                                <div className="min-w-[220px] hover:text-ejaar-blueHover cursor-pointer">Conditions d'utilisation</div>
+                                <div className="min-w-[220px] hover:text-ejaar-blueHover cursor-pointer">Carrières</div>
+                                <div className="min-w-[220px] hover:text-ejaar-blueHover cursor-pointer">Contactez-nous</div>
+                                <div className="min-w-[220px] hover:text-ejaar-blueHover cursor-pointer">Politique de confidentialité</div>
+                                <div className="min-w-[220px] hover:text-ejaar-blueHover cursor-pointer">Presse</div>
+                                <div className="min-w-[220px] hover:text-ejaar-blueHover cursor-pointer">FAQ</div>
+                                <div className="min-w-[220px] hover:text-ejaar-blueHover cursor-pointer">Politique relative aux cookies</div>
+                                <div className="min-w-[220px] hover:text-ejaar-blueHover cursor-pointer">Blog</div>
+
+                            </div>
                             <h4 className="text-sm font-semibold uppercase text-white mb-3">Suivez nous</h4>
                             <div className="flex space-x-4">
-                                {['facebook', 'twitter', 'linkedin', 'instagram'].map((social) => (
+                                {[ 'linkedin'].map((social) => (
                                     <a
                                         key={social}
                                         href={`https://${social}.com`}

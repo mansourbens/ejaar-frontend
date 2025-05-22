@@ -52,9 +52,9 @@ export default function Sidebar({closeMobileMenu}: { closeMobileMenu?: () => voi
         <aside
             className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-30"
         >
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between py-8 p-4">
                 <Link href="/" className="inline-flex items-center w-full">
-                    <img alt='logo' src='/assets/logos/ejaar_logo_v3.svg' className="mx-auto" width={100}/>
+                    <img alt='logo' src='/assets/logos/ejaar_logo_v4.svg' className="mx-auto" width={140}/>
                 </Link>
             </div>
 

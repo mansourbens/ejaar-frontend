@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Menu, Sun, Moon, Bell } from 'lucide-react';
+import {Menu, Sun, Moon, Bell, FileTextIcon, FoldersIcon, PlusCircleIcon, User2Icon} from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import { useTheme } from 'next-themes';
 import Sidebar from '@/components/sidebar/sidebar';
+import Link from "next/link";
+import {Button} from "@/components/ui/button";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
     const { user } = useAuth();
@@ -16,7 +18,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     };
 
     return (
-        <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="flex h-screen bg-ejaar-beige ">
             {mobileMenuOpen && (
                 <div
                     className="fixed inset-0 bg-black/50 z-20 lg:hidden"
@@ -24,11 +26,14 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 ></div>
             )}
 
-            <Sidebar />
-
-            <div className="flex-1 flex flex-col lg:pl-64">
-                <header className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+            <div className="flex-1 flex flex-col">
+                <header className="sticky top-0 z-10 bg-white/50 backdrop-blur-md shadow-md py-2">
+                    <div className="flex items-center justify-between h-16 pr-4 sm:px-6 lg:px-8">
+                        <div className="flex items-center justify-between py-8">
+                            <Link href="/" className="inline-flex items-center w-full">
+                                <img alt='logo' src='/assets/logos/ejaar_logo_v4.svg' className="mx-auto" width={140}/>
+                            </Link>
+                        </div>
                         <button
                             className="lg:hidden"
                             onClick={() => setMobileMenuOpen(true)}
@@ -36,16 +41,36 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                             <Menu className="h-6 w-6 text-gray-500" />
                         </button>
                         <div className="flex w-full">
-                            <div className="flex items-center">
-                                Bienvenue
-                                <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {user?.fullName ?? ( user?.client?.raisonSociale ?? ( user?.supplier?.raisonSociale ??  user?.email))}
-                </span>
-                            </div>
-                            <div className="flex ml-auto">
+                            <nav className="ml-auto items-end flex space-x-8 ">
+                                <Link href="/quotations" className="overflow-auto">
+                                    <Button className="bg-ejaar-700 hover:bg-ejaar-700 hover:shadow-xl group text-base">
+                                        <FileTextIcon className="h-5 w-5 mr-3" />
+                                        Mes Devis
+                                    </Button>
+                                </Link>
+                                <Link href="/folders">
+                                    <Button className="bg-ejaar-700 hover:bg-ejaar-700 hover:shadow-xl group text-base">
+                                        <FoldersIcon className="h-5 w-5 mr-3" />
+                                        Mes Dossiers
+                                    </Button>
+                                </Link>
+                                <Link href="/quotations/new">
+                                    <Button className="bg-[#9d4833] hover:bg-[#b35e49] group text-base">
+                                        <PlusCircleIcon className="h-5 w-5 mr-3" />
+                                        Nouveau devis
+                                    </Button>
+                                </Link>
+                            </nav>
+                            <div className="divider-ejaar h-8 w-0.5 bg-[#4a7971] my-auto mx-4"></div>
+                            <div className="flex ml-2">
                                 <button className="p-2 relative rounded-md text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <Bell className="h-5 w-5" />
                                     <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                </button>
+                            </div>
+                            <div className="flex ml-2">
+                                <button className="p-2 relative rounded-md text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <User2Icon className="h-5 w-5" />
                                 </button>
                             </div>
                         </div>
@@ -55,6 +80,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                 <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
                     {children}
                 </main>
+                <div className="bg-ejaar-700 h-10 w-full"></div>
             </div>
         </div>
     );

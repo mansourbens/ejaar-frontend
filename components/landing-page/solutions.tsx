@@ -5,7 +5,7 @@ import {EquipmentCard} from "@/components/landing-page/solutions/EquipmentCard";
 import {LeasingCTA} from "@/components/landing-page/solutions/LeasingCTA";
 import {ClientTypes} from "@/components/landing-page/solutions/ClientTypes";
 import React from "react";
-import {Clock, CreditCard, Shield} from "lucide-react";
+import {ArrowRight, Clock, CreditCard, Shield} from "lucide-react";
 import {FeatureCard} from "@/components/landing-page/features";
 import {cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
@@ -81,12 +81,19 @@ export function Solutions() {
             </div>
             <div className="divider-ejaar h-1 w-[300px] bg-[#9d4833] mx-auto my-20"></div>
             <div className="container mx-auto px-2 relative z-10">
-                <h1 className="text-4xl text-center mb-8 text-[#182e43] md:text-5xl lg:text-6xl font-bold leading-tight lg:leading-tight lato-bold">
-                    Fournisseurs, transformez chaque demande de devis en <span className="text-[#9d4833]">opportunité</span> conclue
+                <h1 className="text-4xl text-center mb-12 text-[#182e43] md:text-5xl lg:text-6xl font-bold leading-tight lg:leading-tight lato-bold">
+                    Partenaires revendeurs, <span className="text-[#9d4833]">vendez mieux, plus vite</span>
                 </h1>
                 <div className="grid lg:grid-cols-2 items-center">
-                    <div className="justify-center flex self-start">
-                        <img src='/assets/images/img_9.png' width={700}/>
+                    <div className=" flex flex-col self-start my-auto relative">
+                        <img src='/assets/images/img_9.png' className="mt-20" width={700}/>
+                        <Button size="lg" className="mt-12 mb-20 bg-[#9d4833] text-gray-50 hover:bg-[#b35e49] text-2xl px-16  h-[60px]">
+                            Découvrez plus sur notre plateforme
+                            <ArrowRight className="ml-2 w-6 h-6"/>
+                        </Button>
+                        <div>
+                            <img src='/assets/images/arrow_right_small.png' width={70} height={20} className="absolute pulse-arrow bottom-[13%] right-[-5%] z-20" />
+                        </div>
                     </div>
                     <div className="flex flex-col gap-8">
 
@@ -97,35 +104,34 @@ export function Solutions() {
 
 
                                     <p className="text-2xl text-justify text-[#344e69] lat-bold">
-                                        Ejaar vous offre une plateforme commerciale tout‑en‑un : elle combine génération de devis, validation de financement et suivi contractuel pour dynamiser vos ventes d’équipements.
-                                    </p>
+                                        Avec Ejaar, chaque demande de devis devient une opportunité gagnée. Notre plateforme commerciale tout-en-un intègre génération de devis, validation de financement et suivi contractuel, pour fluidifier votre cycle de vente et accélérer la décision client                                    </p>
 
                                 </div>
-                                <div className="grid grid-cols-2">
+                                <div className="flex flex-col ml-28 mt-4">
                                     <FeatureCard
                                         icon={<Clock/>}
                                         type="red"
-                                        title="Tunnel de conversion optimisé"
-                                        description="Devis, approbation de financement et service connexe sur une même interface"
+                                        title="Accélérez vos ventes, augmentez vos conversions"
+                                        description="Proposez une solution locative clé-en-main pour lever les freins budgétaires et conclure plus rapidement"
                                     />
                                     <FeatureCard
                                         icon={<CreditCard/>}
                                         type="red"
-                                        title="Financement pour vos clients"
-                                        description="Solutions locatives adaptées qui lèvent le frein budgétaire et accélèrent la décision d’achat"
+                                        title="Générez des devis en quelques clics"
+                                        description="Simulez des loyers adaptés au besoin client. Encouragez l’upsell avec des offres plus complètes, plus accessibles"
                                         highlighted={true}
                                     />
                                     <FeatureCard
                                         icon={<Shield/>}
                                         type="red"
-                                        title="Outil d’upsell intelligent"
-                                        description="Recommandations automatiques de renouvellement ou d’options de maintenance pour maximiser la valeur par client"
+                                        title="Simplifiez votre cycle de vente"
+                                        description="Centralisez devis, validation et signature dans un seul parcours digital. Moins de frictions, plus d’efficacité commerciale"
                                     />
                                     <FeatureCard
                                         icon={<Shield/>}
                                         type="red"
-                                        title="Support en un clic"
-                                        description="Assistance technique et commerciale centralisée afin de sécuriser chaque étape du cycle de vente"
+                                        title="Suivez l’avancement de vos dossiers en temps réel"
+                                        description="Visualisez tous vos devis, ceux en cours de finalisation, validés ou transformés en bon de commande — pour une gestion fluide de votre activité"
                                     />
                                 </div>
                             </div>
@@ -142,12 +148,12 @@ export function Solutions() {
     );
 }
 export const EquipmentCard2 = ({
-                                icon,
-                                type='yellow',
-                                title,
-                                description,
-                                highlighted = false
-                            }: {
+                                   icon,
+                                   type='yellow',
+                                   title,
+                                   description,
+                                   highlighted = false
+                               }: {
     icon: React.ReactNode;
     title: string;
     type: string;

@@ -28,27 +28,26 @@ const Features = () => {
                                             Pourquoi choisir <span className="text-[#256aa3]">Ejaar</span> pour la
                                             location de matériel ?
                                         </h1>
-                                        <p className="text-2xl text-justify text-[#344e69] max-w-xl lat-bold">
-                                            Nous combinons du matériel de pointe avec des options de location flexibles
-                                            pour faire avancer votre entreprise.</p>
+                                        <p className="text-2xl text-justify text-[#344e69] max-w-2xl lat-bold">
+                                            Accédez au matériel de votre choix via un modèle locatif flexible, incluant assurances et maintenance. Une solution clé-en-main pour maîtriser vos budgets, préserver votre trésorerie et faire évoluer votre infrastructure en toute agilité</p>
 
                                     </div>
-                                    <div className="grid grid-rows-3">
+                                    <div className="grid grid-rows-3 mt-8">
                                         <FeatureCard
                                             icon={<Clock/>}
-                                            title="Validation en moins de 48 h"
-                                            description="Notre workflow digital, orchestrant fournisseurs et partenaires bancaires, valide vos financements sous 48h, assurant un parcours de leasing fluide et sécurisé."
+                                            title="Validation rapide"
+                                            description="Devis instantané, validation en moins de 48h : une interface intuitive pour un parcours simplifié, rapide et sans friction"
                                         />
                                         <FeatureCard
                                             icon={<CreditCard/>}
                                             title="Financement flexible"
-                                            description="Transformez vos investissements IT en charges opérationnelles prévisibles grâce à des plans de loyers sur‑mesure parfaitement calibrés à votre capacité budgétaire."
+                                            description="Transformez vos investissements IT en charges prévisibles grâce à des loyers calibrés à votre capacité budgétaire"
                                             highlighted={true}
                                         />
                                         <FeatureCard
                                             icon={<Shield/>}
                                             title="Support complet"
-                                            description="Appuyez‑vous sur un support 24/7, une maintenance proactive, des garanties étendues et une assurance tous risques intégrée."
+                                            description="Appuyez‑vous sur un support 24/7, une maintenance proactive, des garanties étendues et une assurance tous risques intégrée"
                                         />
                                     </div>
                                 </div>
@@ -67,14 +66,12 @@ const Features = () => {
                 <div className="mt-24">
                     <div className="grid lg:grid-cols-2 gap-16 items-center">
                         <div className="order-2 lg:order-1">
-                            <div className="mb-8">
+                            <div className="flex flex-col space-y-8 animate-fade-in">
                                 <h1 className="text-4xl text-[#182e43] md:text-5xl lg:text-6xl font-bold leading-tight lg:leading-tight lato-bold">
-                                    Contrôlez <span className="text-[#256aa3]">facilement</span>  vos dossiers de devis
+                                    Une interface  <span className="text-[#256aa3]">unique</span>  pour tout suivre, en temps réel
                                 </h1>
-                                <p className="text-2xl text-justify text-[#344e69] max-w-xl lat-bold">
-                                    Notre plateforme intuitive vous permet de suivre vos dossiers en temps réel, depuis
-                                    la demande de devis jusqu’à la signature du contrat, avec une validation fluide par
-                                    les banques.
+                                <p className="text-2xl text-justify text-[#344e69] max-w-2xl lat-bold">
+                                    Suivez et gérez vos dossiers en toute simplicité grâce à une interface centralisée, vous offrant une visibilité en temps réel depuis la demande de devis jusqu’à la signature du contrat
                                 </p>
                                 <div className="mt-8">
                                     <Link href="/signin">
@@ -200,12 +197,14 @@ export const FeatureCard = ({
 }) => {
     return (
         <div
-            className={cn(`rounded-xl p-8 mt-2 group transition-all duration-300
+            className={cn(`rounded-xl px-8 py-4 group transition-all duration-300
              hover:-translate-y-1 max-w-[600px]`,
                 type === 'green' ? `hover:bg-[#e5eae9]`: `hover:bg-[#f7ecde]`,
                 )}
         >
             <Button className={cn(` cursor-default 
+            min-w-[475px]
+            justify-start
              group text-xl mb-2`,
                                     type === 'green' ? `hover:bg-[#4a7971] bg-[#4a7971]`: `bg-[#deb679] hover:bg-[#deb679]`,
                 type === 'red' ? `group-hover:bg-[#9d4833]` : ``

@@ -58,7 +58,7 @@ const LandingNavbar = () => {
                     </Link>
                     <Link href="/contact">
                     <Button
-                        className="bg-ejaar-800 hover:bg-ejaar-800 group text-base">
+                        className="bg-ejaar-800 hover:bg-ejaar-blueHover group text-base">
                         Parler à un expert
                     </Button>
                     </Link>

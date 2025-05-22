@@ -14,7 +14,7 @@ const ProgressStepBar: React.FC<ProgressStepBarProps> = ({
     const steps = [
         {
             number: 1,
-            title: "Choisissez vos équipements et la durée",
+            title: "Définissez vos besoins avec votre fournisseur",
             icon: Package2,
             description: "Sélectionnez les équipements dont vous avez besoin",
         },

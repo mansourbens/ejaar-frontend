@@ -117,7 +117,7 @@ export default function SignUp() {
                                                         onClick={() => field.onChange('CLIENT')}
                                                         className={`py-3 px-4 rounded-md text-lg font-medium ${
                                                             field.value === 'CLIENT'
-                                                                ? 'bg-ejaar-800 text-ejaar-beige border border-ejaar-700'
+                                                                ? 'bg-ejaar-700 text-ejaar-beige border border-ejaar-700'
                                                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                         }`}
                                                     >
@@ -128,7 +128,7 @@ export default function SignUp() {
                                                         onClick={() => field.onChange('FOURNISSEUR')}
                                                         className={`py-3 px-4 rounded-md text-lg font-medium ${
                                                             field.value === 'FOURNISSEUR'
-                                                                ? 'bg-ejaar-800 text-ejaar-beige border border-ejaar-700'
+                                                                ? 'bg-ejaar-700 text-ejaar-beige border border-ejaar-700'
                                                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                         }`}
                                                     >
@@ -139,7 +139,7 @@ export default function SignUp() {
                                             </FormItem>
                                         )}
                                     />
-
+                                    <div className="divider-ejaar border-t-2 !mt-4 border-dashed border-gray-400 w-[200px] h-1 mx-auto"></div>
                                     {/* Form Fields with signin styling */}
                                     <div className="space-y-6">
                                         <div className="grid grid-cols-2 gap-6">
@@ -148,7 +148,7 @@ export default function SignUp() {
                                                 name="raisonSociale"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel className="text-xl text-ejaar-700">Raison sociale</FormLabel>
+                                                        <FormLabel className="text-xl text-ejaar-700">Raison sociale <span className="text-ejaar-red">*</span> </FormLabel>
                                                         <FormControl>
                                                             <Input
                                                                 className="outline-none bg-ejaar-beige ring-2 ring-ring ring-offset-2"
@@ -167,7 +167,7 @@ export default function SignUp() {
                                                 name="email"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel className="text-xl text-ejaar-700">Email</FormLabel>
+                                                        <FormLabel className="text-xl text-ejaar-700">Email  <span className="text-ejaar-red">*</span> </FormLabel>
                                                         <FormControl>
                                                             <Input
                                                                 className="outline-none bg-ejaar-beige ring-2 ring-ring ring-offset-2"
@@ -189,7 +189,7 @@ export default function SignUp() {
                                                 name="ICE"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel className="text-xl text-ejaar-700">ICE</FormLabel>
+                                                        <FormLabel className="text-xl text-ejaar-700">ICE  <span className="text-ejaar-red">*</span> </FormLabel>
                                                         <FormControl>
                                                             <Input
                                                                 className="outline-none bg-ejaar-beige ring-2 ring-ring ring-offset-2"

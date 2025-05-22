@@ -49,7 +49,7 @@ const LandingPage = () => {
                         <div className={`relative w-full flip-card ${isFlipped ? 'flipped' : ''}`}>
                             <div className="flip-card-front rounded-2xl  p-1 shadow-xl">
                                 <div className="absolute inset-0  rounded-2xl backdrop-blur-sm"></div>
-                                    <img src='/assets/backgrounds/image_5.png' width={800} className="absolute left-0"/>
+                                    <img src='/assets/backgrounds/image_5.jpg' width={800} className="absolute left-0"/>
                             </div>
 
                             <div className="flip-card-back rounded-2xl p-1 shadow-xl">

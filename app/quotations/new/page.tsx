@@ -6,7 +6,7 @@ import {useRouter} from 'next/navigation';
 import {useFieldArray, useForm} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {DownloadIcon, Loader2, Plus, Trash2, UploadIcon} from 'lucide-react';
+import {DownloadIcon, Loader2, Plus, PlusCircleIcon, Trash2, UploadIcon} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
@@ -42,7 +42,13 @@ const deviceSchema = z.object({
 const formSchema = z.object({
     devices: z.array(deviceSchema).min(1, {message: "Ajoutez au moins un appareil"}),
 });
+const formatPrice = (value: number) => {
+    return `${Math.floor(value).toLocaleString('fr-FR')} DH HT`;
+};
 
+const formatDuration = (value: number) => {
+    return `${value} mois`;
+};
 export default function NewQuotationPage() {
     const {user} = useAuth();
     const router = useRouter();
@@ -116,7 +122,7 @@ export default function NewQuotationPage() {
 
     const validateAndSetData = (data: any[]) => {
         try {
-            console.log( data.filter((row, index) => !isNaN(Number(row['Prix Unitaire HT']))));
+            console.log(data.filter((row, index) => !isNaN(Number(row['Prix Unitaire HT']))));
             const mappedDevices = data.filter((row, index) => !isNaN(Number(row['Prix Unitaire HT']))).map((row, index) => {
                 if (!row['Type de matériel'] || isNaN(Number(row['Prix Unitaire HT'])) || isNaN(Number(row['Quantité']))) {
                     throw new Error(`Erreur de format à la ligne ${index + 1}.`);
@@ -179,7 +185,7 @@ export default function NewQuotationPage() {
                     description: user?.role.name === UserRole.CLIENT ?
                         "Votre devis a été créé avec succès et est en attente de validation." : "",
                 });
-               // router.push('/quotations')
+                // router.push('/quotations')
             } else {
                 toast({
                     title: "Erreur",
@@ -199,7 +205,7 @@ export default function NewQuotationPage() {
         }
     };
 
-    const downloadTemplate = async() => {
+    const downloadTemplate = async () => {
         try {
             const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations/template`);
             if (response.ok) {
@@ -221,20 +227,30 @@ export default function NewQuotationPage() {
 
     return (
         <MainLayout>
-            <div className="space-y-6">
-                <div className="flex justify-between items-center">
+            <div className="">
+                <div className="flex justify-between items-center ml-8">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Nouveau devis</h1>
-                        <p className="text-sm text-muted-foreground">
-                            Remplissez le formulaire pour {user?.role.name === UserRole.CLIENT ? `demander ` : `simuler `}
+                        <h1 className="text-4xl text-ejaar-700 md:text-5xl lg:text-6xl font-bold leading-tight lg:leading-tight lato-bold">
+                            Nouveau devis
+                        </h1>
+
+                        <p className="text-2xl text-justify text-ejaar-800 max-w-xl lat-bold">
+                            Remplissez le formulaire
+                            pour {user?.role.name === UserRole.CLIENT ? `demander ` : `simuler `}
                             un devis de location de matériel
                         </p>
                     </div>
-                    <div className="flex gap-4">
+                </div>
+                {/* Summary Card */}
+
+                <div className="flex flex-col gap-4">
+
+                    {/* Form Card */}
+                    <div className="flex gap-4 ml-auto mr-20">
                         <Button
                             variant="outline"
                             onClick={downloadTemplate}
-                            className="gap-2 bg-white hover:bg-ejaar-100 text-gray-800"
+                            className="gap-2 bg-ejaar-beige hover:bg-ejaar-beige text-ejaar-700"
                         >
                             <DownloadIcon className="w-4 h-4"/>
                             Télécharger le template
@@ -244,76 +260,16 @@ export default function NewQuotationPage() {
                         <Button
                             variant="outline"
                             onClick={() => fileInputRef.current?.click()}
-                            className="gap-2 bg-ejaar-900 hover:bg-ejaar-800 text-gray-100 hover:text-gray-100"
+                            className="gap-2 bg-ejaar-700 hover:bg-ejaar-700 text-white"
                         >
                             <UploadIcon className="w-4 h-4"/>
                             Importer Excel/CSV
                         </Button>
                     </div>
-                </div>
-
-                <div className="grid gap-6 lg:grid-cols-3">
-                    {/* Summary Card */}
-                    <Card className="lg:col-span-1 order-1 lg:order-2">
+                    <Card className="rounded-2xl bg-white/50 mx-20">
                         <CardHeader>
-                            <CardTitle>Résumé</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <div className="flex justify-between items-center pt-2 border-t">
-                                    <span className="text-sm font-medium text-muted-foreground">Montant total du matériel</span>
-                                    <span className="text-lg font-bold text-primary">
-                                        {totalAmount.toFixed(2)} MAD
-                                    </span>
-                                </div>
-                                {user?.role.name !== UserRole.CLIENT && <div className="space-y-2">
-                                    <Label>Catégorie CA client</Label>
-                                    <Select
-                                        value={clientCA}
-                                        onValueChange={(value) => setClientCA(value as CategorieCA)}
-                                    >
-                                        <SelectTrigger><SelectValue /></SelectTrigger>
-                                        <SelectContent>
-                                            {Object.values(CategorieCA).map(ca => (
-                                                <SelectItem key={ca} value={ca}>{ca}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>}
-                            </div>
-
-                            {user?.role.name === UserRole.CLIENT &&
-                                <div className="rounded-lg bg-blue-50 dark:bg-blue-900/30 p-4">
-                                <h3 className="text-sm font-medium mb-2">Note</h3>
-                                <p className="text-sm text-muted-foreground">
-                                    Vérifiez bien les informations avant de soumettre votre demande.
-                                    Le devis sera envoyé pour validation.
-                                </p>
-                            </div>}
-
-                            <Button
-                                onClick={form.handleSubmit(onSubmit)}
-                                className="w-full bg-blue-600 hover:bg-blue-700"
-                                disabled={isCalculating}
-                            >
-                                {isCalculating ? (
-                                    <>
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
-                                        Génération...
-                                    </>
-                                ) : (
-                                    <span>{user?.role.name === UserRole.CLIENT ? "Générer le devis"
-                                        : "Simuler le devis"}</span>
-                                )}
-                            </Button>
-                        </CardContent>
-                    </Card>
-
-                    {/* Form Card */}
-                    <Card className="lg:col-span-2 order-2 lg:order-1">
-                        <CardHeader>
-                            <CardTitle>Détails du matériel</CardTitle>
-                            <CardDescription>
+                            <CardTitle className="text-ejaar-red">Détails du matériel</CardTitle>
+                            <CardDescription className="text-ejaar-700">
                                 Ajoutez les appareils à inclure dans votre devis
                             </CardDescription>
                         </CardHeader>
@@ -322,20 +278,32 @@ export default function NewQuotationPage() {
                                 <form className="space-y-6">
                                     <div className="space-y-4">
                                         <div className="max-h-[300px] space-y-4 overflow-auto">
+                                            <div className="grid grid-cols-6">
+                                                <FormLabel className="text-ejaar-700 text-xl ml-6">Type de
+                                                    matériel</FormLabel>
+                                                <FormLabel className="text-ejaar-700 text-xl ml-5">Référence
+                                                    constructeur</FormLabel>
+                                                <FormLabel className="text-ejaar-700 text-xl ml-3">Désignation</FormLabel>
+                                                <FormLabel className="text-ejaar-700 text-xl ml-2">Prix unitaire
+                                                    (HT)</FormLabel>
+                                                <FormLabel className="text-ejaar-700 text-xl">Quantité</FormLabel>
+                                                <FormLabel className="text-ejaar-700 text-xl">Durée (mois)</FormLabel>
+
+                                            </div>
                                             {fields.map((field, index) => (
                                                 <div key={field.id} className="p-4 border rounded-lg relative group">
-                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
                                                         <FormField
                                                             control={form.control}
                                                             name={`devices.${index}.type`}
                                                             render={({field}) => (
                                                                 <FormItem>
-                                                                    <FormLabel>Type de matériel</FormLabel>
                                                                     <Select onValueChange={field.onChange}
                                                                             value={field.value}>
                                                                         <FormControl>
                                                                             <SelectTrigger className="bg-white">
-                                                                                <SelectValue placeholder="Sélectionner"/>
+                                                                                <SelectValue
+                                                                                    placeholder="Sélectionner"/>
                                                                             </SelectTrigger>
                                                                         </FormControl>
                                                                         <SelectContent>
@@ -356,7 +324,6 @@ export default function NewQuotationPage() {
                                                             name={`devices.${index}.reference`}
                                                             render={({field}) => (
                                                                 <FormItem>
-                                                                    <FormLabel>Référence constructeur</FormLabel>
                                                                     <FormControl>
                                                                         <Input
                                                                             placeholder="Optionnel"
@@ -374,7 +341,6 @@ export default function NewQuotationPage() {
                                                             name={`devices.${index}.designation`}
                                                             render={({field}) => (
                                                                 <FormItem>
-                                                                    <FormLabel>Désignation</FormLabel>
                                                                     <FormControl>
                                                                         <Input
                                                                             placeholder="Optionnel"
@@ -392,7 +358,6 @@ export default function NewQuotationPage() {
                                                             name={`devices.${index}.unitCost`}
                                                             render={({field}) => (
                                                                 <FormItem>
-                                                                    <FormLabel>Prix unitaire (HT)</FormLabel>
                                                                     <FormControl>
                                                                         <div className="relative">
                                                                             <Input
@@ -402,7 +367,7 @@ export default function NewQuotationPage() {
                                                                                 {...field}
                                                                             />
                                                                             <span
-                                                                                className="absolute right-3 top-2.5 text-gray-500 text-sm">MAD</span>
+                                                                                className="absolute right-3 top-2.5 text-gray-500 text-sm">DH</span>
                                                                         </div>
                                                                     </FormControl>
                                                                     <FormMessage/>
@@ -414,8 +379,7 @@ export default function NewQuotationPage() {
                                                             control={form.control}
                                                             name={`devices.${index}.units`}
                                                             render={({field}) => (
-                                                                <FormItem>
-                                                                    <FormLabel>Quantité</FormLabel>
+                                                                <FormItem className="text-ejaar-700 text-xl">
                                                                     <FormControl>
                                                                         <Input
                                                                             type="number"
@@ -428,64 +392,120 @@ export default function NewQuotationPage() {
                                                                 </FormItem>
                                                             )}
                                                         />
+                                                        <div className="flex gap-2">
+                                                            <FormField
+                                                                control={form.control}
+                                                                name={`devices.${index}.duration`}
+                                                                render={({field}) => (
+                                                                    <FormItem className="text-ejaar-700 text-xl w-full">
+                                                                        <Select onValueChange={field.onChange}
+                                                                                value={field.value}>
+                                                                            <FormControl>
+                                                                                <SelectTrigger className="bg-white">
+                                                                                    <SelectValue
+                                                                                        placeholder="Sélectionner"/>
+                                                                                </SelectTrigger>
+                                                                            </FormControl>
+                                                                            <SelectContent>
+                                                                                {durationOptions.map((option) => (
+                                                                                    <SelectItem key={option.value}
+                                                                                                value={option.value}>
+                                                                                        {option.label}
+                                                                                    </SelectItem>
+                                                                                ))}
+                                                                            </SelectContent>
+                                                                        </Select>
+                                                                        <FormMessage/>
+                                                                    </FormItem>
 
-                                                        <FormField
-                                                            control={form.control}
-                                                            name={`devices.${index}.duration`}
-                                                            render={({field}) => (
-                                                                <FormItem>
-                                                                    <FormLabel>Durée (mois)</FormLabel>
-                                                                    <Select onValueChange={field.onChange} value={field.value}>
-                                                                        <FormControl>
-                                                                            <SelectTrigger className="bg-white">
-                                                                                <SelectValue placeholder="Sélectionner"/>
-                                                                            </SelectTrigger>
-                                                                        </FormControl>
-                                                                        <SelectContent>
-                                                                            {durationOptions.map((option) => (
-                                                                                <SelectItem key={option.value} value={option.value}>
-                                                                                    {option.label}
-                                                                                </SelectItem>
-                                                                            ))}
-                                                                        </SelectContent>
-                                                                    </Select>
-                                                                    <FormMessage/>
-                                                                </FormItem>
+                                                                )}
+                                                            />
+                                                            {fields.length > 1 && index !== 0 && (
+                                                                <Button
+                                                                    type="button"
+                                                                    size="icon"
+                                                                    className="bg-ejaar-red my-auto hover:bg-ejaar-redHover"
+                                                                    onClick={() => remove(index)}
+                                                                >
+                                                                    <Trash2 className="h-4 w-4 text-white"/>
+                                                                </Button>
                                                             )}
-                                                        />
+                                                        </div>
+
+
                                                     </div>
 
-                                                    {fields.length > 1 && (
-                                                        <Button
-                                                            type="button"
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                            onClick={() => remove(index)}
-                                                        >
-                                                            <Trash2 className="h-4 w-4 text-red-500"/>
-                                                        </Button>
-                                                    )}
+
                                                 </div>
                                             ))}
                                         </div>
+                                        <div className="w-full flex">
+                                            <Button
+                                                type="button"
+                                                className="ml-auto bg-ejaar-red hover:bg-ejaar-redHover"
+                                                onClick={() => append({
+                                                    type: '',
+                                                    reference: '',
+                                                    designation: '',
+                                                    unitCost: 0,
+                                                    units: 1,
+                                                    duration: '24'
+                                                })}
+                                            >
+                                                <PlusCircleIcon className="mr-2 h-4 w-4"/>
+                                                Ajouter un appareil
+                                            </Button>
+                                        </div>
+                                        <div className="w-full flex gap-10">
 
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            className="w-full border-blue-300 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                            onClick={() => append({
-                                                type: '',
-                                                reference: '',
-                                                designation: '',
-                                                unitCost: 0,
-                                                units: 1,
-                                                duration: '24'
-                                            })}
-                                        >
-                                            <Plus className="mr-2 h-4 w-4"/>
-                                            Ajouter un appareil
-                                        </Button>
+                                            <div className="bg-ejaar-700 text-white p-4 rounded-lg w-3/5">
+                                                <div className="flex justify-between items-center">
+                                                    <p className="text-2xl font-medium">Mensualité calculée sur 24 mois
+                                                       <span className="text-sm text-white italic ml-2">
+                                                        ( Pour {formatPrice(0)} sur {formatDuration(24)} )
+                                                       </span>
+                                                    </p>
+                                                        <span className="text-xl font-bold">
+                                {formatPrice(totalAmount)}
+                            </span>
+                                                </div>
+                                                <div className="divider-ejaar border-t-2 my-6 border-dashed border-white w-2/4 h-1 mx-auto"></div>
+                                                <div className="flex justify-between items-center">
+                                                    <p className="text-2xl font-medium">Mensualité calculée sur 36 mois
+                                                       <span className="text-sm text-white italic ml-2">
+                                                        ( Pour {formatPrice(0)} sur {formatDuration(36)} )
+                                                       </span>
+                                                    </p>
+                                                        <span className="text-xl font-bold">
+                                {formatPrice(totalAmount)}
+                            </span>
+                                                </div>
+                                            </div>
+                                            {user?.role.name === UserRole.CLIENT &&
+                                                <Card className="rounded-xl bg-white/50 flex flex-col gap-2 p-4">
+                                                    <Button
+                                                        onClick={form.handleSubmit(onSubmit)}
+                                                        className="bg-ejaar-red hover:bg-ejaar-redHover text-xl"
+                                                        disabled={isCalculating}
+                                                    >
+                                                        {isCalculating ? (
+                                                            <>
+                                                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                                                Génération...
+                                                            </>
+                                                        ) : (
+                                                            <span>{user?.role.name === UserRole.CLIENT ? "Générer le devis"
+                                                                : "Simuler le devis"}</span>
+                                                        )}
+                                                    </Button>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Vérifiez bien les informations avant de soumettre votre demande.
+                                                        Le devis sera envoyé pour validation.
+                                                    </p>
+
+                                                </Card>}
+
+                                        </div>
                                     </div>
                                 </form>
                             </Form>

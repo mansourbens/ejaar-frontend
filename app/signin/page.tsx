@@ -170,9 +170,8 @@ export default function SignIn() {
 
       </div>
 
-      <div className="bg-ejaar-700 py-12 sm:px-6 lg:px-8 max-h-[200px]">
+      <div className="bg-ejaar-700 py-12 sm:px-6 lg:px-8 max-h-[300px]"></div>
 
-      </div>
     </div>
   );
 }

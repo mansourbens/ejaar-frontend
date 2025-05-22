@@ -39,10 +39,10 @@ const Process: React.FC<ProgressStepBarDemoProps> = ({ initialStep = 3 }) => {
                             Un processus   <span className="text-[#256aa3]">simplifié</span>  tout au long
                         </h1>
                         <p className="text-2xl text-justify text-[#344e69] max-w-xl lat-bold">
-                            Du devis à la mise en service, tout s’enchaîne : un clic, un accord éclair, votre parc IT opérationnel. EJAAR transforme le leasing en simple levier de croissance.                        </p>
+                            Du devis à la mise en service, tout s’enchaîne : un clic, un accord éclair, votre parc IT opérationnel. Ejaar transforme le leasing en simple levier de croissance.                        </p>
 
                     </div>
-                    <div className="flex flex-col gap-8">
+                    <div className="flex flex-col gap-8 ml-12">
 
 
                         <div className="relative perspective mb-auto min-h-[500px]">
@@ -65,20 +65,22 @@ const Process: React.FC<ProgressStepBarDemoProps> = ({ initialStep = 3 }) => {
 
                                         )}
                                     >
-                                        Choisissez vos équipements et la durée
+                                        Définissez vos besoins en matériel
                                     </h3>
                                     <p className={cn(
                                         "text-lg mt-1",
+                                        'max-w-[380px]',
+                                        'text-justify'
                                     )}>
-                                        Sélectionnez les équipements dont vous avez besoin
+                                        Identifiez les équipements à financer et la durée de location. La démarche peut être initiée par vous ou directement par votre fournisseur
                                     </p>
                                     </div>
-                                    <img src='/assets/images/step_1.png' width={150} />
+                                    <img src='/assets/images/step_1.png' className="mr-12" width={150} />
                                 </div>
 
                             </div>
                             <img src='/assets/images/arrow_right.png'
-                                 className="absolute top-[120px] right-[-12px]"
+                                 className="absolute top-[150px] right-[20px]"
                                  width={50} />
                             <div className="flex gap-4">
                                 <div className="ml-4 md:ml-0 md:mt-4 flex-1 flex gap-4">
@@ -97,15 +99,18 @@ const Process: React.FC<ProgressStepBarDemoProps> = ({ initialStep = 3 }) => {
                                         <h3
                                             className={cn(
                                                 "font-semibold text-2xl text-ejaar-800",
+                                                'text-justify'
 
                                             )}
                                         >
-                                            Obtenez votre devis et déposez votre dossier
+                                            Obtenez une offre instantanée
                                         </h3>
                                         <p className={cn(
                                             "text-lg mt-1",
+                                            'max-w-[340px]',
+                                            'text-justify'
                                         )}>
-                                            Recevez une proposition adaptée à vos besoins
+                                            Recevez un devis tout inclus (financement, assurance, maintenance) et soumettez votre dossier en ligne en quelques minutes
                                         </p>
                                     </div>
 
@@ -133,13 +138,13 @@ const Process: React.FC<ProgressStepBarDemoProps> = ({ initialStep = 3 }) => {
 
                                             )}
                                         >
-                                            Profitez & Renouvelez
+                                            Utilisez en toute sérénité
                                         </h3>
                                         <p className={cn(
                                             "text-lg mt-1",
+                                            'max-w-[370px]',
                                         )}>
-                                            Assistance 24/7, reprise ou upgrade en fin de contrat
-                                        </p>
+                                            Profitez de vos équipements avec un accompagnement continu, et choisissez la reprise ou l’upgrade en fin de contrat                                        </p>
                                     </div>
                                     <img src='/assets/images/step_3.png' width={160} />
                                 </div>
