@@ -1,8 +1,9 @@
 "use client"
 import React, {useState} from 'react';
 import { Button } from '@/components/ui/button';
-import { Computer, Server, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Link from "next/link";
+import Image from "next/image";
 import RentCalculator from "@/components/landing-page/rent-calculator";
 import {Card} from "@/components/ui/card";
 
@@ -14,87 +15,86 @@ const LandingPage = () => {
     };
 
     return (
-        <section className="relative pt-32 pb-20 overflow-hidden bg-[#fcf5eb]">
-            {/* Background Elements */}
+        <section className="relative pt-16 md:pt-24 lg:pt-32 pb-12 md:pb-20 overflow-hidden bg-[#fcf5eb]">
+            <div className="container mx-auto px-4 sm:px-6 relative z-10">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+                    {/* Text Content */}
+                    <div className="flex flex-col space-y-6 md:space-y-8 animate-fade-in w-full lg:w-1/2">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl text-[#182e43] font-bold leading-tight lg:leading-tight">
+                            Libérez votre trésorerie, <span className="text-[#256aa3]">accélérez</span> vos projets IT
+                        </h1>
 
-            {/* Grid pattern */}<div className="absolute inset-0 z-0"></div>
-
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                    <div className="flex flex-col space-y-8 animate-fade-in">
-
-                        <h1 className="text-4xl text-[#182e43] md:text-5xl lg:text-6xl font-bold leading-tight lg:leading-tight lato-bold">
-                            Libérez votre trésorerie,  <span className="text-[#256aa3]">accélérez</span>   vos projets IT                       </h1>
-
-                        <p className="text-2xl text-justify text-[#344e69] max-w-xl lat-bold">
-                            Ejaar transforme vos achats d’équipements en loyers prévisibles. Obtenez un financement en moins de 48 h, sans immobiliser de cash ni complexité administrative.
+                        <p className="text-lg sm:text-xl md:text-2xl text-justify text-[#344e69] max-w-xl">
+                            Ejaar transforme vos achats d'équipements en loyers prévisibles. Obtenez un financement en moins de 48 h, sans immobiliser de cash ni complexité administrative.
                         </p>
 
-                        <div className="flex flex-wrap gap-4">
-                            <Link href="/signin">
-                                <Button className="bg-ejaar-800 hover:bg-ejaar-700 group text-base">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                            <Link href="/signin" className="w-full sm:w-auto">
+                                <Button className="w-full sm:w-auto bg-ejaar-800 hover:bg-ejaar-700 group text-sm sm:text-base">
                                     Commencer <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                 </Button>
                             </Link>
 
-                            <Button className="ejaar-btn ejaar-btn-outline text-base"
-                                    onClick={handleFlip}
-                                    variant="outline">
+                            <Button
+                                className="w-full sm:w-auto ejaar-btn ejaar-btn-outline text-sm sm:text-base"
+                                onClick={handleFlip}
+                                variant="outline"
+                            >
                                 Simuler une location
                             </Button>
                         </div>
                     </div>
 
-                    <div className="relative perspective mb-auto min-h-[500px]">
-                        <div className={`relative w-full flip-card ${isFlipped ? 'flipped' : ''}`}>
-                            <div className="flip-card-front rounded-2xl  p-1 shadow-xl">
-                                <div className="absolute inset-0  rounded-2xl backdrop-blur-sm"></div>
-                                    <img src='/assets/backgrounds/image_5.jpg' width={800} className="absolute left-0"/>
+                    {/* Flip Card Container */}
+                    <div className="relative w-full lg:w-1/2 h-[650px] sm:h-[650px] md:h-[550px]">
+                        <div
+                            className={`relative w-full h-full transition-all duration-700 ease-in-out transform-style-preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}
+                            style={{
+                                transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0)',
+                                height: '100%'
+                            }}
+                        >
+                            {/* Front Card */}
+                            <div
+                                className="absolute w-full h-full  backface-hidden"
+                                style={{
+                                    backfaceVisibility: 'hidden',
+                                    height: '100%'
+                                }}
+                            >
+                                <div className="relative w-full h-full">
+                                    <Image
+                                        src="/assets/backgrounds/image_5.jpg"
+                                        alt="IT Equipment Leasing"
+                                        fill
+                                        className="object-cover"
+                                        priority
+                                        quality={80}
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+                                    />
+                                </div>
                             </div>
 
-                            <div className="flip-card-back rounded-2xl p-1 shadow-xl">
-                                <Card className=" m-auto bg-white/50 rounded-3xl hover:shadow-xl mb-16">
-                                    <div className=" h-full rounded-3xl p-8">
+                            {/* Back Card */}
+                            <div
+                                className="absolute w-full h-full rounded-2xl shadow-xl backface-hidden"
+                                style={{
+                                    backfaceVisibility: 'hidden',
+                                    transform: 'rotateY(180deg)',
+                                    height: '100%'
+                                }}
+                            >
+                                <Card className="h-full bg-white/50 rounded-2xl hover:shadow-xl">
+                                    <div className="h-full rounded-2xl p-4 sm:p-6 md:p-8 overflow-y-auto">
                                         <RentCalculator onBack={handleFlip} />
                                     </div>
                                 </Card>
                             </div>
                         </div>
-
-                        {/* Éléments décoratifs */}
                     </div>
                 </div>
             </div>
         </section>
-    );
-};
-
-const HeroCard = ({
-                      icon,
-                      title,
-                      description,
-                      isAnimated = false,
-                      delay = "0ms"
-                  }: {
-    icon: React.ReactNode,
-    title: string,
-    description: string,
-    isAnimated?: boolean,
-    delay?: string
-}) => {
-    return (
-        <div
-            className={`bg-white rounded-lg p-5 shadow-sm border border-gray-100 ${
-                isAnimated ? 'animate-fade-in' : ''
-            }`}
-            style={{ animationDelay: delay }}
-        >
-            <div className="w-10 h-10 rounded-lg bg-ejaar-50 flex items-center justify-center mb-3">
-                {icon}
-            </div>
-            <h3 className="text-lg font-semibold mb-2">{title}</h3>
-            <p className="text-sm text-gray-600">{description}</p>
-        </div>
     );
 };
 
