@@ -100,7 +100,6 @@ export function Solutions() {
                             alt="Partner illustration"
                         />
                         <Button
-                            size="lg"
                             className="mt-8 sm:mt-12 mb-8 sm:mb-20 bg-[#9d4833] text-gray-50 hover:bg-[#b35e49] text-lg sm:text-xl sm:px-16 h-[50px] sm:h-[60px] mx-auto"
                         >
                             Découvrez plus sur notre plateforme

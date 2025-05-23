@@ -199,13 +199,18 @@ export const FeatureCard = ({
                 type === 'green' ? `hover:bg-[#e5eae9]`: `hover:bg-[#f7ecde]`,
             )}
         >
-            <Button className={cn(`cursor-default 
-            min-w-full sm:min-w-[475px]
-            justify-start
-             group text-base sm:text-xl mb-1 sm:mb-2`,
-                type === 'green' ? `hover:bg-[#4a7971] bg-[#4a7971]`: `bg-[#deb679] hover:bg-[#deb679]`,
-                type === 'red' ? `group-hover:bg-[#9d4833]` : ``
-            )}>
+            <Button
+                className={cn(
+                    `cursor-default 
+     min-w-full sm:min-w-[475px]
+     justify-start
+     group text-base sm:text-xl mb-1 sm:mb-2 
+          h-12 sm:h-10
+     whitespace-normal break-words text-left`,
+                    type === 'green' ? `hover:bg-[#4a7971] bg-[#4a7971]` : `bg-[#deb679] hover:bg-[#deb679]`,
+                    type === 'red' ? `group-hover:bg-[#9d4833]` : ``
+                )}
+            >
                 {title}
             </Button>
             {type === `green` && icon}
