@@ -1,8 +1,9 @@
 "use client";
 
-import React, {createContext, useContext, useState, useEffect} from 'react';
-import {useRouter, usePathname} from 'next/navigation';
+import React, {createContext, useContext, useEffect, useState} from 'react';
+import {usePathname, useRouter} from 'next/navigation';
 import {User} from "@/app/users/page";
+import {UserRole} from "@/lib/utils";
 
 
 type AuthContextType = {
@@ -73,7 +74,11 @@ export default function AuthProvider({children}: { children: React.ReactNode }) 
                 router.push('/signin');
             }
             if (user && (pathname === '/signin' || pathname === '/signup')) {
-                router.push('/dashboard');
+                if (user.role.name === UserRole.CLIENT) {
+                    router.push('/quotations');
+                } else {
+                    router.push('/dashboard');
+                }
             }
         }
     }, [user, loading, pathname, router]);

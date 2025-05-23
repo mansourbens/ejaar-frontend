@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent} from '@/components/ui/card';
@@ -45,6 +45,8 @@ export default function QuotationsPage() {
     const [statusFilter, setStatusFilter] = useState('all');
     const [isLoading, setIsLoading] = useState(false);
     const {toast} = useToast();
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
     const router = useRouter();
     const pathname = usePathname();
     const handleDelete = async () => {
@@ -160,6 +162,11 @@ export default function QuotationsPage() {
         const quotations = await response.json();
         setQuotations(quotations);
         setFilteredQuotations(quotations);
+        const totalPages = Math.ceil(filteredQuotations.length / itemsPerPage);
+        const paginatedQuotations = filteredQuotations.slice(
+            (currentPage - 1) * itemsPerPage,
+            currentPage * itemsPerPage
+        );
     }
     useEffect(() => {
         getQuotations();
@@ -222,18 +229,14 @@ export default function QuotationsPage() {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Devis</h1>
-                        <p className="text-muted-foreground">
-                            Gérez et suivez tous vos dossiers de location de matériel.
+                        <h1 className="text-4xl text-ejaar-700 md:text-5xl lg:text-6xl font-bold leading-tight lg:leading-tight lato-bold">
+                            {user?.role.name === UserRole.CLIENT && `Mes ` } Devis
+                        </h1>
+
+                        <p className="text-2xl text-justify text-ejaar-800 max-w-xl lat-bold">
+                            Gérez et suivez tous vos devis de location de matériel.
                         </p>
                     </div>
-                    {user?.role.name == UserRole.CLIENT &&
-                        <Link href="/quotations/new">
-                            <Button className="bg-ejaar-800 hover:bg-ejaar-600">
-                                <Plus className="mr-2 h-4 w-4"/> Nouveau devis
-                            </Button>
-                        </Link>
-                    }
                     {user?.role.name !== UserRole.CLIENT &&
                         <Link href="/quotations/new">
                             <Button className="bg-ejaar-800 hover:bg-ejaar-600">
@@ -243,7 +246,7 @@ export default function QuotationsPage() {
                     }
                 </div>
 
-                <Card>
+                <Card className="bg-white/50 rounded-2xl ">
                     <CardContent className="pt-6">
                         {/* Search Bar with Blue Accent */}
                         <div className="relative mb-8">
@@ -258,27 +261,28 @@ export default function QuotationsPage() {
                             />
                         </div>
                         <Table>
-                            <TableHeader className="bg-blue-50">
-                                <TableRow>
-                                    <TableHead className="text-blue-800">Numéro de devis</TableHead>
-                                    <TableHead className="text-blue-800">Types de matériel</TableHead>
-                                    <TableHead className="text-blue-800">Date de demande</TableHead>
+                            <TableHeader className="bg-ejaar-700 hover:bg-ejaar-700">
+                                <TableRow className="bg-ejaar-700 hover:bg-ejaar-700">
+                                    <TableHead className="text-ejaar-beige">Numéro de devis</TableHead>
+                                    <TableHead className="text-ejaar-beige">Types de matériel</TableHead>
+                                    <TableHead className="text-ejaar-beige">Date de demande</TableHead>
                                     {user?.role.name != UserRole.CLIENT && (
                                         <>
-                                            <TableHead className="text-blue-800">Client</TableHead>
+                                            <TableHead className="text-ejaar-beige">Client</TableHead>
                                             {user?.role.name === UserRole.SUPER_ADMIN && (
-                                                <TableHead className="text-blue-800">Fournisseur</TableHead>
+                                                <TableHead className="text-ejaar-beige">Fournisseur</TableHead>
                                             )}
                                         </>
                                     )}
-                                    <TableHead className="text-right text-blue-800">{user?.role.name === UserRole.SUPER_ADMIN ?
+                                    <TableHead className="text-right text-ejaar-beige">{user?.role.name === UserRole.SUPER_ADMIN ?
                                         `Montant financé` : `Montant`}</TableHead>
                                     {user?.role.name === UserRole.SUPER_ADMIN &&
-                                        <TableHead className="text-right text-blue-800">
+                                        <TableHead className="text-right text-ejaar-beige">
                                             Mensualité
                                         </TableHead>
                                     }
-                                    <TableHead className="text-right text-blue-800">Actions</TableHead>
+                                    <TableHead className="text-right text-ejaar-beige">Mensualité</TableHead>
+                                    <TableHead className="text-right text-ejaar-beige">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -288,7 +292,7 @@ export default function QuotationsPage() {
                                         q.client?.raisonSociale.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                         q.supplier?.raisonSociale?.toLowerCase().includes(searchTerm.toLowerCase()))
                                     .map((quotation) => (
-                                        <TableRow key={quotation.id} className="bg-gray-50">
+                                        <TableRow key={quotation.id} className="bg-transparent hover:bg-gray-100">
                                             <TableCell className="font-medium">
 
                                                 {quotation.status === QuotationStatusEnum.REJECTED && <Badge
@@ -487,7 +491,234 @@ export default function QuotationsPage() {
 
                     </CardContent>
                 </Card>
-            </div>
+            </div>                        <Table>
+            <TableHeader className="bg-ejaar-700 hover:bg-ejaar-700">
+                <TableRow className="bg-ejaar-700 hover:bg-ejaar-700">
+                    <TableHead className="text-ejaar-beige">Numéro de devis</TableHead>
+                    <TableHead className="text-ejaar-beige">Types de matériel</TableHead>
+                    <TableHead className="text-ejaar-beige">Date de demande</TableHead>
+                    {user?.role.name != UserRole.CLIENT && (
+                        <>
+                            <TableHead className="text-ejaar-beige">Client</TableHead>
+                            {user?.role.name === UserRole.SUPER_ADMIN && (
+                                <TableHead className="text-ejaar-beige">Fournisseur</TableHead>
+                            )}
+                        </>
+                    )}
+                    <TableHead className="text-right text-ejaar-beige">{user?.role.name === UserRole.SUPER_ADMIN ?
+                        `Montant financé` : `Montant`}</TableHead>
+                    {user?.role.name === UserRole.SUPER_ADMIN &&
+                        <TableHead className="text-right text-ejaar-beige">
+                            Mensualité
+                        </TableHead>
+                    }
+                    <TableHead className="text-right text-ejaar-beige">Mensualité</TableHead>
+                    <TableHead className="text-right text-ejaar-beige">Actions</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {quotations
+                    .filter(q => q.status === QuotationStatusEnum.GENERE || q.status === QuotationStatusEnum.REJECTED)
+                    .filter(q => searchTerm === '' ||
+                        q.client?.raisonSociale.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        q.supplier?.raisonSociale?.toLowerCase().includes(searchTerm.toLowerCase()))
+                    .map((quotation) => (
+                        <TableRow key={quotation.id} className="bg-transparent hover:bg-gray-100">
+                            <TableCell className="font-medium">
+
+                                {quotation.status === QuotationStatusEnum.REJECTED && <Badge
+                                    className={`bg-red-100 text-red-800 hover:bg-red-200 capitalize mr-2`}>
+                                    Refusé
+                                </Badge>}
+                                {quotation.number}
+                            </TableCell> <TableCell className="font-medium">
+                            <TableCell>
+                                {quotation.devices?.split(',').map((type, index) => (
+                                    <Badge key={index} className="mr-1 text-xs p-1.5 bg-ejaar-400 hover:bg-ejaar-400 cursor-default">
+                                        {type}
+                                    </Badge>
+                                ))}
+                            </TableCell>
+                        </TableCell>
+                            <TableCell className="font-medium">
+                                {new Date(quotation.createdAt).toLocaleDateString('fr-FR')}
+                            </TableCell>
+                            {user?.role.name != UserRole.CLIENT && (
+                                <>
+                                    <TableCell>{quotation.supplier?.raisonSociale ?? '—'}</TableCell>
+                                    <TableCell>{quotation.client?.raisonSociale ?? '—'}</TableCell>
+                                </>
+                            )}
+                            <TableCell className="text-right">
+                                {quotation.amount?.toLocaleString('fr-FR', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })} DH
+                            </TableCell>
+                            <TableCell className="text-right">
+                                {quotation.totalMonthlyPayments?.toLocaleString('fr-FR', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }) ?? 0} DH
+                            </TableCell>
+                            {/*
+                                            <TableCell>
+                                                <div
+                                                    className="cursor-pointer flex items-center gap-2"
+                                                    onClick={() => {
+                                                        // Toggle expanded state for this row
+                                                        setExpandedRows(prev => ({
+                                                            ...prev,
+                                                            [quotation.id]: !prev[quotation.id]
+                                                        }));
+                                                    }}
+                                                >
+                                                    <Badge
+                                                        className={`${getStatusBadgeColor(quotation.status)} capitalize`}>
+                                                        {quotation.status}
+                                                    </Badge>
+                                                    {expandedRows[quotation.id] ? (
+                                                        <ChevronUp className="h-4 w-4 text-blue-500"/>
+                                                    ) : (
+                                                        <ChevronDown className="h-4 w-4 text-blue-500"/>
+                                                    )}
+                                                </div>
+
+                                                {expandedRows[quotation.id] && (
+                                                    <div className="mt-3 ml-2">
+                                                         Status Timeline
+                                                        <div className="relative pt-4 pb-6">
+                                                             Timeline line
+                                                            <div
+                                                                className="absolute left-4 top-6 h-1 w-[calc(100%-2rem)] bg-gray-200"></div>
+
+                                                             Timeline items
+                                                            <div className="flex justify-between relative z-10">
+                                                                 Generated
+                                                                <div className="flex flex-col items-center">
+                                                                    <div className={`w-4 h-4 rounded-full ${
+                                                                        quotation.status === QuotationStatusEnum.GENERE ?
+                                                                            'bg-blue-600 ring-2 ring-blue-300' :
+                                                                            'bg-gray-300'
+                                                                    }`}></div>
+                                                                    <span
+                                                                        className="text-xs mt-1 text-gray-600">Généré</span>
+                                                                </div>
+
+                                                                 Middle label
+                                                                <div
+                                                                    className="absolute left-1/4 top-0 transform -translate-x-1/2 text-xs text-gray-500">
+                                                                    1 jour
+                                                                </div>
+
+                                                                 Client Validated
+                                                                <div className="flex flex-col items-center">
+                                                                    <div className={`w-4 h-4 rounded-full ${
+                                                                        quotation.status === QuotationStatusEnum.VALIDE_CLIENT ?
+                                                                            'bg-green-600 ring-2 ring-green-300' :
+                                                                            quotation.status === QuotationStatusEnum.GENERE ?
+                                                                                'bg-gray-300' :
+                                                                                'bg-green-300'
+                                                                    }`}></div>
+                                                                    <span className="text-xs mt-1 text-gray-600">Validé client</span>
+                                                                </div>
+
+                                                                 Middle label
+                                                                <div
+                                                                    className="absolute left-3/4 top-0 transform -translate-x-1/2 text-xs text-gray-500">
+                                                                    2 jours
+                                                                </div>
+
+                                                                 Verification
+                                                                <div className="flex flex-col items-center">
+                                                                    <div className={`w-4 h-4 rounded-full ${
+                                                                        quotation.status === QuotationStatusEnum.VERIFICATION ?
+                                                                            'bg-amber-600 ring-2 ring-amber-300' :
+                                                                            ['GENERE', 'VALIDE_CLIENT'].includes(quotation.status) ?
+                                                                                'bg-gray-300' :
+                                                                                'bg-amber-300'
+                                                                    }`}></div>
+                                                                    <span
+                                                                        className="text-xs mt-1 text-gray-600">Vérification</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </TableCell>
+*/}
+                            <TableCell className="justify-end flex gap-2">
+                                {quotation.status === QuotationStatusEnum.GENERE &&
+                                    <TooltipProvider>
+
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <div className="inline-flex items-center cursor-pointer text-blue-600 hover:text-blue-800">
+                                                    <Info className="w-4 h-4" />
+                                                </div>
+                                            </TooltipTrigger>
+                                            <TooltipContent className="bg-white text-sm text-gray-900 shadow-md border border-gray-200 rounded px-3 py-1.5">
+                                                5 jours restants pour la validité du devis
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                }
+
+
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" size="icon" title="Actions">
+                                            <MoreVertical className="h-4 w-4"/>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem
+                                            onClick={() => handleDownloadPDF(+quotation.id)}>
+                                            <FileDown className="w-4 h-4 mr-2"/>
+                                            Télécharger
+                                        </DropdownMenuItem>
+                                        {user?.role.name === UserRole.SUPER_ADMIN && (
+                                            <DropdownMenuItem
+                                                onClick={() => {
+                                                    setActiveQuote(quotation);
+                                                    setIsDeleteDialogOpen(true);
+                                                }}
+                                                className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                                            >
+                                                <CircleXIcon className="w-4 h-4 mr-2"/>
+                                                Annuler
+                                            </DropdownMenuItem>
+                                        )}
+                                        {
+                                            user?.role.name === UserRole.CLIENT && quotation.status === QuotationStatusEnum.GENERE && (
+                                                <>
+                                                    <DropdownMenuItem
+                                                        onClick={() => {
+                                                            setActiveQuote(quotation);
+                                                            setIsValidateDialogOpen(true);
+                                                        }}
+                                                    >
+                                                        <CheckCircle2Icon className="w-4 h-4 mr-2"/>
+                                                        Valider
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        onClick={() => {
+                                                            setActiveQuote(quotation);
+                                                            setIsRejectDialogOpen(true);
+                                                        }}
+                                                    >
+                                                        <CircleXIcon className="w-4 h-4 mr-2"/>
+                                                        Refuser
+                                                    </DropdownMenuItem>
+                                                </>
+                                            )}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+            </TableBody>
+        </Table>
             <Dialog open={isValidateDialogOpen} onOpenChange={setIsValidateDialogOpen}>
                 <DialogContent className="sm:max-w-[425px] bg-white rounded-lg border border-blue-100 shadow-xl">
 

@@ -65,7 +65,11 @@ export default function SignUp() {
                 description: 'Votre compte a été créé avec succès',
                 variant: 'default',
             });
-            router.push('/dashboard');
+            if (data.userType === 'FOURNISSEUR') {
+                router.push('/dashboard');
+            } else {
+                router.push('/quotations');
+            }
         } catch (error) {
             toast({
                 title: 'Erreur',

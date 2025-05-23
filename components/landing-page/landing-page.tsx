@@ -46,7 +46,7 @@ const LandingPage = () => {
                     </div>
 
                     {/* Flip Card Container */}
-                    <div className="relative w-full lg:w-1/2 h-[650px] sm:h-[650px] md:h-[550px]">
+                    <div className="relative w-full lg:w-1/2 h-[720px] sm:h-[632px]">
                         <div
                             className={`relative w-full h-full transition-all duration-700 ease-in-out transform-style-preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}
                             style={{
@@ -85,7 +85,7 @@ const LandingPage = () => {
                                 }}
                             >
                                 <Card className="h-full bg-white/50 rounded-2xl hover:shadow-xl">
-                                    <div className="h-full rounded-2xl p-4 sm:p-6 md:p-8 overflow-y-auto">
+                                    <div className="h-full rounded-2xl p-4 sm:p-6 md:p-8">
                                         <RentCalculator onBack={handleFlip} />
                                     </div>
                                 </Card>

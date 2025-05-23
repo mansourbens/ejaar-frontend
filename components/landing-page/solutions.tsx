@@ -58,15 +58,15 @@ export function Solutions() {
                             Et pour tous types d&apos;acteurs
                         </h3>
                         <div className="z-10 flex flex-col relative">
-                            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 lg:gap-12 z-10">
-                                <div className="flex gap-2 items-center text-lg sm:text-xl my-2 text-[#4a7971]">
+                            <div className="flex sm:flex-row gap-4 sm:gap-8 lg:gap-12 z-10">
+                                <div className="flex gap-2 items-center text-sm sm:text-xl my-2 text-[#4a7971]">
                                     <span className="h-3 w-1 bg-[#4a7971]"></span> TPE/PME/ETI
                                 </div>
-                                <div className="flex gap-2 items-center text-lg sm:text-xl my-2 text-[#4a7971]">
+                                <div className="flex gap-2 items-center text-sm sm:text-xl my-2 text-[#4a7971]">
                                     <div className="h-3 w-1 bg-[#4a7971]"></div>
                                     Professions libérales
                                 </div>
-                                <div className="flex gap-2 items-center text-lg sm:text-xl my-2 text-[#4a7971]">
+                                <div className="flex gap-2 items-center text-sm sm:text-xl my-2 text-[#4a7971]">
                                     <div className="h-3 w-1 bg-[#4a7971]"></div>
                                     Auto entrepreneurs
                                 </div>
