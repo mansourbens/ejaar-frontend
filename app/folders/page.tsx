@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent} from '@/components/ui/card';
@@ -22,7 +22,6 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 
 export default function FoldersPage() {
     const {user} = useAuth();
-    const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
     const [quotations, setQuotations] = useState<Quotation[]>([]);
     const [filteredQuotations, setFilteredQuotations] = useState<Quotation[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -105,21 +104,17 @@ export default function FoldersPage() {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Dossiers</h1>
-                        <p className="text-muted-foreground">
+                        <h1 className="text-4xl text-ejaar-700 md:text-5xl font-bold leading-tight lg:leading-tight lato-bold">
+                            {user?.role.name === UserRole.CLIENT && `Mes ` } Dossiers
+                        </h1>
+
+                        <p className="text-2xl text-justify text-ejaar-800 max-w-xl lat-bold">
                             Gérez et suivez tous vos dossiers de location de matériel.
                         </p>
                     </div>
-                    {user?.role.name == UserRole.CLIENT &&
-                        <Link href="/quotations/new">
-                            <Button className="bg-ejaar-800 hover:bg-ejaar-600">
-                                <Plus className="mr-2 h-4 w-4"/> Nouveau devis
-                            </Button>
-                        </Link>
-                    }
                 </div>
 
-                <Card>
+                <Card className="bg-white/50">
                     <CardContent className="pt-6">
                         {/* Search Bar with Blue Accent */}
                         <div className="relative mb-8">
@@ -142,18 +137,18 @@ export default function FoldersPage() {
                             {/* Généré Panel */}
                             <AccordionItem
                                 value="generated"
-                                className="border border-blue-50 rounded-lg overflow-hidden bg-blue-50 transition-all"
+                                className="border rounded-lg overflow-hidden border-[#f7ecde] bg-[#f7ecde] transition-all"
                             >
-                                <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-blue-100">
+                                <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-ejaar-beige">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-2 h-8 rounded-full bg-blue-500"></div>
+                                        <div className="w-2 h-8 rounded-full bg-ejaar-800"></div>
                                         <div>
-                                            <h3 className="text-lg text-left font-semibold text-blue-900">En cours de
+                                            <h3 className="text-lg text-left font-semibold text-ejaar-700">En cours de
                                                 constitution</h3>
-                                            <p className="text-sm text-blue-600">En attente de completion par le
+                                            <p className="text-sm text-ejaar-800">En attente de completion par le
                                                 client</p>
                                         </div>
-                                        <Badge className="ml-auto bg-blue-500 hover:bg-blue-600">
+                                        <Badge className="ml-auto bg-ejaar-800 hover:bg-ejaar-800">
                                             {quotations.filter(q => q.status === QuotationStatusEnum.VALIDE_CLIENT).length}
                                         </Badge>
                                     </div>
@@ -174,25 +169,25 @@ export default function FoldersPage() {
                                             </div>
                                         ) : (
                                             <Table>
-                                                <TableHeader className="bg-blue-50">
+                                                <TableHeader className="bg-ejaar-700">
                                                     <TableRow>
-                                                        <TableHead className="text-blue-800">Numéro</TableHead>
-                                                        <TableHead className="text-blue-800">Date</TableHead>
+                                                        <TableHead className="text-ejaar-beige">Numéro</TableHead>
+                                                        <TableHead className="text-ejaar-beige">Date</TableHead>
                                                         {user?.role.name != UserRole.CLIENT && (
                                                             <>
                                                                 <TableHead
-                                                                    className="text-blue-800">Fournisseur</TableHead>
-                                                                <TableHead className="text-blue-800">Client</TableHead>
+                                                                    className="text-ejaar-beige">Fournisseur</TableHead>
+                                                                <TableHead className="text-ejaar-beige">Client</TableHead>
                                                             </>
                                                         )}
                                                         <TableHead
-                                                            className="text-right text-blue-800">Montant</TableHead>
+                                                            className="text-right text-ejaar-beige">Montant</TableHead>
                                                         <TableHead
-                                                            className="hidden md:table-cell text-blue-800">Durée</TableHead>
+                                                            className="hidden md:table-cell text-ejaar-beige">Durée</TableHead>
 
-                                                        <TableHead className="text-blue-800">Statut</TableHead>
+                                                        <TableHead className="text-ejaar-beige">Statut</TableHead>
                                                         <TableHead
-                                                            className="text-right text-blue-800">Actions</TableHead>
+                                                            className="text-right text-ejaar-beige">Actions</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
@@ -272,16 +267,16 @@ export default function FoldersPage() {
                             {/* En vérification Panel */}
                             <AccordionItem
                                 value="verification"
-                                className="border border-blue-50 rounded-lg overflow-hidden bg-blue-50 transition-all"
+                                className="border rounded-lg overflow-hidden border-[#f7ecde] bg-[#f7ecde] transition-all"
                             >
-                                <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-blue-100">
+                                <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-ejaar-beige">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-2 h-8 rounded-full bg-blue-500"></div>
+                                        <div className="w-2 h-8 rounded-full bg-ejaar-redHover"></div>
                                         <div>
-                                            <h3 className="text-lg font-semibold text-blue-900">En Vérification</h3>
-                                            <p className="text-sm text-blue-600">En cours d'examen</p>
+                                            <h3 className="text-lg font-semibold text-ejaar-700">En Vérification</h3>
+                                            <p className="text-sm text-ejaar-redHover">En cours d'examen</p>
                                         </div>
-                                        <Badge className="ml-auto bg-amber-500 hover:bg-amber-600">
+                                        <Badge className="ml-auto bg-ejaar-redHover hover:bg-ejaar-redHover">
                                             {quotations.filter(q => q.status === QuotationStatusEnum.VERIFICATION).length}
                                         </Badge>
                                     </div>
@@ -302,25 +297,25 @@ export default function FoldersPage() {
                                             </div>
                                         ) : (
                                             <Table>
-                                                <TableHeader className="bg-blue-50">
+                                                <TableHeader className="bg-ejaar-700">
                                                     <TableRow>
-                                                        <TableHead className="text-blue-800">Numéro</TableHead>
-                                                        <TableHead className="text-blue-800">Date</TableHead>
+                                                        <TableHead className="text-ejaar-beige">Numéro</TableHead>
+                                                        <TableHead className="text-ejaar-beige">Date</TableHead>
                                                         {user?.role.name != UserRole.CLIENT && (
                                                             <>
                                                                 <TableHead
-                                                                    className="text-blue-800">Fournisseur</TableHead>
-                                                                <TableHead className="text-blue-800">Client</TableHead>
+                                                                    className="text-ejaar-beige">Fournisseur</TableHead>
+                                                                <TableHead className="text-ejaar-beige">Client</TableHead>
                                                             </>
                                                         )}
                                                         <TableHead
-                                                            className="text-right text-blue-800">Montant</TableHead>
+                                                            className="text-right text-ejaar-beige">Montant</TableHead>
                                                         <TableHead
-                                                            className="hidden md:table-cell text-blue-800">Durée</TableHead>
+                                                            className="hidden md:table-cell text-ejaar-beige">Durée</TableHead>
 
-                                                        <TableHead className="text-blue-800">Statut</TableHead>
+                                                        <TableHead className="text-ejaar-beige">Statut</TableHead>
                                                         <TableHead
-                                                            className="text-right text-blue-800">Actions</TableHead>
+                                                            className="text-right text-ejaar-beige">Actions</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
@@ -400,16 +395,16 @@ export default function FoldersPage() {
                             {/* Validé banque Panel */}
                             <AccordionItem
                                 value="validated"
-                                className="border border-blue-50 rounded-lg overflow-hidden bg-blue-50 transition-all"
+                                className="border rounded-lg overflow-hidden border-[#f7ecde] bg-[#f7ecde] transition-all"
                             >
-                                <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-blue-100">
+                                <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-ejaar-beige">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-2 h-8 rounded-full bg-green-500"></div>
+                                        <div className="w-2 h-8 rounded-full bg-[#4a7971]"></div>
                                         <div>
-                                            <h3 className="text-lg text-left font-semibold text-blue-900">Approuvés par la banque</h3>
-                                            <p className="text-sm text-blue-600">En attente de signature de contrat</p>
+                                            <h3 className="text-lg text-left font-semibold text-ejaar-700">Approuvés par la banque</h3>
+                                            <p className="text-sm  text-[#4a7971]">En attente de signature de contrat</p>
                                         </div>
-                                        <Badge className="ml-auto bg-green-500 hover:bg-green-600">
+                                        <Badge className="ml-auto  bg-[#4a7971] hover:bg-[#4a7971]">
                                             {quotations.filter(q => q.status === QuotationStatusEnum.VALIDE).length}
                                         </Badge>
                                     </div>
@@ -432,25 +427,25 @@ export default function FoldersPage() {
                                                 </div>
                                             ) : (
                                                 <Table>
-                                                    <TableHeader className="bg-blue-50">
+                                                    <TableHeader className="bg-ejaar-700">
                                                         <TableRow>
-                                                            <TableHead className="text-blue-800">Numéro</TableHead>
-                                                            <TableHead className="text-blue-800">Date</TableHead>
+                                                            <TableHead className="text-ejaar-beige">Numéro</TableHead>
+                                                            <TableHead className="text-ejaar-beige">Date</TableHead>
                                                             {user?.role.name != UserRole.CLIENT && (
                                                                 <>
                                                                     <TableHead
-                                                                        className="text-blue-800">Fournisseur</TableHead>
-                                                                    <TableHead className="text-blue-800">Client</TableHead>
+                                                                        className="text-ejaar-beige">Fournisseur</TableHead>
+                                                                    <TableHead className="text-ejaar-beige">Client</TableHead>
                                                                 </>
                                                             )}
                                                             <TableHead
-                                                                className="text-right text-blue-800">Montant</TableHead>
+                                                                className="text-right text-ejaar-beige">Montant</TableHead>
                                                             <TableHead
-                                                                className="hidden md:table-cell text-blue-800">Durée</TableHead>
+                                                                className="hidden md:table-cell text-ejaar-beige">Durée</TableHead>
 
-                                                            <TableHead className="text-blue-800">Statut</TableHead>
+                                                            <TableHead className="text-ejaar-beige">Statut</TableHead>
                                                             <TableHead
-                                                                className="text-right text-blue-800">Actions</TableHead>
+                                                                className="text-right text-ejaar-beige">Actions</TableHead>
                                                         </TableRow>
                                                     </TableHeader>
                                                     <TableBody>
