@@ -350,19 +350,19 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
                 {/* Blue Top Banner */}
 
                 <div className="flex flex-col">
-                    <Card className="border-blue-100 bg-blue-50">
+                    <Card className="bg-white/50 mx-20  ">
                         <div className="flex items-start gap-6 p-4">
                             {/* Title Section */}
                             <div className="flex items-center gap-6 min-w-[180px]">
                                 <Link href="/folders">
-                                    <Button size="sm" className="text-blue-100 bg-ejaar-900 hover:bg-ejaar-800">
+                                    <Button size="sm" className="text-blue-100 bg-ejaar-700 hover:bg-ejaar-900">
                                         <ArrowLeft className="h-4 w-4 mr-1"/>
                                         Retour
                                     </Button>
                                 </Link>
                                 <FileText className="h-5 w-5 text-ejaar-800"/>
                                 <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">Complétion du dossier</h3>
+                                    <h3 className="text-lg font-semibold text-gray-700">Complétion du dossier</h3>
                                     <p className="text-sm text-gray-600">Téléversez les documents requis pour compléter
                                         votre dossier</p>
                                 </div>
@@ -384,7 +384,7 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
                                     <p className="text-xs font-medium text-ejaar-800">Matériel</p>
                                     {quotation.devices?.split(',').map((type, index) => (
                                         <Badge key={index}
-                                               className="mr-1 mb-1 text-[10px] p-1.5 bg-ejaar-400 hover:bg-ejaar-400 cursor-default">
+                                               className="mr-1 mb-1 text-[10px] p-1.5 bg-ejaar-700 hover:bg-ejaar-700 cursor-default">
                                             {type}
                                         </Badge>
                                     ))}
@@ -398,32 +398,32 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
                             </div>
                         </div>
                     </Card>
-                    <div className="py-8 px-4 sm:px-6 lg:px-8">
+                    <div className="pt-8 px-4 sm:px-6 lg:px-8">
                         <div className="max-w-5xl mx-auto">
                             <header className="mb-8 text-center">
-                                <h1 className="text-xl text-blue-900 mb-2 lato-bold">
+                                <h1 className="text-xl text-ejaar-700 mb-2 lato-bold">
                                     Documents à fournir pour une demande de leasing
                                 </h1>
-                                <p className="text-ejaar-800/80 lato-regular text-sm max-w-xl mx-auto">
+                                <p className="text-ejaar-900/80 lato-regular text-sm max-w-xl mx-auto">
                                     Veuillez téléverser les documents requis pour compléter votre demande de leasing.
                                     Tous les fichiers doivent être au format PDF, DOC, DOCX, JPG ou PNG.
                                 </p>
                             </header>
 
-                            <div className="bg-white rounded-2xl shadow-sm border border-blue-100 p-4 sm:p-6 mb-6">
+                            <div className="bg-white/50 rounded-2xl shadow-sm hover:shadow-xl border  p-4 sm:p-6 mb-6">
                                 <div className="flex justify-between items-center mb-6">
-                                    <h2 className="text-xl font-bold text-blue-900">
+                                    <h2 className="text-xl font-bold text-ejaar-700">
                                         Statut de votre dossier
                                     </h2>
                                     <div
-                                        className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                                        className="flex items-center bg-ejaar-red text-white px-3 py-1 rounded-full text-sm font-medium">
                                         {uploadedDocuments} sur {totalDocuments} documents obligatoires téléchargés
                                     </div>
                                 </div>
 
-                                <div className="h-2 w-full bg-blue-100 rounded-full mb-6">
+                                <div className="h-2 w-full bg-gray-100 rounded-full mb-6">
                                     <div
-                                        className="h-full bg-blue-600 rounded-full transition-all duration-500 ease-out"
+                                        className="h-full bg-ejaar-700 rounded-full transition-all duration-500 ease-out"
                                         style={{width: `${progress}%`}}
                                     ></div>
                                 </div>
@@ -448,7 +448,7 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
                                             <div className="flex gap-2">
                                                 <Link href="/folders">
                                                     <Button
-                                                        className="px-6 py-2 bg-white hover:bg-ejaar-50 border-ejaar-800 border-2 text-ejaar-800"
+                                                        className="px-6 py-2 bg-white hover:bg-transparent border-ejaar-800 border-2 text-ejaar-800"
                                                     >
                                                         Enregistrer pour plus tard
                                                     </Button>
@@ -457,7 +457,7 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
                                                 <Button
                                                     onClick={submitDocuments}
                                                     type="button"
-                                                    className="px-6 py-2 bg-ejaar-900 hover:bg-ejaar-800 text-white"
+                                                    className="px-6 py-2 bg-ejaar-red hover:bg-ejaar-redHover text-white"
                                                 >
                                                     Soumettre les documents
                                                 </Button>

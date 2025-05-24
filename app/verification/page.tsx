@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent} from '@/components/ui/card';
@@ -175,8 +175,8 @@ export default function FoldersPage() {
                                             .length === 0 ? (
                                             <div className="py-12 text-center">
                                                 <FileSearch className="mx-auto h-10 w-10 text-blue-300"/>
-                                                <h4 className="mt-4 font-medium text-blue-900">Aucun devis généré</h4>
-                                                <p className="mt-1 text-sm text-blue-600">Tous les devis générés
+                                                <h4 className="mt-4 font-medium text-ejaar-700">Aucun devis généré</h4>
+                                                <p className="mt-1 text-sm text-gray-600">Tous les devis générés
                                                     apparaîtront ici</p>
                                             </div>
                                         ) : (

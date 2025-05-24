@@ -47,10 +47,10 @@ const FileUploadSection: React.FC<FileUploadSectionProps> = ({
                 <div className="section-title cursor-pointer"
                      onClick={toggleExpanded}
                      aria-expanded={isExpanded}>
-                    <Folder className="text-blue-600" size={20} />
-                    <span>{section.title} {section.id != 'section-4' && <span className="text-red-600">*</span>}</span>
+                    <Folder className="text-ejaar-800" size={20} />
+                    <span className="text-ejaar-700">{section.title} {section.id != 'section-4' && <span className="text-red-600">*</span>}</span>
                     <div className="ml-auto flex items-center gap-3">
-                        <div className="text-sm text-blue-600 font-medium">
+                        <div className="text-sm text-ejaar-700 font-medium">
                             {uploadedDocuments}/{totalDocuments}
                         </div>
                         {isExpanded ? (

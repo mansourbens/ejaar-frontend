@@ -320,7 +320,7 @@ export default function QuotationsPage() {
                                                         <Button
                                                             variant="ghost"
                                                             onClick={() => setSearchTerm('')}
-                                                            className="text-blue-600"
+                                                            className="text-ejaar-800   "
                                                         >
                                                             Effacer la recherche
                                                         </Button>
@@ -344,7 +344,7 @@ export default function QuotationsPage() {
                                                     {quotation.devices?.split(',').map((type, index) => (
                                                         <Badge
                                                             key={index}
-                                                            className="mr-1 text-xs p-1.5 bg-ejaar-400 hover:bg-ejaar-400 cursor-default"
+                                                            className="mr-1 text-xs p-1.5 bg-ejaar-800 hover:bg-ejaar-800 cursor-default"
                                                         >
                                                             {type}
                                                         </Badge>

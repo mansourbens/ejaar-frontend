@@ -53,7 +53,7 @@ export default function FoldersPage() {
 
         if (searchTerm) {
             filtered = filtered.filter(quote =>
-                quote.id.toLowerCase().includes(searchTerm.toLowerCase())
+                quote.number.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
 
@@ -163,8 +163,8 @@ export default function FoldersPage() {
                                             .length === 0 ? (
                                             <div className="py-12 text-center">
                                                 <FileSearch className="mx-auto h-10 w-10 text-blue-300"/>
-                                                <h4 className="mt-4 font-medium text-blue-900">Aucun devis généré</h4>
-                                                <p className="mt-1 text-sm text-blue-600">Tous les devis générés
+                                                <h4 className="mt-4 font-medium text-ejaar-700">Aucun devis généré</h4>
+                                                <p className="mt-1 text-sm text-gray-600">Tous les devis générés
                                                     apparaîtront ici</p>
                                             </div>
                                         ) : (
@@ -291,8 +291,8 @@ export default function FoldersPage() {
                                             .length === 0 ? (
                                             <div className="py-12 text-center">
                                                 <FileSearch className="mx-auto h-10 w-10 text-blue-300"/>
-                                                <h4 className="mt-4 font-medium text-blue-900">Aucun devis généré</h4>
-                                                <p className="mt-1 text-sm text-blue-600">Tous les devis générés
+                                                <h4 className="mt-4 font-medium text-ejaar-700">Aucun devis généré</h4>
+                                                <p className="mt-1 text-sm text-gray-600">Tous les devis générés
                                                     apparaîtront ici</p>
                                             </div>
                                         ) : (
@@ -420,9 +420,8 @@ export default function FoldersPage() {
                                                 .length === 0 ? (
                                                 <div className="py-12 text-center">
                                                     <FileSearch className="mx-auto h-10 w-10 text-blue-300"/>
-                                                    <h4 className="mt-4 font-medium text-blue-900">Aucun devis
-                                                        généré</h4>
-                                                    <p className="mt-1 text-sm text-blue-600">Tous les devis générés
+                                                    <h4 className="mt-4 font-medium text-ejaar-700">Aucun devis généré</h4>
+                                                    <p className="mt-1 text-sm text-gray-600">Tous les devis générés
                                                         apparaîtront ici</p>
                                                 </div>
                                             ) : (
