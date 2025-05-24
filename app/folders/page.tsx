@@ -101,7 +101,7 @@ export default function FoldersPage() {
 
     return (
         <MainLayout>
-            <div className="space-y-6">
+            <div className="space-y-6 px-12">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-4xl text-ejaar-700 md:text-5xl font-bold leading-tight lg:leading-tight lato-bold">

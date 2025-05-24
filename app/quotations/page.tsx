@@ -248,7 +248,7 @@ export default function QuotationsPage() {
 
     return (
         <MainLayout>
-            <div className="space-y-6">
+            <div className="space-y-6 px-12">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-4xl text-ejaar-700 md:text-5xl lg:text-6xl font-bold leading-tight lg:leading-tight lato-bold">
@@ -259,13 +259,6 @@ export default function QuotationsPage() {
                             Gérez et suivez tous vos devis de location de matériel.
                         </p>
                     </div>
-                    {user?.role.name !== UserRole.CLIENT &&
-                        <Link href="/quotations/new">
-                            <Button className="bg-ejaar-800 hover:bg-ejaar-600">
-                                <Settings2 className="mr-2 h-4 w-4"/> Simuler un devis
-                            </Button>
-                        </Link>
-                    }
                 </div>
 
                 <Card className="bg-white/50 rounded-2xl">

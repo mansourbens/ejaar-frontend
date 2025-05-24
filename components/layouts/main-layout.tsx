@@ -1,15 +1,29 @@
 "use client";
 
 import React, { useState } from 'react';
-import {Menu, Sun, Moon, Bell, FileTextIcon, FoldersIcon, PlusCircleIcon, User2Icon} from 'lucide-react';
+import {
+    Menu,
+    Sun,
+    Moon,
+    Bell,
+    FileTextIcon,
+    FoldersIcon,
+    PlusCircleIcon,
+    User2Icon,
+    MoreVertical,
+    FileDown, CircleXIcon, CheckCircle2Icon, LogOutIcon, Settings2Icon, CogIcon
+} from 'lucide-react';
 import { useAuth } from '@/components/auth/auth-provider';
 import { useTheme } from 'next-themes';
 import Sidebar from '@/components/sidebar/sidebar';
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import {UserRole} from "@/lib/utils";
+import {QuotationStatusEnum} from "@/lib/mock-data";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { theme, setTheme } = useTheme();
 
@@ -45,21 +59,27 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                 <Link href="/quotations" className="overflow-auto">
                                     <Button className="bg-ejaar-700 hover:bg-ejaar-700 hover:shadow-xl group text-base">
                                         <FileTextIcon className="h-5 w-5 mr-3" />
-                                        Mes Devis
+                                        {user?.role.name === UserRole.CLIENT && `Mes` } Devis
                                     </Button>
                                 </Link>
                                 <Link href="/folders">
                                     <Button className="bg-ejaar-700 hover:bg-ejaar-700 hover:shadow-xl group text-base">
                                         <FoldersIcon className="h-5 w-5 mr-3" />
-                                        Mes Dossiers
+                                        {user?.role.name === UserRole.CLIENT && `Mes` } Dossiers
                                     </Button>
                                 </Link>
-                                <Link href="/quotations/new">
+                                <Link href="/settings">
+                                    <Button className="bg-ejaar-700 hover:bg-ejaar-700 hover:shadow-xl group text-base">
+                                        <CogIcon className="h-5 w-5 mr-3" />
+                                        Paramétrage
+                                    </Button>
+                                </Link>
+                                {user?.role.name === UserRole.CLIENT && <Link href="/quotations/new">
                                     <Button className="bg-[#9d4833] hover:bg-[#b35e49] group text-base">
                                         <PlusCircleIcon className="h-5 w-5 mr-3" />
                                         Nouveau devis
                                     </Button>
-                                </Link>
+                                </Link>}
                             </nav>
                             <div className="divider-ejaar h-8 w-0.5 bg-[#4a7971] my-auto mx-4"></div>
                             <div className="flex ml-2">
@@ -69,9 +89,20 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                 </button>
                             </div>
                             <div className="flex ml-2">
-                                <button className="p-2 relative rounded-md text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <User2Icon className="h-5 w-5" />
-                                </button>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <button className="p-2 relative rounded-md text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                            <User2Icon className="h-5 w-5" />
+                                        </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem onClick={logout} className="text-red-500">
+                                            <LogOutIcon className="w-4 h-4 mr-2" />
+                                            Se déconnecter
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+
                             </div>
                         </div>
                     </div>

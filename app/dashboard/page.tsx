@@ -372,13 +372,6 @@ export default function Dashboard() {
                        <div>
                          <h1 className="text-2xl font-bold tracking-tight">Tableau de bord</h1>
                        </div>
-                       { user?.role.name == UserRole.CLIENT &&
-                           <Link href="/quotations/new">
-                             <Button className="bg-ejaar-800 hover:bg-ejaar-700">
-                               <Plus className="mr-2 h-4 w-4" /> Nouveau devis
-                             </Button>
-                           </Link>
-                       }
 
                      </div>
 

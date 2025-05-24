@@ -50,16 +50,16 @@ const updateTauxLoyer = async (data: TauxLoyerMapping): Promise<void> => {
 const getCommercialRate = async (): Promise<number> => {
     const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/commercial-margin/1`);
     const data = await response.json();
-    return data.rate;
+    return data.tauxMargeCommerciale * 100;
 };
 
 const updateCommercialRate = async (rate: number): Promise<void> => {
     await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/commercial-margin/1`, {
-        method: 'POST',
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ rate }),
+        body: JSON.stringify({ tauxMargeCommerciale: rate ? rate/100 : 0 }),
     });
 };
 
@@ -170,8 +170,8 @@ export const RateConfig = () => {
 
     return (
         <div className="w-full max-w-4xl mx-auto h-full space-y-6">
-            <Card>
-                <CardHeader className="bg-ejaar-800 text-white">
+            <Card className="bg-white/50">
+                <CardHeader className="bg-ejaar-700 text-white">
                     <CardTitle>Configuration des taux de loyer</CardTitle>
                     <CardDescription className="text-ejaar-100">
                         Configurez les taux banque et spread par catégorie de CA
@@ -194,10 +194,10 @@ export const RateConfig = () => {
                                     </th>
                                 </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
+                                <tbody className="bg-transparent divide-y divide-gray-200">
                                 {CATEGORIES_ORDER.map(categorie => (
                                     <tr key={categorie}>
-                                        <td className="px-6 py-2 whitespace-nowrap text-sm font-medium text-blue-900 lato-bold">
+                                        <td className="px-6 py-2 whitespace-nowrap text-sm font-medium text-ejaar-700 lato-bold">
                                             {categorie}
                                         </td>
                                         <td className="px-6 py-2 whitespace-nowrap">
@@ -231,7 +231,7 @@ export const RateConfig = () => {
                         <div className="mt-4 flex justify-end">
                             <Button
                                 type="submit"
-                                className="bg-ejaar-800 hover:bg-ejaar-900 text-white"
+                                className="bg-ejaar-red hover:bg-ejaar-redHover text-white"
                                 disabled={isLoading}
                             >
                                 {isLoading ? "Enregistrement..." : "Enregistrer les modifications"}
@@ -241,8 +241,8 @@ export const RateConfig = () => {
                 </CardContent>
             </Card>
 
-            <Card>
-                <CardHeader className="bg-ejaar-800 text-white">
+            <Card className="bg-white/50">
+                <CardHeader className="bg-ejaar-700 text-white">
                     <CardTitle>Configuration du taux de marge commerciale</CardTitle>
                     <CardDescription className="text-ejaar-100">
                         Définissez le taux de marge commerciale global
@@ -251,7 +251,7 @@ export const RateConfig = () => {
                 <CardContent className="pt-6">
                     <form onSubmit={handleCommercialRateSubmit} className="space-y-4">
                         <div className="flex items-center gap-4">
-                            <Label htmlFor="commercialRate" className="flex-shrink-0">
+                            <Label htmlFor="commercialRate" className="flex-shrink-0 text-ejaar-700">
                                 Taux de marge commerciale (%)
                             </Label>
                             <Input
@@ -268,7 +268,7 @@ export const RateConfig = () => {
                         <div className="flex justify-end">
                             <Button
                                 type="submit"
-                                className="bg-ejaar-800 hover:bg-ejaar-900 text-white"
+                                className="bg-ejaar-red hover:bg-ejaar-redHover text-white"
                                 disabled={isCommercialRateLoading}
                             >
                                 {isCommercialRateLoading ? "Enregistrement..." : "Enregistrer le taux"}

@@ -150,8 +150,8 @@ const ResidualConfig = () => {
 
     return (
         <div className="w-full max-w-4xl mx-auto">
-            <Card>
-                <CardHeader className="bg-ejaar-800 text-white">
+            <Card className="bg-white/50">
+                <CardHeader className="bg-ejaar-700 text-white">
                     <CardTitle>Configuration des valeurs résiduelles</CardTitle>
                     <CardDescription className="text-ejaar-100">
                         Configurez les valeurs résiduelles en % par matériel et durée
@@ -174,7 +174,7 @@ const ResidualConfig = () => {
                                         ))}
                                     </tr>
                                     </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
+                                    <tbody className="bg-transparent divide-y divide-gray-200">
                                     {Object.entries(mapping).map(([equipment, values]) => (
                                         <tr key={equipment}>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -205,7 +205,7 @@ const ResidualConfig = () => {
                             <div className="mt-4 flex justify-between">
                                 <Button
                                     type="submit"
-                                    className="bg-ejaar-800 hover:bg-ejaar-700 text-white"
+                                    className="bg-ejaar-red hover:bg-ejaar-redHover text-white"
                                     disabled={isLoading}
                                 >
                                     {isLoading ? "Enregistrement..." : "Enregistrer les modifications"}

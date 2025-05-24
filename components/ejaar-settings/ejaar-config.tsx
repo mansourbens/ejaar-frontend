@@ -86,8 +86,8 @@ const EjaarConfig = () => {
     return (
         <div className="w-full max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold text-blue-900">Paramètrage du module de calcul</h1>
-            <Card>
-                <CardHeader className="bg-ejaar-800 text-white">
+            <Card className="bg-white/50">
+                <CardHeader className="bg-ejaar-700 text-white">
                     <CardTitle>Configuration des constantes</CardTitle>
                     <CardDescription className="text-ejaar-100">
                         Configurez les constantes utilisées dans la simulation de leasing
@@ -121,7 +121,7 @@ const EjaarConfig = () => {
 
                             <Button
                                 type="submit"
-                                className="bg-ejaar-800 hover:bg-ejaar-700 text-white w-full mt-4"
+                                className="bg-ejaar-red hover:bg-ejaar-redHover text-white w-full mt-4"
                                 disabled={isLoading}
                             >
                                 {isLoading ? "Enregistrement..." : "Enregistrer les modifications"}

@@ -36,6 +36,7 @@ export const CommercialMarginConfig = () => {
             try {
                 setIsLoading(true);
                 const data = await getCommercialMargin();
+                console.log(data);
                 setTauxMarge(data.tauxMargeCommerciale);
             } catch (error) {
                 toast({
