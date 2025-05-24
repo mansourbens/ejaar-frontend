@@ -55,7 +55,7 @@ export default function NewQuotationPage() {
     const router = useRouter();
     const {toast} = useToast();
     const [isCalculating, setIsCalculating] = useState(false);
-    const [clientCA, setClientCA] = useState<CategorieCA>(CategorieCA.MOINS_DE_5M);
+    const [clientCA, setClientCA] = useState<CategorieCA | null>(CategorieCA.MOINS_DE_5M);
     const [tauxLoyerConfig, setTauxLoyerConfig] = useState<TauxLoyerEntry[]>([]);
     const [residualConfig, setResidualConfig] = useState<ResidualConfigEntry[]>([]);
     type ResidualConfigEntry = {
