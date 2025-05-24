@@ -13,7 +13,7 @@ import {Input} from '@/components/ui/input';
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from '@/components/ui/form';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from '@/components/ui/select';
 import {useToast} from '@/hooks/use-toast';
-import {calculateTotalAmount, durationOptions, hardwareTypes} from '@/lib/mock-data';
+import {calculateTotalAmount, Device, durationOptions, hardwareTypes} from '@/lib/mock-data';
 import MainLayout from "@/components/layouts/main-layout";
 import {useAuth} from "@/components/auth/auth-provider";
 import {fetchWithToken, UserRole} from "@/lib/utils";
@@ -131,10 +131,14 @@ export default function NewQuotationPage() {
         control: form.control,
         name: "devices",
     });
+    const calculateAmount = (devices: any[]) => {
+        return devices.reduce((total, device) => total + (device.unitCost * device.units), 0);
+    };
 
     const devices = form.watch('devices');
-    const totalAmount24 = calculateTotalAmount(devices.filter(device => device.duration === `24`));
-    const totalAmount36 = calculateTotalAmount(devices.filter(device => device.duration === `36`));
+    const totalAmount24 = calculateAmount(devices.filter(device => device.duration === `24`));
+    const totalAmount36 = calculateAmount(devices.filter(device => device.duration === `36`));
+
     const monthlyAmount24 = calculateMonthlyAmounts().monthly24;
     const monthlyAmount36 = calculateMonthlyAmounts().monthly36;
 
