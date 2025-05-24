@@ -5,6 +5,7 @@ export interface Device {
   type: string;
   unitCost: number;
   units: number;
+  duration: number;
 }
 export interface Client {
   raisonSociale: string;
@@ -37,7 +38,6 @@ export interface Quotation {
 
 // Hardware type options
 export const hardwareTypes = [
-  'Ordinateur de bureau',
   'Ordinateur portable',
   'Serveur',
   'Équipement réseau',
@@ -83,5 +83,6 @@ export const calculateLeaseAmount = (price: number, duration: string, returnRate
 };
 
 export const calculateTotalAmount = (devices: Device[]) => {
+  console.log(devices);
   return devices.reduce((total, device) => total + (device.unitCost * device.units), 0);
 };

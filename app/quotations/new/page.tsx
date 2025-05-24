@@ -1,7 +1,7 @@
 "use client";
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {useFieldArray, useForm} from 'react-hook-form';
 import {z} from 'zod';
@@ -19,6 +19,7 @@ import {useAuth} from "@/components/auth/auth-provider";
 import {fetchWithToken, UserRole} from "@/lib/utils";
 import {Label} from "@/components/ui/label";
 import {CategorieCA} from "@/components/ejaar-settings/rate-config";
+import {performCalculations} from "@/components/ejaar-settings/calculations";
 
 const deviceSchema = z.object({
     type: z.string({
@@ -55,7 +56,59 @@ export default function NewQuotationPage() {
     const {toast} = useToast();
     const [isCalculating, setIsCalculating] = useState(false);
     const [clientCA, setClientCA] = useState<CategorieCA>(CategorieCA.MOINS_DE_5M);
+    const [tauxLoyerConfig, setTauxLoyerConfig] = useState<TauxLoyerEntry[]>([]);
+    const [residualConfig, setResidualConfig] = useState<ResidualConfigEntry[]>([]);
+    type ResidualConfigEntry = {
+        device: string;
+        months24: string;
+        months36: string;
+    };
+    type TauxLoyerEntry = {
+        categorieCA: string;
+        tauxBanque: string;
+        spread: string;
+    };
+    type DurationKey = 'months24' | 'months36';
+    function toDurationKey(months: number): DurationKey {
+        if (months === 24) return 'months24';
+        if (months === 36) return 'months36';
+        throw new Error(`Unsupported duration: ${months}`);
+    }
+    useEffect(() => {
+        const loadConfigs = async () => {
+            try {
+                const [tauxResponse, residualResponse] = await Promise.all([
+                    fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/rate-config`),
+                    fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/residual-config`)
+                ]);
 
+                setTauxLoyerConfig(await tauxResponse.json());
+                setResidualConfig(await residualResponse.json());
+            } catch (error) {
+                console.error('Failed to load configuration:', error);
+            }
+        };
+        loadConfigs();
+    }, []);
+    function buildResidualValueMap(data: ResidualConfigEntry[]) {
+        return data.reduce((acc, curr) => {
+            acc[curr.device] = {
+                months24: parseFloat(curr.months24),
+                months36: parseFloat(curr.months36),
+            };
+            return acc;
+        }, {} as Record<string, { months24: number; months36: number }>);
+    }
+
+    function buildTauxLoyerMap(data: TauxLoyerEntry[]) {
+        return data.reduce((acc, curr) => {
+            acc[curr.categorieCA] = {
+                tauxBanque: parseFloat(curr.tauxBanque),
+                spread: parseFloat(curr.spread),
+            };
+            return acc;
+        }, {} as Record<string, { tauxBanque: number; spread: number }>);
+    }
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -69,7 +122,9 @@ export default function NewQuotationPage() {
             }],
         },
     });
-
+    useEffect(() => {
+        setClientCA(user?.caCategory ?? null)
+    }, [user]);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const {fields, append, remove} = useFieldArray({
@@ -78,7 +133,57 @@ export default function NewQuotationPage() {
     });
 
     const devices = form.watch('devices');
-    const totalAmount = calculateTotalAmount(devices);
+    const totalAmount24 = calculateTotalAmount(devices.filter(device => device.duration === `24`));
+    const totalAmount36 = calculateTotalAmount(devices.filter(device => device.duration === `36`));
+    const monthlyAmount24 = calculateMonthlyAmounts().monthly24;
+    const monthlyAmount36 = calculateMonthlyAmounts().monthly36;
+
+    function calculateMonthlyAmounts() {
+        if (devices.length && clientCA && tauxLoyerConfig.length && residualConfig.length) {
+
+            const tauxMap = buildTauxLoyerMap(tauxLoyerConfig);
+            const residualMap = buildResidualValueMap(residualConfig);
+            const durationKey24 = toDurationKey(24); // type-safe conversion
+            const durationKey36 = toDurationKey(36); // type-safe conversion
+            const spread = tauxMap[clientCA].spread;
+            const leasingRate = tauxMap[clientCA].tauxBanque;
+            let monthly24 = 0;
+            let monthly36 = 0;
+            for (let device of devices.filter(device => device.duration === `24` && device.type)) {
+                console.log(residualMap);
+                console.log(device.type);
+                const residualValuePercentage = residualMap[device.type][durationKey24];
+                const res = performCalculations(
+                    totalAmount24,
+                    24,
+                    residualValuePercentage,
+                    spread,
+                    leasingRate
+                );
+                monthly24 += res.monthlyPayment;
+            }
+            for (let device of devices.filter(device => device.duration === `36` && device.type)) {
+
+                const residualValuePercentage = residualMap[device.type][durationKey36];
+                const res = performCalculations(
+                    totalAmount36,
+                    36,
+                    residualValuePercentage,
+                    spread,
+                    leasingRate
+                );
+                monthly36 += res.monthlyPayment;
+            }
+            return  {
+                monthly24,
+                monthly36
+        };
+        }
+        return {
+          monthly24: 0,
+          monthly36: 0
+        }
+    }
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -250,7 +355,7 @@ export default function NewQuotationPage() {
                         <Button
                             variant="outline"
                             onClick={downloadTemplate}
-                            className="gap-2 bg-ejaar-beige hover:bg-ejaar-beige text-ejaar-700"
+                            className="gap-2 bg-ejaar-beige hover:bg-white/20 text-ejaar-700"
                         >
                             <DownloadIcon className="w-4 h-4"/>
                             Télécharger le template
@@ -260,7 +365,7 @@ export default function NewQuotationPage() {
                         <Button
                             variant="outline"
                             onClick={() => fileInputRef.current?.click()}
-                            className="gap-2 bg-ejaar-700 hover:bg-ejaar-700 text-white"
+                            className="gap-2 bg-ejaar-700 hover:bg-ejaar-900 text-white hover:text-white"
                         >
                             <UploadIcon className="w-4 h-4"/>
                             Importer Excel/CSV
@@ -462,22 +567,22 @@ export default function NewQuotationPage() {
                                                 <div className="flex justify-between items-center">
                                                     <p className="text-2xl font-medium">Mensualité calculée sur 24 mois
                                                        <span className="text-sm text-white italic ml-2">
-                                                        ( Pour {formatPrice(0)} sur {formatDuration(24)} )
+                                                        ( Pour {formatPrice(totalAmount24)} sur {formatDuration(24)} )
                                                        </span>
                                                     </p>
                                                         <span className="text-xl font-bold">
-                                {formatPrice(totalAmount)}
+                                {formatPrice(monthlyAmount24)}
                             </span>
                                                 </div>
                                                 <div className="divider-ejaar border-t-2 my-6 border-dashed border-white w-2/4 h-1 mx-auto"></div>
                                                 <div className="flex justify-between items-center">
                                                     <p className="text-2xl font-medium">Mensualité calculée sur 36 mois
                                                        <span className="text-sm text-white italic ml-2">
-                                                        ( Pour {formatPrice(0)} sur {formatDuration(36)} )
+                                                        ( Pour {formatPrice(totalAmount36)} sur {formatDuration(36)} )
                                                        </span>
                                                     </p>
                                                         <span className="text-xl font-bold">
-                                {formatPrice(totalAmount)}
+                                {formatPrice(monthlyAmount36)}
                             </span>
                                                 </div>
                                             </div>

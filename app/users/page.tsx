@@ -34,6 +34,7 @@ import {fetchWithToken, formatRelativeTime, rolePipe, UserRole} from "@/lib/util
 import {Client, Supplier} from "@/app/supplier-users/page";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {useAuth} from "@/components/auth/auth-provider";
+import {CategorieCA} from "@/components/ejaar-settings/rate-config";
 
 export interface User {
     id?: string;
@@ -47,6 +48,7 @@ export interface User {
     createdAt: string;
     lastConnectionAt?: Date;
     client?: Client;
+    caCategory?: CategorieCA
 }
 
 
