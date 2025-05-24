@@ -74,7 +74,7 @@ export function Solutions() {
 
                             <img
                                 className="mt-4 sm:mt-8 w-full max-w-[600px] mx-auto"
-                                src="/assets/images/img_6.png"
+                                src="/assets/images/img_6.jpg"
                                 alt="illustration"
                             />
                         </div>
@@ -95,7 +95,7 @@ export function Solutions() {
                     {/* Image Section */}
                     <div className="w-full lg:w-1/2 flex flex-col items-center">
                         <img
-                            src="/assets/images/img_9.png"
+                            src="/assets/images/img_9.jpg"
                             className="mt-8 sm:mt-20 w-full max-w-[700px] mx-auto"
                             alt="Partner illustration"
                         />

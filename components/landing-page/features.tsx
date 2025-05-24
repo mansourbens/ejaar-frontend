@@ -22,7 +22,7 @@ const Features = () => {
                         {/* Image section */}
                         <div className="order-2 lg:order-1 flex justify-center">
                             <img
-                                src='/assets/images/img_5.png'
+                                src='/assets/images/img_5.jpg'
                                 className="w-full max-w-[300px] sm:max-w-[400px]"
                                 alt="Ejaar feature illustration"
                             />
