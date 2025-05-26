@@ -4,19 +4,16 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {Button} from '@/components/ui/button';
-import {Card} from '@/components/ui/card';
-import {AlertCircle, ArrowLeft, File, FileText, Info, UploadCloud} from 'lucide-react';
+import {AlertCircle, ArrowLeft, File, Info, UploadCloud} from 'lucide-react';
 import {useToast} from '@/hooks/use-toast';
-import {Quotation} from "@/lib/mock-data";
+import {Quotation, QuotationStatusEnum} from "@/lib/mock-data";
 import {fetchWithToken, fetchWithTokenWithoutContentType, UserRole} from "@/lib/utils";
 import MainLayout from "@/components/layouts/main-layout";
 import FileUploadSection from '@/components/file-upload/file-upload-section';
 import {DocumentUploadState, ServerFile, UploadFile} from '@/types/file-upload';
 import Loader from "@/components/ui/loader";
-import {Badge} from "@/components/ui/badge";
 import {useAuth} from "@/components/auth/auth-provider";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
-import {Input} from "@/components/ui/input";
 
 
 const initialState: DocumentUploadState = {
@@ -59,14 +56,16 @@ const initialState: DocumentUploadState = {
         }
     ]
 };
-
-export default function ValidateQuotationPage({params}: { params: { id: string } }) {
+interface QuotationInfoStepProps {
+    quotation: Quotation;
+    onStepUpdate: (newStep: QuotationStatusEnum) => void;
+}
+export default function QuotationDocuments({quotation, onStepUpdate}: QuotationInfoStepProps) {
     const [uploadState, setUploadState] = useState<DocumentUploadState>(initialState);
     const router = useRouter();
     const {toast} = useToast();
     const [files, setFiles] = useState<any[]>([]);
     const [isUploading, setIsUploading] = useState(false);
-    const [quotation, setQuotation] = useState<Quotation | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [contract, setContract] = useState<File | null>(null);
@@ -159,6 +158,7 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
         if (!quotation) return;
         if (file.status != 'success') return;
         try {
+            console.log('upload...');
             const formData = new FormData();
             formData.append('file', file.file as File);
             formData.append('documentType', documentTypeId);
@@ -246,7 +246,7 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
                 title: "Succès",
                 description: 'Dossier envoyé en vérification',
             })
-            router.push('/folders');
+            onStepUpdate(QuotationStatusEnum.VERIFICATION);
         }
     }
     const sendToBank = async () => {
@@ -288,32 +288,6 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
 
     const progress = Math.round((uploadedDocuments / totalDocuments) * 100);
 
-    useEffect(() => {
-        const fetchQuotation = async () => {
-            try {
-                setIsLoading(true);
-                const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations/${params.id}`);
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch quotation');
-                }
-
-                const data = await response.json();
-                setQuotation(data);
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'Unknown error occurred');
-                toast({
-                    title: 'Error',
-                    description: 'Failed to load quotation',
-                    variant: 'destructive',
-                });
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchQuotation();
-    }, [params.id, toast]);
 
     if (!quotation) {
         if (isLoading) {
@@ -345,59 +319,10 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
     }
 
     return (
-        <MainLayout>
             <div className="space-y-6">
                 {/* Blue Top Banner */}
 
                 <div className="flex flex-col">
-                    <Card className="bg-white/50 mx-20  ">
-                        <div className="flex items-start gap-6 p-4">
-                            {/* Title Section */}
-                            <div className="flex items-center gap-6 min-w-[180px]">
-                                <Link href="/folders">
-                                    <Button size="sm" className="text-blue-100 bg-ejaar-700 hover:bg-ejaar-900">
-                                        <ArrowLeft className="h-4 w-4 mr-1"/>
-                                        Retour
-                                    </Button>
-                                </Link>
-                                <FileText className="h-5 w-5 text-ejaar-800"/>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-700">Complétion du dossier</h3>
-                                    <p className="text-sm text-gray-600">Téléversez les documents requis pour compléter
-                                        votre dossier</p>
-                                </div>
-                            </div>
-
-                            {/* Details Grid - Moved closer */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-2 flex-1 ml-4">
-                                <div>
-                                    <p className="text-xs font-medium text-ejaar-800">Numéro</p>
-                                    <p className="text-sm font-medium text-gray-900">{quotation.number}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs font-medium text-ejaar-800">Date</p>
-                                    <p className="text-sm font-medium text-gray-900">
-                                        {new Date(quotation.createdAt).toLocaleDateString('fr-FR')}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-xs font-medium text-ejaar-800">Matériel</p>
-                                    {quotation.devices?.split(',').map((type, index) => (
-                                        <Badge key={index}
-                                               className="mr-1 mb-1 text-[10px] p-1.5 bg-ejaar-700 hover:bg-ejaar-700 cursor-default">
-                                            {type}
-                                        </Badge>
-                                    ))}
-                                </div>
-                                <div>
-                                    <p className="text-xs font-medium text-ejaar-800">Montant</p>
-                                    <p className="text-sm font-bold text-gray-900">
-                                        {quotation.amount.toFixed(2)} MAD
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </Card>
                     <div className="pt-8 px-4 sm:px-6 lg:px-8">
                         <div className="max-w-5xl mx-auto">
                             <header className="mb-8 text-center">
@@ -436,17 +361,20 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
                                             quotationId={quotation.id}
                                             onFileUpload={handleFileUpload}
                                             onFileRemove={handleFileRemove}
+                                            isDeleteHidden={quotation.status !== QuotationStatusEnum.VALIDE_CLIENT}
                                         />
                                     ))}
 
-                                    <div className="mt-8 flex justify-between">
+                                    { quotation.status === QuotationStatusEnum.VALIDE_CLIENT &&
+                                        <div className="mt-8 flex justify-between">
                                         <div>
                                             <span className="text-red-600 mr-1">*</span>
                                             <span className="text-sm">Obligatoire</span>
                                         </div>
                                         {user?.role.name === UserRole.CLIENT &&
+
                                             <div className="flex gap-2">
-                                                <Link href="/folders">
+                                                <Link href="/quotations">
                                                     <Button
                                                         className="px-6 py-2 bg-white hover:bg-transparent border-ejaar-800 border-2 text-ejaar-800"
                                                     >
@@ -455,6 +383,9 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
                                                 </Link>
 
                                                 <Button
+                                                    disabled={ (
+                                                        uploadedDocuments < totalDocuments
+                                                    ) }
                                                     onClick={submitDocuments}
                                                     type="button"
                                                     className="px-6 py-2 bg-ejaar-red hover:bg-ejaar-redHover text-white"
@@ -531,7 +462,7 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
                                                     </Button>
                                                 </DialogFooter>
                                             </DialogContent>
-                                        </Dialog></div>
+                                        </Dialog></div>}
                                 </form>
                             </div>
                         </div>
@@ -539,7 +470,6 @@ export default function ValidateQuotationPage({params}: { params: { id: string }
                 </div>
 
             </div>
-        </MainLayout>
     );
 }
 

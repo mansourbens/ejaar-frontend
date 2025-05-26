@@ -41,6 +41,9 @@ const config: Config = {
                     dark: '#0F172A',
                     beige: '#fcf5eb',
                     red: '#9d4833',
+                    greenHover: '#8abbb3',
+                    green: '#4a7971',
+                    beigeDark: '#deb679',
                     redHover: '#b65e47',
                     blueHover: '#4d8ec1',
                     'purple-light': '#C4B5FD'

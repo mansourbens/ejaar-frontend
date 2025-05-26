@@ -169,8 +169,8 @@ export default function FoldersPage() {
                                             </div>
                                         ) : (
                                             <Table>
-                                                <TableHeader className="bg-ejaar-700">
-                                                    <TableRow>
+                                                <TableHeader className="bg-ejaar-700 hover:bg-ejaar-700">
+                                                    <TableRow className="bg-ejaar-700 hover:bg-ejaar-700">
                                                         <TableHead className="text-ejaar-beige">Numéro</TableHead>
                                                         <TableHead className="text-ejaar-beige">Date</TableHead>
                                                         {user?.role.name != UserRole.CLIENT && (
@@ -297,8 +297,8 @@ export default function FoldersPage() {
                                             </div>
                                         ) : (
                                             <Table>
-                                                <TableHeader className="bg-ejaar-700">
-                                                    <TableRow>
+                                                <TableHeader className="bg-ejaar-700 hover:bg-ejaar-700">
+                                                    <TableRow className="bg-ejaar-700 hover:bg-ejaar-700">
                                                         <TableHead className="text-ejaar-beige">Numéro</TableHead>
                                                         <TableHead className="text-ejaar-beige">Date</TableHead>
                                                         {user?.role.name != UserRole.CLIENT && (
@@ -426,8 +426,8 @@ export default function FoldersPage() {
                                                 </div>
                                             ) : (
                                                 <Table>
-                                                    <TableHeader className="bg-ejaar-700">
-                                                        <TableRow>
+                                                    <TableHeader className="bg-ejaar-700 hover:bg-ejaar-700">
+                                                        <TableRow className="bg-ejaar-700 hover:bg-ejaar-700">
                                                             <TableHead className="text-ejaar-beige">Numéro</TableHead>
                                                             <TableHead className="text-ejaar-beige">Date</TableHead>
                                                             {user?.role.name != UserRole.CLIENT && (

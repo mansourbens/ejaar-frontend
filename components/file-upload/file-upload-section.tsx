@@ -7,6 +7,7 @@ import {useAuth} from "@/components/auth/auth-provider";
 interface FileUploadSectionProps {
     section: DocumentSection;
     quotationId: string,
+    isDeleteHidden: boolean,
     onFileUpload: (sectionId: string, documentTypeId: string, file: UploadFile) => void;
     onFileRemove: (sectionId: string, documentTypeId: string) => void;
 }
@@ -15,7 +16,8 @@ const FileUploadSection: React.FC<FileUploadSectionProps> = ({
                                                                  section,
                                                                  quotationId,
                                                                  onFileUpload,
-                                                                 onFileRemove
+                                                                 onFileRemove,
+                                                                 isDeleteHidden
                                                              }) => {
     const [isExpanded, setIsExpanded] = useState(false);
         const {user} = useAuth()
@@ -68,6 +70,7 @@ const FileUploadSection: React.FC<FileUploadSectionProps> = ({
                             key={documentType.id}
                             documentType={documentType}
                             quotationId={quotationId}
+                            isDeleteHidden={isDeleteHidden}
                             onFileUpload={handleFileUpload}
                             onFileRemove={handleFileRemove}
                         />

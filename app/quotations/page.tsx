@@ -295,9 +295,7 @@ export default function QuotationsPage() {
                                         <TableHead className="text-right text-ejaar-beige">
                                             {user?.role.name === UserRole.SUPER_ADMIN ? 'Montant financé' : 'Montant'}
                                         </TableHead>
-                                        {user?.role.name === UserRole.SUPER_ADMIN && (
-                                            <TableHead className="text-right text-ejaar-beige">Mensualité</TableHead>
-                                        )}
+                                        <TableHead className="text-right text-ejaar-beige">Mensualité</TableHead>
                                         <TableHead className="text-right text-ejaar-beige">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -323,7 +321,10 @@ export default function QuotationsPage() {
                                         </TableRow>
                                     ) : (
                                         paginatedQuotations.map((quotation) => (
-                                            <TableRow key={quotation.id} className="hover:bg-gray-100/50">
+
+
+                                            <TableRow className="hover:bg-blue-100/50 cursor-pointer"
+                                            onClick={() => router.push(`/quotations/`+quotation.id)} >
                                                 <TableCell className="font-medium">
                                                     {quotation.status === QuotationStatusEnum.REJECTED && (
                                                         <Badge className="bg-red-100 text-red-800 hover:bg-red-200 capitalize mr-2">
@@ -362,14 +363,12 @@ export default function QuotationsPage() {
                                                     })} DH
                                                 </TableCell>
 
-                                                {user?.role.name === UserRole.SUPER_ADMIN && (
                                                     <TableCell className="text-right">
                                                         {quotation.totalMonthlyPayments?.toLocaleString('fr-FR', {
                                                             minimumFractionDigits: 2,
                                                             maximumFractionDigits: 2
                                                         }) ?? 0} DH
                                                     </TableCell>
-                                                )}
 
                                                 <TableCell className="text-right">
                                                     <div className="flex justify-end gap-2">
@@ -437,7 +436,8 @@ export default function QuotationsPage() {
                                                         </DropdownMenu>
                                                     </div>
                                                 </TableCell>
-                                            </TableRow>)
+                                            </TableRow>
+                                                )
                                         ))}
                                 </TableBody>
                             </Table>

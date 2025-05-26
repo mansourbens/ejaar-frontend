@@ -68,12 +68,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                                         {user?.role.name === UserRole.CLIENT && `Mes` } Dossiers
                                     </Button>
                                 </Link>
-                                <Link href="/settings">
+                                {user?.role.name === UserRole.SUPER_ADMIN && <Link href="/settings">
                                     <Button className="bg-ejaar-700 hover:bg-ejaar-700 hover:shadow-xl group text-base">
                                         <CogIcon className="h-5 w-5 mr-3" />
                                         Paramétrage
                                     </Button>
-                                </Link>
+                                </Link>}
+
                                 {user?.role.name === UserRole.CLIENT && <Link href="/quotations/new">
                                     <Button className="bg-[#9d4833] hover:bg-[#b35e49] group text-base">
                                         <PlusCircleIcon className="h-5 w-5 mr-3" />

@@ -158,7 +158,7 @@ export default function NewQuotationPage() {
                 console.log(device.type);
                 const residualValuePercentage = residualMap[device.type][durationKey24];
                 const res = performCalculations(
-                    totalAmount24,
+                    device.unitCost * device.units,
                     24,
                     residualValuePercentage,
                     spread,
@@ -170,7 +170,7 @@ export default function NewQuotationPage() {
 
                 const residualValuePercentage = residualMap[device.type][durationKey36];
                 const res = performCalculations(
-                    totalAmount36,
+                    device.unitCost * device.units,
                     36,
                     residualValuePercentage,
                     spread,
@@ -261,7 +261,6 @@ export default function NewQuotationPage() {
     };
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
-        console.log(data);
         setIsCalculating(true);
         try {
             const response = user?.role.name === UserRole.CLIENT ? await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations/generate`, {
