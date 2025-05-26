@@ -52,10 +52,6 @@ export default function QuotationsPage() {
         let filtered = [...quotations];
 
         // Filter by status
-        filtered = filtered.filter(q =>
-            q.status === QuotationStatusEnum.GENERE ||
-            q.status === QuotationStatusEnum.REJECTED
-        );
 
         // Filter by search term if exists
         if (searchTerm) {
