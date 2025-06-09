@@ -7,13 +7,14 @@ import {QuotationStepper} from "@/components/quotations/quotation-stepper";
 import QuotationInfoStep from "@/components/quotations/quotation-info-step";
 import {QuotationVerificationStep} from "@/components/quotations/quotation-verification-step";
 import {QuotationContractStep} from "@/components/quotations/quotation-contract-step";
-import {fetchWithToken} from "@/lib/utils";
+import {fetchWithToken, UserRole} from "@/lib/utils";
 import {useToast} from "@/hooks/use-toast";
 import MainLayout from "@/components/layouts/main-layout";
 import Loader from "@/components/ui/loader";
 import {Card} from "@/components/ui/card";
 import {FileText} from "lucide-react";
 import {Badge} from "@/components/ui/badge";
+import {useAuth} from "@/components/auth/auth-provider";
 
 interface QuotationStepperPageProps {
     quotationStatus?: QuotationStatusEnum;
@@ -28,6 +29,7 @@ export default function QuotationStepperPage({
     const [quotation, setQuotation] = useState<Quotation | undefined>();
     const [isLoading, setIsLoading] = useState(false);
     const {toast} = useToast();
+    const {user} = useAuth();
     useEffect(() => {
         if (!quotation) return;
         setCurrentStatus(quotation.status);
@@ -80,9 +82,16 @@ export default function QuotationStepperPage({
                 />;
             case QuotationStatusEnum.VERIFICATION:
             case QuotationStatusEnum.SENT_TO_BANK:
-                return <QuotationVerificationStep />;
+                return <QuotationVerificationStep quotation={quotation!}
+                                                  onStepUpdate={(newStep) => {
+                                                      setViewingStep(newStep);
+                                                      setCurrentStatus(newStep);
+                                                  }}
+                />;
             case QuotationStatusEnum.VALIDE:
-                return <QuotationContractStep />;
+                return <QuotationContractStep
+                quotation={quotation!}
+                />;
             default:
                 return <QuotationInfoStep quotation={quotation!}
                                           onStepUpdate={(newStep) => {
@@ -143,12 +152,19 @@ export default function QuotationStepperPage({
                         </div>
                     </div>
                 </Card>
+                {user?.role.name === UserRole.BANK ?
+                    <QuotationVerificationStep quotation={quotation!}
+                                               onStepUpdate={(newStep) => {
+                                                   setViewingStep(newStep);
+                                                   setCurrentStatus(newStep);
+                                               }}></QuotationVerificationStep>
+                    :
                 <QuotationStepper
                     currentStatus={currentStatus}
                     onStepClick={handleStepClick}
                 >
                     {renderStepContent()}
-                </QuotationStepper>
+                </QuotationStepper>}
             </>
 : <div>
                 <Loader size={100} color="#53769b"/>

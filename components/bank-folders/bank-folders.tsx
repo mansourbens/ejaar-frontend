@@ -13,13 +13,12 @@ import {useAuth} from "@/components/auth/auth-provider";
 import {useToast} from "@/hooks/use-toast";
 import {useRouter} from "next/navigation";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import BankFolders from "@/components/bank-folders/bank-folders";
 
-export default function FoldersPage() {
+export default function BankFolders() {
     const {user} = useAuth();
     const [quotations, setQuotations] = useState<Quotation[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [statusFilter, setStatusFilter] = useState<'in_progress' | 'all' | 'submitted'>('all');
+    const [statusFilter, setStatusFilter] = useState<'to_verify' | 'validated'>('to_verify');
     const [isLoading, setIsLoading] = useState(false);
     const {toast} = useToast();
     const router = useRouter();
@@ -48,21 +47,18 @@ export default function FoldersPage() {
 
         // Filter based on active tab
         switch (statusFilter) {
-            case 'submitted':
+            case 'to_verify':
                 filtered = filtered.filter(quote =>
-                    quote.status === QuotationStatusEnum.VERIFICATION ||
                     quote.status === QuotationStatusEnum.SENT_TO_BANK
                 );
                 break;
-            case 'in_progress':
+            case 'validated':
                 filtered = filtered.filter(quote =>
-                    quote.status === QuotationStatusEnum.VALIDE_CLIENT
+                    quote.status === QuotationStatusEnum.VALIDE
                 );
                 break;
             default:
                 filtered = filtered.filter(quote =>
-                    quote.status === QuotationStatusEnum.VALIDE_CLIENT ||
-                    quote.status === QuotationStatusEnum.VERIFICATION ||
                     quote.status === QuotationStatusEnum.SENT_TO_BANK
                 );
                 break;
@@ -115,11 +111,9 @@ export default function FoldersPage() {
 
     const getStatusBadgeColor = (status: string) => {
         switch (status) {
-            case QuotationStatusEnum.VALIDE_CLIENT:
-                return 'bg-purple-100 text-purple-800 hover:bg-purple-200';
-            case QuotationStatusEnum.VERIFICATION:
-                return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200';
             case QuotationStatusEnum.SENT_TO_BANK:
+                return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200';
+            case QuotationStatusEnum.VALIDE:
                 return 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200';
             default:
                 return 'bg-gray-100 text-gray-800 hover:bg-gray-200';
@@ -127,13 +121,12 @@ export default function FoldersPage() {
     };
     const getStatusLabel = (status: string) => {
         switch (status) {
-            case QuotationStatusEnum.VALIDE_CLIENT:
-                return 'En cours de constitution';
-            case QuotationStatusEnum.VERIFICATION:
             case QuotationStatusEnum.SENT_TO_BANK:
-                return 'En cours de vérification';
+                return 'À vérifier';
+            case QuotationStatusEnum.VALIDE:
+                return 'Validé'
             default:
-                return 'En cours de vérification';
+                return 'À vérifier';
         }
     };
 
@@ -158,17 +151,6 @@ export default function FoldersPage() {
                                 <FileDown className="w-4 h-4 mr-2" />
                                 Télécharger
                             </DropdownMenuItem>
-                            {quotation.status === QuotationStatusEnum.VALIDE_CLIENT && (
-                                <DropdownMenuItem
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        router.push(`/folders/${quotation.id}/validate`);
-                                    }}
-                                >
-                                    <FileText className="w-4 h-4 mr-2" />
-                                    Documents
-                                </DropdownMenuItem>
-                            )}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -218,10 +200,6 @@ export default function FoldersPage() {
     );
 
     return (
-
-        <MainLayout>
-            {user?.role.name === UserRole.BANK ?
-            <BankFolders></BankFolders> :
             <div className="space-y-6 px-12">
                 <div className="flex items-center justify-between">
                     <div>
@@ -238,39 +216,33 @@ export default function FoldersPage() {
                     <CardContent className="pt-6">
                         {/* Tabs Section */}
                         <div className="flex flex-col space-y-4 mb-4">
-                        <div className="flex border-b border-gray-200">
-                            <button
-                                onClick={() => setStatusFilter('all')}
-                                className={`py-2 px-4 font-medium text-sm border-b-2 ${statusFilter === 'all' ? 'border-ejaar-red text-ejaar-red' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                            >
-                                Tout
-                            </button>
-                            <button
-                                onClick={() => setStatusFilter('in_progress')}
-                                className={`py-2 px-4 font-medium text-sm border-b-2 ${statusFilter === 'in_progress' ? 'border-ejaar-red text-ejaar-red' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                            >
-                                Dossiers en constitution
-                            </button>
-                            <button
-                                onClick={() => setStatusFilter('submitted')}
-                                className={`py-2 px-4 font-medium text-sm border-b-2 ${statusFilter === 'submitted' ? 'border-ejaar-red text-ejaar-red' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                            >
-                                Dossiers soumis
-                            </button>
+                            <div className="flex border-b border-gray-200">
+                                <button
+                                    onClick={() => setStatusFilter('to_verify')}
+                                    className={`py-2 px-4 font-medium text-sm border-b-2 ${statusFilter === 'to_verify' ? 'border-ejaar-red text-ejaar-red' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                                >
+                                    Dossiers à vérifier
+                                </button>
+                                <button
+                                    onClick={() => setStatusFilter('validated')}
+                                    className={`py-2 px-4 font-medium text-sm border-b-2 ${statusFilter === 'validated' ? 'border-ejaar-red text-ejaar-red' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                                >
+                                    Dossiers validés
+                                </button>
 
-                        </div>
-                        {/* Search Bar */}
-                        <div className="relative mb-8">
-                            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <Search className="h-5 w-5 text-blue-400"/>
                             </div>
-                            <Input
-                                placeholder="Rechercher dossier ..."
-                                className="pl-10 border-blue-200 focus:border-blue-400 focus-visible:ring-blue-200"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
+                            {/* Search Bar */}
+                            <div className="relative mb-8">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <Search className="h-5 w-5 text-blue-400"/>
+                                </div>
+                                <Input
+                                    placeholder="Rechercher dossier ..."
+                                    className="pl-10 border-blue-200 focus:border-blue-400 focus-visible:ring-blue-200"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
                         </div>
 
                         {/* Cards View */}
@@ -328,8 +300,5 @@ export default function FoldersPage() {
                     </CardContent>
                 </Card>
             </div>
-            }
-
-        </MainLayout>
     );
 }

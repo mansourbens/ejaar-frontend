@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { DocumentSection, UploadFile } from '@/types/file-upload';
+import React, {useState} from 'react';
+import {DocumentSection, UploadFile} from '@/types/file-upload';
 import FileUploadItem from './file-upload-item';
-import { ChevronDown, ChevronUp, Folder } from 'lucide-react';
+import {ChevronDown, ChevronUp, Folder} from 'lucide-react';
 import {useAuth} from "@/components/auth/auth-provider";
 
 interface FileUploadSectionProps {
@@ -10,6 +10,11 @@ interface FileUploadSectionProps {
     isDeleteHidden: boolean,
     onFileUpload: (sectionId: string, documentTypeId: string, file: UploadFile) => void;
     onFileRemove: (sectionId: string, documentTypeId: string) => void;
+    onValidateFile?: (fileId: string) => void;
+    onRejectFile?: (fileId: string) => void;
+    isValidationHidden?: boolean;
+    isRectification: boolean;
+    onRectifFile?: () => void;
 }
 
 const FileUploadSection: React.FC<FileUploadSectionProps> = ({
@@ -17,10 +22,15 @@ const FileUploadSection: React.FC<FileUploadSectionProps> = ({
                                                                  quotationId,
                                                                  onFileUpload,
                                                                  onFileRemove,
-                                                                 isDeleteHidden
+                                                                 isDeleteHidden,
+                                                                 onValidateFile,
+                                                                 onRejectFile,
+                                                                 isValidationHidden,isRectification,
+                                                                 onRectifFile
+
                                                              }) => {
     const [isExpanded, setIsExpanded] = useState(false);
-        const {user} = useAuth()
+    const {user} = useAuth()
     const toggleExpanded = () => {
         setIsExpanded(!isExpanded);
     };
@@ -45,22 +55,23 @@ const FileUploadSection: React.FC<FileUploadSectionProps> = ({
 
     return (
         <div className="section-card text-left  mb-6 animate-slide-up"
-           >
-                <div className="section-title cursor-pointer"
-                     onClick={toggleExpanded}
-                     aria-expanded={isExpanded}>
-                    <Folder className="text-ejaar-800" size={20} />
-                    <span className="text-ejaar-700">{section.title} {section.id != 'section-4' && <span className="text-red-600">*</span>}</span>
-                    <div className="ml-auto flex items-center gap-3">
-                        <div className="text-sm text-ejaar-700 font-medium">
-                            {uploadedDocuments}/{totalDocuments}
-                        </div>
-                        {isExpanded ? (
-                            <ChevronUp size={20} className="text-gray-500" />
-                        ) : (
-                            <ChevronDown size={20} className="text-gray-500" />
-                        )}
+        >
+            <div className="section-title cursor-pointer"
+                 onClick={toggleExpanded}
+                 aria-expanded={isExpanded}>
+                <Folder className="text-ejaar-800" size={20}/>
+                <span className="text-ejaar-700">{section.title} {section.id != 'section-4' &&
+                    <span className="text-red-600">*</span>}</span>
+                <div className="ml-auto flex items-center gap-3">
+                    <div className="text-sm text-ejaar-700 font-medium">
+                        {uploadedDocuments}/{totalDocuments}
                     </div>
+                    {isExpanded ? (
+                        <ChevronUp size={20} className="text-gray-500"/>
+                    ) : (
+                        <ChevronDown size={20} className="text-gray-500"/>
+                    )}
+                </div>
             </div>
 
             {isExpanded && (
@@ -73,6 +84,8 @@ const FileUploadSection: React.FC<FileUploadSectionProps> = ({
                             isDeleteHidden={isDeleteHidden}
                             onFileUpload={handleFileUpload}
                             onFileRemove={handleFileRemove}
+                            isRectification={isRectification}
+                            onRectifFile={onRectifFile}
                         />
                     ))}
                 </div>

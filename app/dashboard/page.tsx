@@ -6,13 +6,15 @@ import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import {
-  ArrowRight, ChartBar,
-  Clock, DollarSign,
+  ArrowRight,
+  ChartBar,
+  Clock,
+  DollarSign,
   FileCheck,
-  FileClock, FilePen,
+  FileClock,
+  FilePen,
   FileText,
-  LayoutDashboard,
-  Plus, TrendingUp
+  TrendingUp
 } from 'lucide-react';
 import {Bar, BarChart, Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis,} from 'recharts';
 import {useAuth} from '@/components/auth/auth-provider';
@@ -24,6 +26,8 @@ import DashboardMetricCard from "@/components/dashboard/dashboard-metric-card";
 import {Switch} from "@/components/ui/switch";
 import FinancingBreakdown from "@/components/dashboard/financing-break-down";
 import DashboardTaskList from "@/components/dashboard/dashboard-task-list";
+import {redirect} from "next/navigation";
+
 const mockStats = {
   pendingClientValidation: 8,
   incompleteFiles: 15,
@@ -95,9 +99,12 @@ export default function Dashboard() {
     });
   }
   useEffect(() => {
+    if (user?.role.name === UserRole.BANK) {
+      redirect('/folders')
+    }
     getQuotations();
 
-  }, []);
+  }, [user]);
 
   // Activity data for bar chart
   const activityData = [

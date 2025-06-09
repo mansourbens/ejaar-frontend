@@ -239,7 +239,7 @@ export default function UsersPage() {
                     </div>
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
-                            <Button className="bg-[#266CA9] hover:bg-[#266CA9DD]">
+                            <Button className="bg-ejaar-red hover:bg-ejaar-redHover">
                                 <UserPlus className="mr-2 h-4 w-4"/> Ajouter un utilisateur
                             </Button>
                         </DialogTrigger>
@@ -350,7 +350,7 @@ export default function UsersPage() {
                         </Button>
                     </div>
                 ) : (
-                    <div className="rounded-md border">
+                    <div className="rounded-md shadow-lg bg-white/50 border">
                         <Table>
                             <TableHeader>
                                 <TableRow>

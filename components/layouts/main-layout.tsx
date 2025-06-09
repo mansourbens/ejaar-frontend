@@ -1,31 +1,30 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
-    Menu,
-    Sun,
-    Moon,
     Bell,
+    CogIcon,
     FileTextIcon,
     FoldersIcon,
-    PlusCircleIcon,
+    LogOutIcon,
+    Menu,
+    PlusCircleIcon, SignatureIcon,
     User2Icon,
-    MoreVertical,
-    FileDown, CircleXIcon, CheckCircle2Icon, LogOutIcon, Settings2Icon, CogIcon
+    UsersIcon
 } from 'lucide-react';
-import { useAuth } from '@/components/auth/auth-provider';
-import { useTheme } from 'next-themes';
-import Sidebar from '@/components/sidebar/sidebar';
+import {useAuth} from '@/components/auth/auth-provider';
+import {useTheme} from 'next-themes';
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {UserRole} from "@/lib/utils";
-import {QuotationStatusEnum} from "@/lib/mock-data";
+import {usePathname} from "next/navigation";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
     const { user, logout } = useAuth();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { theme, setTheme } = useTheme();
+    const pathname = usePathname();
 
     const toggleTheme = () => {
         setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -56,22 +55,40 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                         </button>
                         <div className="flex w-full">
                             <nav className="ml-auto items-end flex space-x-8 ">
-                                <Link href="/quotations" className="overflow-auto">
+                                {user?.role.name !== UserRole.BANK &&
+                                    <Link href="/quotations" className="overflow-auto">
                                     <Button className="bg-ejaar-700 hover:bg-ejaar-700 hover:shadow-xl group text-base">
                                         <FileTextIcon className="h-5 w-5 mr-3" />
                                         {user?.role.name === UserRole.CLIENT && `Mes` } Devis
                                     </Button>
+
                                 </Link>
+                                }
                                 <Link href="/folders">
                                     <Button className="bg-ejaar-700 hover:bg-ejaar-700 hover:shadow-xl group text-base">
                                         <FoldersIcon className="h-5 w-5 mr-3" />
                                         {user?.role.name === UserRole.CLIENT && `Mes` } Dossiers
                                     </Button>
                                 </Link>
+                                {user?.role.name !== UserRole.BANK &&
+                                    <Link href="/contracts" className="overflow-auto">
+                                        <Button className="bg-ejaar-700 hover:bg-ejaar-700 hover:shadow-xl group text-base">
+                                            <SignatureIcon className="h-5 w-5 mr-3" />
+                                            {user?.role.name === UserRole.CLIENT && `Mes` } Contrats
+                                        </Button>
+
+                                    </Link>
+                                }
                                 {user?.role.name === UserRole.SUPER_ADMIN && <Link href="/settings">
                                     <Button className="bg-ejaar-700 hover:bg-ejaar-700 hover:shadow-xl group text-base">
                                         <CogIcon className="h-5 w-5 mr-3" />
                                         Paramétrage
+                                    </Button>
+                                </Link>}
+                                {user?.role.name === UserRole.SUPER_ADMIN && <Link href="/users">
+                                    <Button className="bg-ejaar-700 hover:bg-ejaar-700 hover:shadow-xl group text-base">
+                                        <UsersIcon className="h-5 w-5 mr-3" />
+                                        Utilisateurs
                                     </Button>
                                 </Link>}
 

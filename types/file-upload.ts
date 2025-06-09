@@ -1,3 +1,5 @@
+import {FileStatusEnum} from "@/components/quotations/quotation-verification-step";
+
 export type FileStatus = 'idle' | 'uploading' | 'success' | 'error';
 
 export interface ServerFile {
@@ -8,6 +10,8 @@ export interface ServerFile {
     size: number;
     uploadedAt: Date;
     url: string;
+    rejectionReason?: string;
+    status: FileStatusEnum
 }
 
 export interface UploadFile {

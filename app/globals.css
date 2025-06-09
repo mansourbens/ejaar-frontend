@@ -363,3 +363,20 @@
 .preserve-3d {
   transform-style: preserve-3d;
 }
+.tab-button {
+  position: relative;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  color: #374151;
+}
+
+.tab-button.active {
+  color: #ef4444; /* ejaar-red color */
+  border-bottom-color: #ef4444;
+}

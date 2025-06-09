@@ -65,7 +65,8 @@ export default function SignUp() {
                 raisonSociale: data.raisonSociale,
                 email: data.email,
                 userType: data.userType,
-                password: data.password
+                password: data.password,
+                caCategory: data.categorieCA
             }
             await signup(signupDto);
             toast({
@@ -74,7 +75,7 @@ export default function SignUp() {
                 variant: 'default',
             });
             if (data.userType === 'FOURNISSEUR') {
-                router.push('/dashboard');
+                router.push('/quotations');
             } else {
                 router.push('/quotations');
             }

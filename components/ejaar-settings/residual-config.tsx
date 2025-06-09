@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import {fetchWithToken} from "@/lib/utils";
 import {useToast} from "@/hooks/use-toast";
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
+import {Badge} from "@/components/ui/badge";
+import {QuotationStatusEnum} from "@/lib/mock-data";
 
 interface ResidualValueMapping {
     [device: string]: {
@@ -149,17 +152,31 @@ const ResidualConfig = () => {
     };
 
     return (
+
         <div className="w-full max-w-4xl mx-auto">
-            <Card className="bg-white/50">
-                <CardHeader className="bg-ejaar-700 text-white">
-                    <CardTitle>Configuration des valeurs résiduelles</CardTitle>
-                    <CardDescription className="text-ejaar-100">
-                        Configurez les valeurs résiduelles en % par matériel et durée
-                    </CardDescription>
-                </CardHeader>
-                {isLoading ? <></> :
-                    <CardContent className="pt-6">
-                        <form onSubmit={handleSubmit}>
+            <Accordion
+                type="multiple"
+                defaultValue={[""]}
+                className="w-full space-y-4 " // Added space between accordion items
+            >
+                {/* Généré Panel */}
+                <AccordionItem
+                    value="residual"
+                    className="border rounded-lg overflow-hidden border-[#f7ecde]  bg-white/50 transition-all"
+                >
+                    <AccordionTrigger className="px-6 py-4 bg-ejaar-700 text-white hover:no-underline hover:bg-ejaar-900">
+                        <div className="flex items-center gap-3">
+                            <div>
+                                <h3 className="text-lg text-left font-semibold text-white">
+                                    Configuration des valeurs résiduelles</h3>
+                                <p className="text-sm text-gray-300">
+                                    Configurez les valeurs résiduelles en % par matériel et durée
+                                </p>
+                            </div>
+                        </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-0 pb-0">
+                        {isLoading ? <></> : <form onSubmit={handleSubmit}>
                             <div className="overflow-x-auto max-h-[60vh] overflow-auto">
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-gray-50">
@@ -177,11 +194,11 @@ const ResidualConfig = () => {
                                     <tbody className="bg-transparent divide-y divide-gray-200">
                                     {Object.entries(mapping).map(([equipment, values]) => (
                                         <tr key={equipment}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            <td className="px-6 p2-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                 {equipment}
                                             </td>
                                             {DURATIONS.map(duration => (
-                                                <td key={`${equipment}-${duration}`} className="px-6 py-4 whitespace-nowrap">
+                                                <td key={`${equipment}-${duration}`} className="px-6 py-2 whitespace-nowrap">
                                                     <div className="flex items-center">
                                                         <Input
                                                             type="number"
@@ -202,20 +219,19 @@ const ResidualConfig = () => {
                                 </table>
                             </div>
 
-                            <div className="mt-4 flex justify-between">
+                            <div className="mt-4 flex py-4  w-full">
                                 <Button
                                     type="submit"
-                                    className="bg-ejaar-red hover:bg-ejaar-redHover text-white"
+                                    className="bg-ejaar-red hover:bg-ejaar-redHover text-white ml-auto mr-4"
                                     disabled={isLoading}
                                 >
                                     {isLoading ? "Enregistrement..." : "Enregistrer les modifications"}
                                 </Button>
                             </div>
-                        </form>
-                    </CardContent>
-
-                }
-            </Card>
+                        </form>}
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
         </div>
     );
 };

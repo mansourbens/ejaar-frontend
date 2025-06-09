@@ -4,6 +4,7 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import {User} from "@/app/users/page";
 import {UserRole} from "@/lib/utils";
+import {CategorieCA} from "@/components/ejaar-settings/rate-config";
 
 
 type AuthContextType = {
@@ -17,6 +18,7 @@ export type SignupDto = {
     ICE: string;
     address: string;
     raisonSociale: string;
+    caCategory: CategorieCA;
     email: string;
     password: string;
     userType: string;

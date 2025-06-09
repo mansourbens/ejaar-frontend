@@ -29,7 +29,7 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ status, progress, error
             {status === 'success' && (
                 <div className="flex items-center gap-1.5 text-sm text-green-600 font-medium">
                     <Check size={16} className="shrink-0" />
-                    <span>Upload successful</span>
+                    <span>Téléchargé avec succès</span>
                 </div>
             )}
 

@@ -1,5 +1,5 @@
 import {Card} from "@/components/ui/card";
-import {CheckCircle, CheckCircle2Icon, DownloadIcon, FileText, Info} from "lucide-react";
+import {CheckCircle, CheckCircle2Icon, CircleXIcon, DownloadIcon, FileText, Info} from "lucide-react";
 import {Quotation, QuotationStatusEnum} from "@/lib/mock-data";
 import {Button} from "@/components/ui/button";
 import {Badge} from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/
 import {fetchWithToken} from "@/lib/utils";
 import {useToast} from "@/hooks/use-toast";
 import {useRouter} from "next/navigation";
+import {Textarea} from "../ui/textarea";
 
 interface QuotationInfoStepProps {
     quotation: Quotation;
@@ -15,8 +16,44 @@ interface QuotationInfoStepProps {
 }
 function QuotationInfoStep({ quotation, onStepUpdate }: QuotationInfoStepProps) {
     const [isValidateDialogOpen, setIsValidateDialogOpen] = useState(false);
+    const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
+    const [rejectionReason, setRejectionReason] = useState('');
+
     const {toast} = useToast();
     const router = useRouter();
+    const handleRejection = async () => {
+        const quotationId = quotation?.id;
+
+        try {
+            const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/quotations/reject/${quotationId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({reason : rejectionReason})
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to refuse quotation');
+            }
+
+            toast({
+                title: 'Succes',
+                description: "Devis refusé.",
+            });
+            quotation.status = QuotationStatusEnum.REJECTED;
+            onStepUpdate(QuotationStatusEnum.REJECTED);
+            setIsRejectDialogOpen(false);
+        } catch (error) {
+            toast({
+                title: 'Erreur',
+                description: "Erreur lors du refus du devis. Veuillez réessayer.",
+                variant: 'destructive',
+            });
+            console.error(error);
+        } finally {
+        }
+    }
 
     const handleValidate = async () => {
         const quotationId = quotation?.id;
@@ -87,6 +124,13 @@ function QuotationInfoStep({ quotation, onStepUpdate }: QuotationInfoStepProps) 
                                     <CheckCircle2Icon className="h-5 w-5 mr-3" />
                                     Valider le devis
                                 </Button>
+                                <Button
+                                    disabled={quotation.status !== QuotationStatusEnum.GENERE}
+                                    onClick={() => setIsRejectDialogOpen(true)}
+                                    className="border-2 border-[#9d4833] text-ejaar-red  hover:border-[#b35e49] bg-white hover:bg-white/40 group text-sm" size="sm">
+                                    <CircleXIcon className="w-5 h-5 mr-3" />
+                                    Refuser le devis
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -133,6 +177,49 @@ function QuotationInfoStep({ quotation, onStepUpdate }: QuotationInfoStepProps) 
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+            <Dialog open={isRejectDialogOpen} onOpenChange={setIsRejectDialogOpen}>
+                <DialogContent className="sm:max-w-[425px] bg-white rounded-lg border border-red-100 shadow-xl">
+
+                    <DialogHeader className="space-y-4">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-full bg-red-50">
+                                <FileText className="h-5 w-5 text-red-600"/>
+                            </div>
+                            <DialogTitle className="text-red-900 text-lg font-semibold">
+                                Refus du devis N°{quotation?.number}
+                            </DialogTitle>
+                        </div>
+                    </DialogHeader>
+
+                    <div className="py-4 px-2">
+                        <Textarea
+                            id="rejection-reason"
+                            placeholder="Expliquez la raison du refus"
+                            value={rejectionReason}
+                            onChange={(e) => setRejectionReason(e.target.value)}
+                            className="border-red-900"
+                        />
+                    </div>
+
+                    <DialogFooter className="sm:justify-between">
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsRejectDialogOpen(false)}
+                            className="border-gray-700 text-gray-700 hover:bg-gray-50"
+                        >
+                            Annuler
+                        </Button>
+                        <Button
+                            onClick={handleRejection}
+                            className="bg-red-900 hover:bg-red-800 text-white shadow-sm"
+                        >
+                            <CheckCircle className="mr-2 h-4 w-4"/>
+                            Confirmer le refus
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
 
         </div>
     );

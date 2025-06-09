@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import {fetchWithToken} from "@/lib/utils";
 import {useToast} from "@/hooks/use-toast";
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 
 export enum CategorieCA {
     MOINS_DE_5M = 'Moins de 5 000 000 dhs',
@@ -170,113 +171,135 @@ export const RateConfig = () => {
 
     return (
         <div className="w-full max-w-4xl mx-auto h-full space-y-6">
-            <Card className="bg-white/50">
-                <CardHeader className="bg-ejaar-700 text-white">
-                    <CardTitle>Configuration des taux de loyer</CardTitle>
-                    <CardDescription className="text-ejaar-100">
-                        Configurez les taux banque et spread par catégorie de CA
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-6">
-                    <form onSubmit={handleSubmit}>
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        CA du client
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Taux Banque (%)
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Spread (%)
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody className="bg-transparent divide-y divide-gray-200">
-                                {CATEGORIES_ORDER.map(categorie => (
-                                    <tr key={categorie}>
-                                        <td className="px-6 py-2 whitespace-nowrap text-sm font-medium text-ejaar-700 lato-bold">
-                                            {categorie}
-                                        </td>
-                                        <td className="px-6 py-2 whitespace-nowrap">
-                                            <Input
-                                                type="number"
-                                                step="0.1"
-                                                min="0"
-                                                max="100"
-                                                value={tauxLoyer[categorie]?.tauxBanque || 0}
-                                                onChange={(e) => handleChange(categorie, 'tauxBanque', e.target.value)}
-                                                className="w-24 border-ejaar-300 focus:border-ejaar-500 focus:ring-ejaar-500"
-                                            />
-                                        </td>
-                                        <td className="px-6 py-2 whitespace-nowrap">
-                                            <Input
-                                                type="number"
-                                                step="0.1"
-                                                min="0"
-                                                max="100"
-                                                value={tauxLoyer[categorie]?.spread || 0}
-                                                onChange={(e) => handleChange(categorie, 'spread', e.target.value)}
-                                                className="w-24 border-ejaar-300 focus:border-ejaar-500 focus:ring-ejaar-500"
-                                            />
-                                        </td>
+            <Accordion
+                type="multiple"
+                defaultValue={[""]}
+                className="w-full space-y-4 " // Added space between accordion items
+            >
+                {/* Généré Panel */}
+                <AccordionItem
+                    value="rentRate"
+                    className="border rounded-lg overflow-hidden border-[#f7ecde]  bg-white/50 transition-all"
+                >
+                    <AccordionTrigger className="px-6 py-4 bg-ejaar-700 text-white hover:no-underline hover:bg-ejaar-900">
+                        <div className="flex items-center gap-3">
+                            <div>
+                                <h3 className="text-lg text-left font-semibold text-white">
+                                    Configuration des taux de loyer</h3>
+                                <p className="text-sm text-gray-300">
+                                    Configurez les taux banque et spread par catégorie de CA
+                                </p>
+                            </div>
+                        </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-0 pb-0">
+                        <form onSubmit={handleSubmit}>
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            CA du client
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Taux Banque (%)
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Spread (%)
+                                        </th>
                                     </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody className="bg-transparent divide-y divide-gray-200">
+                                    {CATEGORIES_ORDER.map(categorie => (
+                                        <tr key={categorie}>
+                                            <td className="px-6 py-2 whitespace-nowrap text-sm font-medium text-ejaar-700 lato-bold">
+                                                {categorie}
+                                            </td>
+                                            <td className="px-6 py-2 whitespace-nowrap">
+                                                <Input
+                                                    type="number"
+                                                    step="0.1"
+                                                    min="0"
+                                                    max="100"
+                                                    value={tauxLoyer[categorie]?.tauxBanque || 0}
+                                                    onChange={(e) => handleChange(categorie, 'tauxBanque', e.target.value)}
+                                                    className="w-24 border-ejaar-300 focus:border-ejaar-500 focus:ring-ejaar-500"
+                                                />
+                                            </td>
+                                            <td className="px-6 py-2 whitespace-nowrap">
+                                                <Input
+                                                    type="number"
+                                                    step="0.1"
+                                                    min="0"
+                                                    max="100"
+                                                    value={tauxLoyer[categorie]?.spread || 0}
+                                                    onChange={(e) => handleChange(categorie, 'spread', e.target.value)}
+                                                    className="w-24 border-ejaar-300 focus:border-ejaar-500 focus:ring-ejaar-500"
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
 
-                        <div className="mt-4 flex justify-end">
-                            <Button
-                                type="submit"
-                                className="bg-ejaar-red hover:bg-ejaar-redHover text-white"
-                                disabled={isLoading}
-                            >
-                                {isLoading ? "Enregistrement..." : "Enregistrer les modifications"}
-                            </Button>
+                            <div className="mt-4 flex py-4  justify-end">
+                                <Button
+                                    type="submit"
+                                    className="bg-ejaar-red hover:bg-ejaar-redHover text-white ml-auto mr-4"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? "Enregistrement..." : "Enregistrer les modifications"}
+                                </Button>
+                            </div>
+                        </form>
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem
+                    value="commercialRate"
+                    className="border rounded-lg overflow-hidden border-[#f7ecde]  bg-white/50 transition-all"
+                >
+                    <AccordionTrigger className="px-6 py-4 bg-ejaar-700 text-white hover:no-underline hover:bg-ejaar-900">
+                        <div className="flex items-center gap-3">
+                            <div>
+                                <h3 className="text-lg text-left font-semibold text-white">
+                                    Configuration du taux de marge commerciale</h3>
+                                <p className="text-sm text-gray-300">
+                                    Définissez le taux de marge commerciale global
+                                </p>
+                            </div>
                         </div>
-                    </form>
-                </CardContent>
-            </Card>
-
-            <Card className="bg-white/50">
-                <CardHeader className="bg-ejaar-700 text-white">
-                    <CardTitle>Configuration du taux de marge commerciale</CardTitle>
-                    <CardDescription className="text-ejaar-100">
-                        Définissez le taux de marge commerciale global
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-6">
-                    <form onSubmit={handleCommercialRateSubmit} className="space-y-4">
-                        <div className="flex items-center gap-4">
-                            <Label htmlFor="commercialRate" className="flex-shrink-0 text-ejaar-700">
-                                Taux de marge commerciale (%)
-                            </Label>
-                            <Input
-                                id="commercialRate"
-                                type="number"
-                                step="0.1"
-                                min="0"
-                                max="100"
-                                value={commercialRate}
-                                onChange={(e) => setCommercialRate(parseFloat(e.target.value) || 0)}
-                                className="w-24 border-ejaar-300 focus:border-ejaar-500 focus:ring-ejaar-500"
-                            />
-                        </div>
-                        <div className="flex justify-end">
-                            <Button
-                                type="submit"
-                                className="bg-ejaar-red hover:bg-ejaar-redHover text-white"
-                                disabled={isCommercialRateLoading}
-                            >
-                                {isCommercialRateLoading ? "Enregistrement..." : "Enregistrer le taux"}
-                            </Button>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-0 pb-0">
+                        <form onSubmit={handleCommercialRateSubmit} className="space-y-4">
+                            <div className="flex items-center gap-4">
+                                <Label htmlFor="commercialRate" className="flex-shrink-0 text-ejaar-700">
+                                    Taux de marge commerciale (%)
+                                </Label>
+                                <Input
+                                    id="commercialRate"
+                                    type="number"
+                                    step="0.1"
+                                    min="0"
+                                    max="100"
+                                    value={commercialRate}
+                                    onChange={(e) => setCommercialRate(parseFloat(e.target.value) || 0)}
+                                    className="w-24 border-ejaar-300 focus:border-ejaar-500 focus:ring-ejaar-500"
+                                />
+                            </div>
+                            <div className="mt-4 flex py-4  justify-end">
+                                <Button
+                                    type="submit"
+                                    className="bg-ejaar-red hover:bg-ejaar-redHover text-white  ml-auto mr-4"
+                                    disabled={isCommercialRateLoading}
+                                >
+                                    {isCommercialRateLoading ? "Enregistrement..." : "Enregistrer le taux"}
+                                </Button>
+                            </div>
+                        </form>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
         </div>
     );
 };

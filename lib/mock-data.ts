@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import {Supplier} from "@/app/supplier-users/page";
 import {ServerFile} from "@/types/file-upload";
+import {Contract} from "@/types/contract";
 export interface Device {
   type: string;
   unitCost: number;
@@ -34,6 +35,7 @@ export interface Quotation {
   createdAt: string;
   documents: ServerFile[];
   totalMonthlyPayments: number;
+  contract?: Contract;
 }
 
 // Hardware type options
