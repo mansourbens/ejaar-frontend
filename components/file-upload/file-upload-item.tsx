@@ -5,7 +5,7 @@ import {Check, CheckCircle, DeleteIcon, File, FileText, Info, Trash2Icon, Undo2I
 import {formatFileSize, generateId, validateFile} from '@/lib/file-utils';
 import {useToast} from "@/hooks/use-toast";
 import UploadProgress from "@/components/file-upload/upload-progress";
-import {fetchWithTokenWithoutContentType, UserRole} from "@/lib/utils";
+import {fetchWithToken, fetchWithTokenWithoutContentType, UserRole} from "@/lib/utils";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useAuth} from "@/components/auth/auth-provider";
 import {FileStatusEnum} from "@/components/quotations/quotation-verification-step";
@@ -70,6 +70,7 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
         }
     };
 
+
     const handleReject = async () => {
         try {
             await fetchWithTokenWithoutContentType(`${process.env.NEXT_PUBLIC_API_URL}/api/upload/reject/${uploadedFile?.id}`, {
@@ -99,24 +100,44 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
         }
     };
 
-    const handleDownload = () => {
-        if (!uploadedFile) return;
+    const handleDownload = async () => {
+        console.log(uploadedFile);
+        try {
+            const response = await fetchWithToken(`${process.env.NEXT_PUBLIC_API_URL}/api/upload/download/${uploadedFile?.id}`);
 
-        if ('url' in uploadedFile.file) {
-            // Server file - open in new tab
-            window.open(uploadedFile.file.url, '_blank');
-        } else {
-            // Client file - create download link
-            const url = URL.createObjectURL(uploadedFile.file);
+            if (!response.ok) {
+                throw new Error('Failed to download contract');
+            }
+
+            // Get filename from content-disposition header
+            const contentDisposition = response.headers.get('Content-Disposition');
+            console.log(response.headers);
+            console.log(contentDisposition);
+            const filename = contentDisposition
+                ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+                : `document-${quotationId}.pdf`;
+
+            // Create blob and download link
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = uploadedFile.file.name;
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            toast({
+                title: "Téléchargement",
+                description: "Le contrat a été téléchargé avec succès.",
+            });
+        } catch (error) {
+            toast({
+                title: "Erreur",
+                description: "Erreur lors du téléchargement du contrat.",
+            });
         }
     };
+
     const handleRectifFileSelect = async (file: File) => {
         const validation = validateFile(file);
 
