@@ -13,10 +13,10 @@ import {FileStatusEnum} from "@/components/quotations/quotation-verification-ste
 interface FileUploadItemProps {
     documentType: DocumentType;
     quotationId: string,
-    onFileUpload: (documentTypeId: string, file: UploadFile) => void;
-    onFileRemove: (documentTypeId: string) => void;
+    onFileUpload?: (documentTypeId: string, file: UploadFile) => void;
+    onFileRemove?: (documentTypeId: string) => void;
     isDeleteHidden: boolean,
-    isRectification: boolean,
+    isRectification?: boolean,
     onRectifFile?: () => void;
 }
 
@@ -26,7 +26,7 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
                                                            onFileUpload,
                                                            onFileRemove,
                                                            isDeleteHidden, isRectification,
-    onRectifFile
+                                                           onRectifFile
                                                        }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [isRejectionDialogOpen, setIsRejectionDialogOpen] = useState(false);
@@ -47,11 +47,18 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
             await fetchWithTokenWithoutContentType(`${process.env.NEXT_PUBLIC_API_URL}/api/upload/validate/${uploadedFile?.id}`, {
                 method: 'GET',
             });
-            toast({
-                title: 'Document validé',
-                description: `Le document ${uploadedFile?.file.originalName} a été validé avec succès.`,
-            });
-            uploadedFile.file.status = FileStatusEnum.VERIFE;
+
+            if (uploadedFile && uploadedFile.file) {
+                const displayedName =
+                    'originalName' in uploadedFile?.file ? uploadedFile?.file.originalName : uploadedFile?.file.name;
+                toast({
+                    title: 'Document validé',
+                    description: `Le document ${displayedName} a été validé avec succès.`,
+                });
+                if ('status' in uploadedFile?.file) {
+                    uploadedFile.file.status = FileStatusEnum.VERIFE;
+                }
+            }
         } catch {
             toast({
                 title: 'Erreur de validation',
@@ -72,11 +79,14 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
                     'Content-Type': 'application/json',
                 },
             });
-            uploadedFile.file.status = FileStatusEnum.A_RECTIFIER;
-            toast({
-                title: 'Document rejeté',
-                description: `Le document ${uploadedFile?.file.name} a été rejeté.`,
-            });
+            if (uploadedFile && uploadedFile.file && 'status' in uploadedFile.file && 'name' in uploadedFile.file) {
+                uploadedFile.file.status = FileStatusEnum.A_RECTIFIER;
+                toast({
+                    title: 'Document rejeté',
+                    description: `Le document ${uploadedFile?.file.name} a été rejeté.`,
+                });
+            }
+
         } catch {
             toast({
                 title: 'Erreur de rejet',
@@ -129,29 +139,33 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
     }
 
     const sendRectifFile = async (file: File) => {
-        try {
-            console.log('upload...');
-            const formData = new FormData();
-            formData.append('file', file as File);
-            formData.append('rectification', 'true');
-            formData.append('documentType', uploadedFile.file.documentType);
-            formData.append('quotationId', quotationId);
+        if (uploadedFile && 'documentType' in uploadedFile.file) {
 
-            const response = await fetchWithTokenWithoutContentType(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/upload`,
-                {
-                    method: 'POST',
-                    body: formData,
+            try {
+                console.log('upload...');
+                const formData = new FormData();
+                formData.append('file', file as File);
+                formData.append('rectification', 'true');
+                formData.append('documentType', uploadedFile.file.documentType);
+                formData.append('quotationId', quotationId);
+
+                const response = await fetchWithTokenWithoutContentType(
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/upload`,
+                    {
+                        method: 'POST',
+                        body: formData,
+                    }
+                );
+
+                if (!response.ok) throw new Error('Upload failed');
+                if (onRectifFile) {
+                    onRectifFile();
                 }
-            );
 
-            if (!response.ok) throw new Error('Upload failed');
-            if(onRectifFile) {
-                onRectifFile();
+            } catch (error) {
             }
-
-        } catch (error) {
         }
+
     }
     const handleFileSelect = async (file: File) => {
         const validation = validateFile(file);
@@ -171,45 +185,50 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
             status: 'uploading',
             progress: 0
         };
+        if (onFileUpload) {
             onFileUpload(id, newFile);
+        }
 
-            try {
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('documentType', id);
-                formData.append('originalName', file.name);
-                formData.append('quotationId', quotationId);
-                await fetchWithTokenWithoutContentType(`${process.env.NEXT_PUBLIC_API_URL}/api/upload`, {
-                    method: 'POST',
-                    body: formData,
-                });
-
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('documentType', id);
+            formData.append('originalName', file.name);
+            formData.append('quotationId', quotationId);
+            await fetchWithTokenWithoutContentType(`${process.env.NEXT_PUBLIC_API_URL}/api/upload`, {
+                method: 'POST',
+                body: formData,
+            });
+            if (onFileUpload) {
                 onFileUpload(id, {
                     ...newFile,
                     status: 'success',
                     progress: 100
                 });
+            }
 
-                toast({
-                    title: "Upload Terminé",
-                    description: `Le document ${file.name} a été uploadé avec succès.`,
-                });
-            } catch (error) {
-                const errorMessage = 'Une erreur est survenue';
 
+            toast({
+                title: "Upload Terminé",
+                description: `Le document ${file.name} a été uploadé avec succès.`,
+            });
+        } catch (error) {
+            const errorMessage = 'Une erreur est survenue';
+            if (onFileUpload) {
                 onFileUpload(id, {
                     ...newFile,
                     status: 'error',
                     progress: 0,
                     error: errorMessage
                 });
-
-                toast({
-                    title: "Upload échoué",
-                    description: errorMessage,
-                    variant: "destructive",
-                });
             }
+
+            toast({
+                title: "Upload échoué",
+                description: errorMessage,
+                variant: "destructive",
+            });
+        }
     };
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         console.log('input');
@@ -268,7 +287,9 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
 
     }
     const handleRemove = () => {
-        onFileRemove(id);
+        if (onFileRemove) {
+            onFileRemove(id);
+        }
         setIsFileRemoveOpen(false);
     };
 
@@ -354,7 +375,8 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
 
 
                         </div>
-                        {uploadedFile?.status === 'success' && user?.role.name === UserRole.SUPER_ADMIN && uploadedFile.file.status === FileStatusEnum.EN_VERIFICATION && (
+                        {uploadedFile?.status === 'success' && user?.role.name === UserRole.SUPER_ADMIN && 'status' in uploadedFile.file &&
+                            uploadedFile.file.status === FileStatusEnum.EN_VERIFICATION && (
                             <div className="flex mt-2 gap-2">
                                 <Button
                                     size="sm"
@@ -374,13 +396,13 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
                                 </Button>
                             </div>
                         )}
-                        {uploadedFile.file.status === FileStatusEnum.VERIFE &&
+                        {'status' in uploadedFile.file && uploadedFile.file.status === FileStatusEnum.VERIFE &&
                             <div className="text-ejaar-green flex gap-2 items-center mt-2">
                                 <CheckCircle className="h-3 w-3"></CheckCircle>
                                 <span>Verifié</span>
                             </div>
                         }
-                        {uploadedFile.file.status === FileStatusEnum.A_RECTIFIER &&
+                        {'status' in uploadedFile.file && uploadedFile.file.status === FileStatusEnum.A_RECTIFIER &&
                             <>
                                 <div className="text-amber-600 flex gap-2 items-center mt-2">
                                     <Undo2Icon className="h-3 w-3"></Undo2Icon>
@@ -390,7 +412,7 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
                                     className="text-sm text-ejaar-700">Info : {uploadedFile.file?.rejectionReason}</span>
                             </>
                         }
-                        {uploadedFile && user?.role.name === UserRole.CLIENT && uploadedFile.file.status === FileStatusEnum.A_RECTIFIER && (
+                        {uploadedFile && 'status' in uploadedFile.file &&  user?.role.name === UserRole.CLIENT && uploadedFile.file.status === FileStatusEnum.A_RECTIFIER && (
                             <div>
                                 <p className="text-ejaar-700">Nouveau document</p>
                                 {rectifUploadedFile ?
@@ -420,8 +442,8 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
                                                 </div>
                                             </div>
                                         )}
-                                    <div/>
-                                    </div>:
+                                        <div/>
+                                    </div> :
                                     <>
 
                                         <input
@@ -443,7 +465,8 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
                                                 className="text-blue-500 mb-2"
                                             />
                                             <p className="text-sm text-center text-gray-500">
-                                                <span className="font-semibold text-blue-600">Cliquer pour uploader</span> ou
+                                                <span
+                                                    className="font-semibold text-blue-600">Cliquer pour uploader</span> ou
                                                 glisser
                                             </p>
                                             <p className="text-xs text-gray-400 mt-1">
@@ -586,7 +609,7 @@ const FileUploadItem: React.FC<FileUploadItemProps> = ({
                                 <FileText className="h-5 w-5 text-blue-600"/>
                             </div>
                             <DialogTitle className="text-blue-900 text-lg font-semibold">
-                                Validation du document {uploadedFile?.file.originalName}
+                                Validation du document {uploadedFile && uploadedFile.file && ('originalName' in uploadedFile?.file ? uploadedFile?.file.originalName : uploadedFile?.file.name)}
                             </DialogTitle>
                         </div>
                     </DialogHeader>

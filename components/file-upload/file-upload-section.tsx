@@ -8,12 +8,12 @@ interface FileUploadSectionProps {
     section: DocumentSection;
     quotationId: string,
     isDeleteHidden: boolean,
-    onFileUpload: (sectionId: string, documentTypeId: string, file: UploadFile) => void;
-    onFileRemove: (sectionId: string, documentTypeId: string) => void;
+    onFileUpload?: (sectionId: string, documentTypeId: string, file: UploadFile) => void;
+    onFileRemove?: (sectionId: string, documentTypeId: string) => void;
     onValidateFile?: (fileId: string) => void;
     onRejectFile?: (fileId: string) => void;
     isValidationHidden?: boolean;
-    isRectification: boolean;
+    isRectification?: boolean;
     onRectifFile?: () => void;
 }
 
@@ -36,11 +36,15 @@ const FileUploadSection: React.FC<FileUploadSectionProps> = ({
     };
 
     const handleFileUpload = (documentTypeId: string, file: UploadFile) => {
-        onFileUpload(section.id, documentTypeId, file);
+        if (onFileUpload){
+            onFileUpload(section.id, documentTypeId, file);
+        }
     };
 
     const handleFileRemove = (documentTypeId: string) => {
-        onFileRemove(section.id, documentTypeId);
+        if (onFileRemove) {
+            onFileRemove(section.id, documentTypeId);
+        }
     };
 
     // Calculate progress for this section

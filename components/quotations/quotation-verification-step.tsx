@@ -72,7 +72,7 @@ export function QuotationVerificationStep({ quotation, onStepUpdate }: Quotation
     const [currentFileId, setCurrentFileId] = useState<string | null>(null);
     const [rejectionReason, setRejectionReason] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
-    const [serverFiles, setServerFiles] = useState([]);
+    const [serverFiles, setServerFiles] = useState<ServerFile[]>([]);
 
 
     function getRectifiableSections(uploadState: DocumentUploadState): DocumentSection[] {
