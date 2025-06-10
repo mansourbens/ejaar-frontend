@@ -19,6 +19,7 @@ import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {UserRole} from "@/lib/utils";
 import {usePathname} from "next/navigation";
+import ChatWidget from "@/components/chat-widget/chat-widget";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
     const { user, logout } = useAuth();
@@ -130,6 +131,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
                     {children}
                 </main>
                 <div className="bg-ejaar-700 h-10 w-full"></div>
+                <ChatWidget />
             </div>
         </div>
     );

@@ -84,7 +84,7 @@ export default function SupplierUsersPage() {
     });
 
     const filteredUsers = users.filter(user =>
-        user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -411,7 +411,7 @@ export default function SupplierUsersPage() {
                                                 '—'
                                             )}                                        </TableCell>
                                         <TableCell>
-                                            {new Date(user.createdAt).toLocaleDateString('fr-FR')}
+                                            {new Date(user.createdAt ?? '').toLocaleDateString('fr-FR')}
                                         </TableCell>
                                         <TableCell className="text-right">
                                         </TableCell>

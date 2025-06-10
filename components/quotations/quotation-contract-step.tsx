@@ -1,7 +1,16 @@
 import {useRef, useState} from "react";
 import {useToast} from "@/hooks/use-toast";
 import {Card} from "@/components/ui/card";
-import {CheckCircle, Download, FileText, Signature, Upload} from "lucide-react";
+import {
+    CheckCircle,
+    Download,
+    FileText,
+    FileWarningIcon,
+    MessageSquareWarning,
+    MessageSquareWarningIcon,
+    Signature,
+    Upload
+} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Quotation} from "@/lib/mock-data";
 import {fetchWithToken, fetchWithTokenWithoutContentType} from "@/lib/utils";
@@ -113,11 +122,11 @@ export function QuotationContractStep({quotation} : {quotation: Quotation}) {
                         </div>
                         <h2 className="text-2xl font-bold text-ejaar-700 mb-2">Contrat prêt</h2>
                         <p className="text-gray-600">
-                            Votre dossier a été validé et signé. Vous pouvez revoir le contrat ici.
+                            Votre dossier a été validé et signé. Vous pouvez revoir le contrat ici ou bien réclamer un sinistre
                         </p>
                     </div>
 
-                    <div className="flex">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Download Contract */}
                         <div className="space-y-4 w-full">
                             <h3 className="text-lg font-semibold text-ejaar-700"> Télécharger le contrat</h3>
@@ -127,7 +136,7 @@ export function QuotationContractStep({quotation} : {quotation: Quotation}) {
                                     <span className="font-medium text-ejaar-red">Contrat de leasing</span>
                                 </div>
                                 <p className="text-sm text-ejaar-red mb-4">
-                                    Téléchargez votre contrat.
+                                    Téléchargez votre contrat
                                 </p>
                                 <Button
                                     onClick={handleDownloadContract}
@@ -135,6 +144,24 @@ export function QuotationContractStep({quotation} : {quotation: Quotation}) {
                                 >
                                     <Download className="w-4 h-4 mr-2" />
                                     Télécharger le contrat
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="space-y-4 w-full">
+                            <h3 className="text-lg font-semibold text-ejaar-700"> Réclamation</h3>
+                            <div className="bg-ejaar-beige border border-ejaar-beigeDark rounded-lg p-4">
+                                <div className="flex items-center space-x-3 mb-3">
+                                    <MessageSquareWarningIcon className="w-5 h-5 text-ejaar-red" />
+                                    <span className="font-medium text-ejaar-red">Réclamer un sinistre</span>
+                                </div>
+                                <p className="text-sm text-ejaar-red mb-4">
+                                    Vous pouvez réclamer un sinistre lié à votre contrat ici
+                                </p>
+                                <Button
+                                    className="w-full bg-ejaar-red hover:bg-ejaar-redHover text-white"
+                                >
+                                    <MessageSquareWarningIcon className="w-4 h-4 mr-2" />
+                                    Réclamer
                                 </Button>
                             </div>
                         </div>

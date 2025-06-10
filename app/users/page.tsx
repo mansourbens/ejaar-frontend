@@ -35,20 +35,23 @@ import {Client, Supplier} from "@/app/supplier-users/page";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {useAuth} from "@/components/auth/auth-provider";
 import {CategorieCA} from "@/components/ejaar-settings/rate-config";
+import {Message} from "@/contexts/chat-context";
 
 export interface User {
     id?: string;
-    fullName: string;
+    fullName?: string;
     email: string;
     role: {
         id?: number;
         name: UserRole;
     };
     supplier?: Supplier;
-    createdAt: string;
+    createdAt?: string;
     lastConnectionAt?: Date;
     client?: Client;
-    caCategory?: CategorieCA
+    caCategory?: CategorieCA,
+    lastMessage?: Message;
+    unreadCount?: number;
 }
 
 
@@ -387,7 +390,7 @@ export default function UsersPage() {
                                                 '—'
                                             )}                                        </TableCell>
                                         <TableCell>
-                                            {new Date(rowUser.createdAt)?.toLocaleDateString('fr-FR')}
+                                            {new Date(rowUser.createdAt ?? '')?.toLocaleDateString('fr-FR')}
                                         </TableCell>
 
                                         <TableCell className="text-right">
