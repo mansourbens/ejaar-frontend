@@ -264,7 +264,7 @@ export const RateConfig = () => {
                             <div>
                                 <h3 className="text-lg text-left font-semibold text-white">
                                     Configuration du taux de marge commerciale</h3>
-                                <p className="text-sm text-gray-300">
+                                <p className="text-sm text-left text-gray-300">
                                     Définissez le taux de marge commerciale global
                                 </p>
                             </div>
@@ -272,7 +272,7 @@ export const RateConfig = () => {
                     </AccordionTrigger>
                     <AccordionContent className="px-0 pb-0">
                         <form onSubmit={handleCommercialRateSubmit} className="space-y-4">
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 mt-4 ml-2">
                                 <Label htmlFor="commercialRate" className="flex-shrink-0 text-ejaar-700">
                                     Taux de marge commerciale (%)
                                 </Label>

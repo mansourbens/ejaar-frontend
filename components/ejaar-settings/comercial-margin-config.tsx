@@ -73,7 +73,7 @@ export const CommercialMarginConfig = () => {
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto h-full">
+        <div className="w-full max-w-4xl mx-auto h-full ">
             <Card>
                 <CardHeader className="bg-ejaar-800 text-white">
                     <CardTitle>Configuration du taux de marge commerciale</CardTitle>
@@ -83,9 +83,9 @@ export const CommercialMarginConfig = () => {
                 </CardHeader>
                 <CardContent className="pt-6">
                     <form onSubmit={handleSubmit}>
-                        <div className="grid gap-4">
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="tauxMarge" className="text-right">
+                        <div className="grid gap-4 mt-4">
+                            <div className="grid grid-cols-4 items-center gap-4 ">
+                                <Label htmlFor="tauxMarge" className="text-right ">
                                     Taux de marge commerciale (%)
                                 </Label>
                                 <Input

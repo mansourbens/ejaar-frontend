@@ -265,7 +265,7 @@ export default function SignUp() {
                                                 name="address"
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel className="text-sm font-medium text-ejaar-700">Adresse</FormLabel>
+                                                        <FormLabel className="text-sm font-medium text-ejaar-700">Adresse <span className="text-ejaar-red">*</span></FormLabel>
                                                         <FormControl>
                                                             <Textarea
                                                                 className="min-h-[40px] bg-ejaar-beige ring-2 ring-ring ring-offset-1"
